@@ -343,6 +343,7 @@ export function CaptureSession({
             presentation={presentation}
             onScenePresented={handlePresented}
             inputEnabled={false}
+            hideCursor
           />
         ) : null}
       </div>
