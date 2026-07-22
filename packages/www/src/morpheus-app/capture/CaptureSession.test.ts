@@ -1,10 +1,28 @@
 import { describe, expect, it } from 'vitest';
 
+import {
+  PANO_ENTRY_YAW3600,
+  panoCaptureYawSequence,
+} from './CaptureSession';
+
 /**
- * CaptureSession is browser/WebGL heavy; unit coverage lives on pure helpers
- * (inventory, captureStageFrame). This file documents the export contract the
- * headless runner depends on.
+ * CaptureSession is browser/WebGL heavy; pure helpers are covered here.
  */
+describe('pano capture yaw', () => {
+  it('starts at engine entry heading 1500 and covers a full revolution', () => {
+    expect(PANO_ENTRY_YAW3600).toBe(1500);
+    const yaws = panoCaptureYawSequence(24);
+    expect(yaws[0]).toBe(1500);
+    expect(yaws).toHaveLength(24);
+    // Last step is just shy of wrapping back to entry
+    expect(yaws[yaws.length - 1]).toBe(
+      Math.round(1500 + (23 * 3600) / 24) % 3600,
+    );
+    const unique = new Set(yaws);
+    expect(unique.size).toBe(24);
+  });
+});
+
 describe('CaptureSession runner contract', () => {
   it('documents the global result shape', () => {
     const example = {

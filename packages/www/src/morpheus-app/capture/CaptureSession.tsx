@@ -45,10 +45,25 @@ export type CaptureResult = {
 
 const CAPTURE_POLICY_VERSION = 'og-gif-v1';
 const DEFAULT_PANO_FRAMES = 24;
+/** Engine default pano entry heading (same as living-save bootstrap). */
+export const PANO_ENTRY_YAW3600 = 1500;
 const DEFAULT_SPECIAL_MS = 3000;
 const SPECIAL_FPS = 8;
 const READY_TIMEOUT_MS = 45000;
 const POST_READY_SETTLE_MS = 200;
+
+/** Full 360° steps starting at entry yaw (morpheus ROT units 0–3600). */
+export function panoCaptureYawSequence(
+  steps: number,
+  entryYaw3600 = PANO_ENTRY_YAW3600,
+): number[] {
+  const count = Math.max(2, steps);
+  const yaws: number[] = [];
+  for (let i = 0; i < count; i += 1) {
+    yaws.push(Math.round(entryYaw3600 + (i * 3600) / count) % 3600);
+  }
+  return yaws;
+}
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => {
@@ -117,7 +132,7 @@ export function CaptureSession({
   useEffect(() => {
     dispatch(scenePrefetched(scene));
     dispatch(activateScene(scene.sceneId));
-    dispatch(setRotation({ yaw3600: 0, pitch: 0 }));
+    dispatch(setRotation({ yaw3600: PANO_ENTRY_YAW3600, pitch: 0 }));
     setStatus('waiting_ready');
     setPresentation({
       token: Date.now(),
@@ -175,9 +190,8 @@ export function CaptureSession({
     const frames: string[] = [];
     try {
       if (kind === 'pano') {
-        const steps = Math.max(2, panoFrames);
-        for (let i = 0; i < steps; i += 1) {
-          const yaw3600 = Math.round((i * 3600) / steps) % 3600;
+        const yaws = panoCaptureYawSequence(panoFrames, PANO_ENTRY_YAW3600);
+        for (const yaw3600 of yaws) {
           dispatch(setRotation({ yaw3600, pitch: 0 }));
           await sleep(80);
           const dataUrl = grabFrameDataUrl();
