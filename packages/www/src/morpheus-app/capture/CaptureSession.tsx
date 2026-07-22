@@ -50,21 +50,17 @@ const DEFAULT_PANO_FRAMES = 24;
  * Matches livingSaveCoordinator bootstrap.
  */
 export const PANO_AUTHORED_ENTRY_YAW3600 = 1500;
-/**
- * WebGL cylinder FOV is a 600px texture “slice” of the 3072 unwrap
- * (`sliceOffset` in pano WebGL). Rotation is left-edge-of-FOV oriented;
- * subtract half a slice so the entry heading is the *center* of the view.
- */
-export const PANO_SLICE_TEXTURE_PX = 600;
-export const PANO_CANVAS_WIDTH = 3072;
 export const PANO_FULL_ROTATION = 3600;
-export const PANO_HALF_SLICE_YAW3600 = Math.round(
-  (PANO_SLICE_TEXTURE_PX / 2) * (PANO_FULL_ROTATION / PANO_CANVAS_WIDTH),
-); // 352
-/** Capture start: entry center minus half FOV slice. */
+/**
+ * Small left nudge so the first frame matches entry framing.
+ * Half of one 24-frame sector (3600/24/2 = 75). A full FOV half-slice
+ * (~352) overshot hard left in capture.
+ */
+export const PANO_ENTRY_YAW_NUDGE = Math.round(PANO_FULL_ROTATION / 24 / 2); // 75
+/** Capture start yaw after nudge. */
 export const PANO_ENTRY_YAW3600 =
-  (PANO_AUTHORED_ENTRY_YAW3600 - PANO_HALF_SLICE_YAW3600 + PANO_FULL_ROTATION) %
-  PANO_FULL_ROTATION; // 1148
+  (PANO_AUTHORED_ENTRY_YAW3600 - PANO_ENTRY_YAW_NUDGE + PANO_FULL_ROTATION) %
+  PANO_FULL_ROTATION; // 1425
 const DEFAULT_SPECIAL_MS = 3000;
 const SPECIAL_FPS = 8;
 const READY_TIMEOUT_MS = 45000;
