@@ -6,7 +6,7 @@
  */
 
 import { spawn } from 'node:child_process';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -65,6 +65,10 @@ export function parseGenerateArguments(argv = process.argv.slice(2)) {
     } else if (arg === '--dry-run') {
       options.dryRun = true;
     } else if (arg === '--force') {
+      options.force = true;
+    } else if (arg === '--encode-only') {
+      // Re-encode master/webm/gif from existing intermediate PNGs (no browser).
+      options.encodeOnly = true;
       options.force = true;
     } else if (arg === '--width' && argv[i + 1]) {
       options.maxWidth = Math.min(NATIVE_WIDTH, Number(argv[++i]));
@@ -177,14 +181,21 @@ export function runFfmpegWebm(
 }
 
 /**
- * OG GIF: smaller resolution, higher fps (motion over pixels).
- * Source frames stay full 640×400 on disk.
+ * OG GIF: temporal + spatial downsample from dense HQ sources.
+ *
+ * Important: `-framerate` on input must be the *source* rate (e.g. 60 for
+ * 480-frame panos) so duration matches the master. Then `fps=gifFps` drops
+ * frames. Using gifFps as the input rate keeps every PNG → 40s GIFs.
  */
 export function runFfmpegGif(
   framePattern,
   outputGif,
-  maxWidth = DEFAULT_GIF_WIDTH,
-  framerate = DEFAULT_GIF_FPS,
+  {
+    maxWidth = DEFAULT_GIF_WIDTH,
+    sourceFps = DEFAULT_MASTER_FPS,
+    gifFps = DEFAULT_GIF_FPS,
+    maxColors = 128,
+  } = {},
 ) {
   const scale =
     maxWidth < NATIVE_WIDTH
@@ -193,11 +204,13 @@ export function runFfmpegGif(
   return runFfmpeg([
     '-y',
     '-framerate',
-    String(framerate),
+    String(sourceFps),
     '-i',
     framePattern,
     '-vf',
-    `fps=${framerate},${scale}split[s0][s1];[s0]palettegen=max_colors=256:stats_mode=diff[p];[s1][p]paletteuse=dither=bayer:bayer_scale=3`,
+    `fps=${gifFps},${scale}split[s0][s1];[s0]palettegen=max_colors=${maxColors}:stats_mode=diff[p];[s1][p]paletteuse=dither=bayer:bayer_scale=5`,
+    '-loop',
+    '0',
     outputGif,
   ]);
 }
@@ -263,6 +276,51 @@ export async function captureSceneInBrowser({
   }
 }
 
+async function countPngFrames(framesDir) {
+  try {
+    const names = await readdir(framesDir);
+    return names.filter((n) => /^f\d+\.png$/i.test(n)).length;
+  } catch {
+    return 0;
+  }
+}
+
+async function encodeOutputsForScene({
+  sceneId,
+  kind,
+  framesDir,
+  frameCount,
+  options,
+  gifDir,
+  masterDir,
+  webmDir,
+  inputHash,
+}) {
+  const pattern = path.join(framesDir, 'f%03d.png');
+  const masterPath = path.join(masterDir, `${sceneId}.mp4`);
+  const webmPath = path.join(webmDir, `${sceneId}.webm`);
+  const gifPath = path.join(gifDir, `${sceneId}.gif`);
+  // Specials ≈ game rate; panos use dense master rate for correct duration.
+  const sourceFps = kind === 'pano' ? options.masterFps : options.gifFps;
+  await runFfmpegMasterMp4(pattern, masterPath, sourceFps);
+  await runFfmpegWebm(pattern, webmPath, sourceFps);
+  await runFfmpegGif(pattern, gifPath, {
+    maxWidth: options.maxWidth,
+    sourceFps,
+    gifFps: options.gifFps,
+  });
+  return {
+    sceneId,
+    kind,
+    frameCount,
+    masterPath,
+    webmPath,
+    gifPath,
+    inputHash,
+    status: 'ok',
+  };
+}
+
 async function main() {
   const options = parseGenerateArguments();
   if (options.help) {
@@ -278,13 +336,14 @@ Options:
   --gif-fps <n>      GIF framerate (default ${DEFAULT_GIF_FPS}; can be lower)
   --width <n>        OG GIF max width ≤640 (default ${DEFAULT_GIF_WIDTH})
   --force            Ignore previous hashes; recapture all targets
+  --encode-only      Re-encode from existing intermediate PNGs (no browser)
   --dry-run          Print dirty set only
 `);
     return;
   }
 
   let previous = null;
-  if (!options.force) {
+  if (!options.force && !options.encodeOnly) {
     try {
       previous = JSON.parse(await readFile(options.manifestPath, 'utf8'));
     } catch {
@@ -296,17 +355,40 @@ Options:
     sceneIds: options.sceneIds,
   });
   const { dirty } = computeDirtySet(
-    options.allDirty && !options.force ? previous : null,
+    options.allDirty && !options.force && !options.encodeOnly
+      ? previous
+      : null,
     inventory,
   );
-  const targets = options.sceneIds
+  let targets = options.sceneIds
     ? inventory.scenes.filter((row) => options.sceneIds.includes(row.sceneId))
     : dirty;
+
+  if (options.encodeOnly) {
+    // Prefer scenes that already have intermediates on disk
+    const interRoot = path.join(options.outDir, 'intermediates');
+    let dirs = [];
+    try {
+      dirs = await readdir(interRoot);
+    } catch {
+      dirs = [];
+    }
+    const onDisk = new Set(
+      dirs.filter((d) => /^\d+$/.test(d)).map((d) => Number(d)),
+    );
+    targets = inventory.scenes.filter((row) => {
+      if (options.sceneIds && !options.sceneIds.includes(row.sceneId)) {
+        return false;
+      }
+      return onDisk.has(row.sceneId);
+    });
+  }
 
   process.stdout.write(
     JSON.stringify(
       {
         policyVersion: PREVIEW_POLICY_VERSION,
+        encodeOnly: Boolean(options.encodeOnly),
         targetCount: targets.length,
         panoFrames: options.panoFrames,
         masterFps: options.masterFps,
@@ -327,23 +409,26 @@ Options:
     return;
   }
 
-  const { chromium } = await loadPlaywright();
-  const browser = await chromium.launch({
-    headless: true,
-    args: [
-      '--enable-webgl',
-      '--ignore-gpu-blocklist',
-      '--use-gl=angle',
-      '--use-angle=metal',
-    ],
-  });
-
   const gifDir = path.join(options.outDir, 'gif');
   const masterDir = path.join(options.outDir, 'master');
   const webmDir = path.join(options.outDir, 'webm');
   await mkdir(gifDir, { recursive: true });
   await mkdir(masterDir, { recursive: true });
   await mkdir(webmDir, { recursive: true });
+
+  let browser = null;
+  if (!options.encodeOnly) {
+    const { chromium } = await loadPlaywright();
+    browser = await chromium.launch({
+      headless: true,
+      args: [
+        '--enable-webgl',
+        '--ignore-gpu-blocklist',
+        '--use-gl=angle',
+        '--use-angle=metal',
+      ],
+    });
+  }
 
   const results = [];
   let done = 0;
@@ -355,41 +440,45 @@ Options:
         String(row.sceneId),
       );
       process.stderr.write(
-        `[${done + 1}/${targets.length}] capturing scene ${row.sceneId} (${row.kind})\n`,
+        `[${done + 1}/${targets.length}] ${options.encodeOnly ? 'encoding' : 'capturing'} scene ${row.sceneId} (${row.kind})\n`,
       );
       try {
-        const captured = await captureSceneInBrowser({
-          browser,
-          baseUrl: options.baseUrl,
+        let frameCount = 0;
+        let kind = row.kind;
+        if (!options.encodeOnly) {
+          const captured = await captureSceneInBrowser({
+            browser,
+            baseUrl: options.baseUrl,
+            sceneId: row.sceneId,
+            framesDir,
+            panoFrames: options.panoFrames,
+          });
+          frameCount = captured.frameCount;
+          kind = captured.kind;
+        } else {
+          frameCount = await countPngFrames(framesDir);
+          if (frameCount === 0) {
+            throw new Error('no intermediate PNGs on disk');
+          }
+          // Dense packs are panos; short packs are specials
+          if (frameCount >= options.panoFrames * 0.5) {
+            kind = 'pano';
+          }
+        }
+        const encoded = await encodeOutputsForScene({
           sceneId: row.sceneId,
+          kind,
           framesDir,
-          panoFrames: options.panoFrames,
-        });
-        const pattern = path.join(framesDir, 'f%03d.png');
-        const masterPath = path.join(masterDir, `${row.sceneId}.mp4`);
-        const webmPath = path.join(webmDir, `${row.sceneId}.webm`);
-        const gifPath = path.join(gifDir, `${row.sceneId}.gif`);
-        await runFfmpegMasterMp4(pattern, masterPath, options.masterFps);
-        await runFfmpegWebm(pattern, webmPath, options.webmFps);
-        // GIF samples the dense source at a lower fps for size
-        await runFfmpegGif(
-          pattern,
-          gifPath,
-          options.maxWidth,
-          options.gifFps,
-        );
-        results.push({
-          sceneId: row.sceneId,
-          kind: captured.kind,
-          frameCount: captured.frameCount,
-          masterPath,
-          webmPath,
-          gifPath,
+          frameCount,
+          options,
+          gifDir,
+          masterDir,
+          webmDir,
           inputHash: row.inputHash,
-          status: 'ok',
         });
+        results.push(encoded);
         process.stderr.write(
-          `  wrote master mp4 + webm + gif (${captured.frameCount} frames)\n`,
+          `  wrote master mp4 + webm + gif (${frameCount} frames → gif @ ${options.gifFps}fps / ${options.maxWidth}px)\n`,
         );
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
@@ -405,7 +494,9 @@ Options:
       done += 1;
     }
   } finally {
-    await browser.close();
+    if (browser) {
+      await browser.close();
+    }
   }
 
   const nextManifest = {
