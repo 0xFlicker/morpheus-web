@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">Morpheus</title>
+  <defs>
+    <linearGradient id="burgundy" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#9d3d51"/>
+      <stop offset=".52" stop-color="#531221"/>
+      <stop offset="1" stop-color="#230814"/>
+    </linearGradient>
+    <radialGradient id="iris">
+      <stop stop-color="#efffff"/>
+      <stop offset=".15" stop-color="#9cf8ff"/>
+      <stop offset=".55" stop-color="#29a9bd"/>
+      <stop offset="1" stop-color="#082c3b"/>
+    </radialGradient>
+    <linearGradient id="eye" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#d8feff"/>
+      <stop offset=".45" stop-color="#5bd8e8"/>
+      <stop offset="1" stop-color="#168da5"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <path d="M256 15 290 53 276 151h-40L222 53z" fill="url(#burgundy)" stroke="#e3ad87" stroke-width="7"/>
+  <path d="M80 470V260C80 135 159 55 256 55s176 80 176 205v210h-58V260c0-86-50-142-118-142s-118 56-118 142v210z" fill="url(#burgundy)" stroke="#e3ad87" stroke-width="7"/>
+  <path d="M55 470h108v-54H79v-45h84v-48H64v-42h99v-38H55zM457 470H349v-54h84v-45h-84v-48h99v-42h-99v-38h108z" fill="url(#burgundy)" stroke="#e3ad87" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M256 140c-68 0-125 72-125 162 0 88 57 156 125 195 68-39 125-107 125-195 0-90-57-162-125-162z" fill="#061b24" stroke="#1e6070" stroke-width="14"/>
+  <path d="M256 157c-55 0-102 64-102 145 0 79 47 139 102 174 55-35 102-95 102-174 0-81-47-145-102-145z" fill="url(#eye)" stroke="#c0fbff" stroke-width="12" filter="url(#glow)"/>
+  <circle cx="256" cy="309" r="68" fill="url(#iris)" stroke="#e7ffff" stroke-width="9"/>
+  <circle cx="256" cy="309" r="29" fill="#08232e"/>
+  <circle cx="276" cy="287" r="13" fill="#fff" opacity=".8"/>
+  <path d="m256 408 38 55h-76z" fill="url(#burgundy)" stroke="#e3ad87" stroke-width="7" stroke-linejoin="round"/>
+</svg>
