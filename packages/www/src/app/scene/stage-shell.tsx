@@ -53,6 +53,7 @@ import {
 import type { LivingSaveSlotSummary } from '@/morpheus-app/store/slices/livingSavesSlice';
 import { getHotspotCandidates } from '@/morpheus-app/hotspot/hotspotEligibility';
 import type { ScenePresentationRequest } from 'morpheus/casts/presentation';
+import { captureStageFrame } from '@/morpheus-app/capture/captureStageFrame';
 
 import '@/morpheus-app/runtime';
 
@@ -73,57 +74,6 @@ type PresentingTransition = ScenePresentationRequest & {
 
 const DISSOLVE_DURATION_MS = 600;
 const PRESENTATION_TIMEOUT_MS = 5000;
-
-function captureStageFrame(
-  source: HTMLDivElement,
-  target: HTMLCanvasElement,
-): boolean {
-  const sourceRect = source.getBoundingClientRect();
-  const canvases = source.querySelectorAll('canvas');
-  if (sourceRect.width <= 0 || sourceRect.height <= 0) {
-    return false;
-  }
-
-  const pixelRatio = window.devicePixelRatio || 1;
-  const pixelWidth = Math.max(1, Math.round(sourceRect.width * pixelRatio));
-  const pixelHeight = Math.max(1, Math.round(sourceRect.height * pixelRatio));
-  if (target.width !== pixelWidth) {
-    target.width = pixelWidth;
-  }
-  if (target.height !== pixelHeight) {
-    target.height = pixelHeight;
-  }
-  target.style.width = `${sourceRect.width}px`;
-  target.style.height = `${sourceRect.height}px`;
-
-  const context = target.getContext('2d');
-  if (!context) {
-    return false;
-  }
-  context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-  context.fillStyle = '#000';
-  context.fillRect(0, 0, sourceRect.width, sourceRect.height);
-
-  for (const canvas of canvases) {
-    const canvasRect = canvas.getBoundingClientRect();
-    if (canvasRect.width <= 0 || canvasRect.height <= 0) {
-      continue;
-    }
-    try {
-      context.drawImage(
-        canvas,
-        canvasRect.left - sourceRect.left,
-        canvasRect.top - sourceRect.top,
-        canvasRect.width,
-        canvasRect.height,
-      );
-    } catch {
-      // The black backing remains an opaque fail-closed transition cover.
-    }
-  }
-
-  return true;
-}
 
 function getActionTypeName(type: number): string {
   const ACTION_TYPES: Record<number, string> = {
