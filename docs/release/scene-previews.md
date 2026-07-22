@@ -43,6 +43,6 @@ Publish GIFs to public CDN under `previews/scenes/{sceneId}.gif` (same disciplin
 ## Policy notes
 
 - Fresh-start gamestate only (new-player activation)
-- Pano = full 360° WebGL loop starting at entry heading **1500** (morpheus ROT / `yaw3600`, same as living-save default); specials = timed motion grab of active special/TRN casts
+- Pano = full 360° WebGL loop; authored entry **1500** minus half FOV slice (**352** ROT units → start **1148**) so the entry heading is view-center, not left-edge of the cylinder FOV; specials = timed motion grab of active special/TRN casts
 - MCP is not used for batch capture
 - Capture route returns 404 when `CAPTURE_MODE` is off and not in development

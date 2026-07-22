@@ -45,14 +45,32 @@ export type CaptureResult = {
 
 const CAPTURE_POLICY_VERSION = 'og-gif-v1';
 const DEFAULT_PANO_FRAMES = 24;
-/** Engine default pano entry heading (same as living-save bootstrap). */
-export const PANO_ENTRY_YAW3600 = 1500;
+/**
+ * Authored / living-save entry heading (morpheus ROT / yaw3600).
+ * Matches livingSaveCoordinator bootstrap.
+ */
+export const PANO_AUTHORED_ENTRY_YAW3600 = 1500;
+/**
+ * WebGL cylinder FOV is a 600px texture “slice” of the 3072 unwrap
+ * (`sliceOffset` in pano WebGL). Rotation is left-edge-of-FOV oriented;
+ * subtract half a slice so the entry heading is the *center* of the view.
+ */
+export const PANO_SLICE_TEXTURE_PX = 600;
+export const PANO_CANVAS_WIDTH = 3072;
+export const PANO_FULL_ROTATION = 3600;
+export const PANO_HALF_SLICE_YAW3600 = Math.round(
+  (PANO_SLICE_TEXTURE_PX / 2) * (PANO_FULL_ROTATION / PANO_CANVAS_WIDTH),
+); // 352
+/** Capture start: entry center minus half FOV slice. */
+export const PANO_ENTRY_YAW3600 =
+  (PANO_AUTHORED_ENTRY_YAW3600 - PANO_HALF_SLICE_YAW3600 + PANO_FULL_ROTATION) %
+  PANO_FULL_ROTATION; // 1148
 const DEFAULT_SPECIAL_MS = 3000;
 const SPECIAL_FPS = 8;
 const READY_TIMEOUT_MS = 45000;
 const POST_READY_SETTLE_MS = 200;
 
-/** Full 360° steps starting at entry yaw (morpheus ROT units 0–3600). */
+/** Full 360° steps starting at capture entry yaw (morpheus ROT units 0–3600). */
 export function panoCaptureYawSequence(
   steps: number,
   entryYaw3600 = PANO_ENTRY_YAW3600,
@@ -60,7 +78,10 @@ export function panoCaptureYawSequence(
   const count = Math.max(2, steps);
   const yaws: number[] = [];
   for (let i = 0; i < count; i += 1) {
-    yaws.push(Math.round(entryYaw3600 + (i * 3600) / count) % 3600);
+    yaws.push(
+      Math.round(entryYaw3600 + (i * PANO_FULL_ROTATION) / count) %
+        PANO_FULL_ROTATION,
+    );
   }
   return yaws;
 }
