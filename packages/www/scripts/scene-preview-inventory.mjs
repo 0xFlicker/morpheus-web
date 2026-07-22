@@ -24,7 +24,7 @@ const DEFAULT_MANIFEST_PATH = path.resolve(
 );
 
 /** Bump when capture/encode policy changes invalidates all rows. */
-export const PREVIEW_POLICY_VERSION = 'og-gif-v2-hq';
+export const PREVIEW_POLICY_VERSION = 'og-gif-v3-smooth';
 
 const TEST_TYPES = {
   0: 'equalTo',

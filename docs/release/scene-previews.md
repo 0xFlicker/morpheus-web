@@ -34,13 +34,13 @@ When finished, the page sets `document.documentElement.dataset.captureState` to 
 
 ## Outputs
 
-- Intermediates (native **640×400** PNGs, **120** pano frames by default):  
+- Intermediates (native **640×400** PNGs, **240** pano frames ≈ 1.5° steps):  
   `packages/www/.scene-previews/intermediates/{sceneId}/fXXX.png`
-- Master MP4 (**12 fps**, crf 17, full 640×400):  
+- Master MP4 (**24 fps**, crf 17, full 640×400 — smooth spin):  
   `packages/www/.scene-previews/master/{sceneId}.mp4`
-- HQ WebM/VP9 (**12 fps**, 640×400):  
+- HQ WebM/VP9 (**24 fps**, 640×400):  
   `packages/www/.scene-previews/webm/{sceneId}.webm`
-- OG GIF (**12 fps**, default **320** wide — motion over resolution):  
+- OG GIF (**12 fps** temporal subsample, default **320** wide):  
   `packages/www/.scene-previews/gif/{sceneId}.gif`
 - Manifest: `packages/www/.scene-previews/manifest.json`
 

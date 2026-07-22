@@ -24,14 +24,15 @@ const DEFAULT_BASE_URL = 'http://localhost:3000';
 /** Authored stage size — never upscale. */
 export const NATIVE_WIDTH = 640;
 export const NATIVE_HEIGHT = 400;
-/** Dense pano samples (~5× original 24-frame spin). */
-export const DEFAULT_PANO_FRAMES = 120;
+/** Dense pano samples (~1.5° steps) so 24fps masters are smooth. */
+export const DEFAULT_PANO_FRAMES = 240;
 /** Prefer motion over resolution on GIF. */
 export const DEFAULT_GIF_WIDTH = 320;
-/** Match original game animated bits (~10–15 fps). */
-export const DEFAULT_MASTER_FPS = 12;
+/** Smooth master / webm playback for panos. */
+export const DEFAULT_MASTER_FPS = 24;
+/** GIF can be lower fps (downsample in time + size from HQ sources). */
 export const DEFAULT_GIF_FPS = 12;
-export const DEFAULT_WEBP_FPS = 12;
+export const DEFAULT_WEBM_FPS = 24;
 
 export function parseGenerateArguments(argv = process.argv.slice(2)) {
   const options = {
@@ -45,6 +46,7 @@ export function parseGenerateArguments(argv = process.argv.slice(2)) {
     maxWidth: DEFAULT_GIF_WIDTH,
     panoFrames: DEFAULT_PANO_FRAMES,
     masterFps: DEFAULT_MASTER_FPS,
+    webmFps: DEFAULT_WEBM_FPS,
     gifFps: DEFAULT_GIF_FPS,
     concurrency: 1,
   };
@@ -69,9 +71,12 @@ export function parseGenerateArguments(argv = process.argv.slice(2)) {
     } else if (arg === '--frames' && argv[i + 1]) {
       options.panoFrames = Number(argv[++i]);
     } else if (arg === '--fps' && argv[i + 1]) {
+      // Master/webm only — GIF stays at gifFps unless --gif-fps is set
       const fps = Number(argv[++i]);
       options.masterFps = fps;
-      options.gifFps = fps;
+      options.webmFps = fps;
+    } else if (arg === '--gif-fps' && argv[i + 1]) {
+      options.gifFps = Number(argv[++i]);
     } else if (arg === '--help' || arg === '-h') {
       options.help = true;
     }
@@ -144,7 +149,7 @@ export function runFfmpegMasterMp4(
 export function runFfmpegWebm(
   framePattern,
   outputWebm,
-  framerate = DEFAULT_WEBP_FPS,
+  framerate = DEFAULT_WEBM_FPS,
 ) {
   return runFfmpeg([
     '-y',
@@ -269,7 +274,8 @@ Options:
   --manifest <path>  Inventory/manifest path
   --scene <id>       Only this scene (repeatable)
   --frames <n>       Pano frame count (default ${DEFAULT_PANO_FRAMES})
-  --fps <n>          Master/GIF/WebP framerate (default ${DEFAULT_MASTER_FPS})
+  --fps <n>          Master/WebM framerate (default ${DEFAULT_MASTER_FPS})
+  --gif-fps <n>      GIF framerate (default ${DEFAULT_GIF_FPS}; can be lower)
   --width <n>        OG GIF max width ≤640 (default ${DEFAULT_GIF_WIDTH})
   --force            Ignore previous hashes; recapture all targets
   --dry-run          Print dirty set only
@@ -304,6 +310,7 @@ Options:
         targetCount: targets.length,
         panoFrames: options.panoFrames,
         masterFps: options.masterFps,
+        webmFps: options.webmFps,
         gifFps: options.gifFps,
         gifWidth: options.maxWidth,
         sampleTargets: targets.slice(0, 8).map((row) => ({
@@ -363,7 +370,8 @@ Options:
         const webmPath = path.join(webmDir, `${row.sceneId}.webm`);
         const gifPath = path.join(gifDir, `${row.sceneId}.gif`);
         await runFfmpegMasterMp4(pattern, masterPath, options.masterFps);
-        await runFfmpegWebm(pattern, webmPath, options.masterFps);
+        await runFfmpegWebm(pattern, webmPath, options.webmFps);
+        // GIF samples the dense source at a lower fps for size
         await runFfmpegGif(
           pattern,
           gifPath,
@@ -406,6 +414,7 @@ Options:
     encode: {
       panoFrames: options.panoFrames,
       masterFps: options.masterFps,
+      webmFps: options.webmFps,
       gifFps: options.gifFps,
       gifWidth: options.maxWidth,
     },

@@ -43,9 +43,12 @@ export type CaptureResult = {
   policyVersion: string;
 };
 
-const CAPTURE_POLICY_VERSION = 'og-gif-v2-hq';
-/** ~5× the original 24-frame spin; dense samples for HQ masters + smooth GIF. */
-const DEFAULT_PANO_FRAMES = 120;
+const CAPTURE_POLICY_VERSION = 'og-gif-v3-smooth';
+/**
+ * Dense pano samples for smooth masters (~1.5° steps).
+ * 240 frames @ 24 fps ≈ 10s full revolution without jumpy yaw.
+ */
+const DEFAULT_PANO_FRAMES = 240;
 /**
  * Authored / living-save entry heading (morpheus ROT / yaw3600).
  * Matches livingSaveCoordinator bootstrap.
@@ -64,9 +67,9 @@ export const PANO_ENTRY_YAW3600 =
 const DEFAULT_SPECIAL_MS = 3000;
 /** Original game animated bits are typically ~10–15 fps. */
 const SPECIAL_FPS = 12;
-/** Settle after each pano step (~12–15 fps capture cadence). */
-const PANO_STEP_MS = 50;
-const READY_TIMEOUT_MS = 120000;
+/** Settle after each pano step; dense spins still need a brief paint. */
+const PANO_STEP_MS = 40;
+const READY_TIMEOUT_MS = 180000;
 const POST_READY_SETTLE_MS = 200;
 
 /**
