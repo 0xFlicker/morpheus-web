@@ -34,13 +34,17 @@ When finished, the page sets `document.documentElement.dataset.captureState` to 
 
 ## Outputs
 
-- Intermediates (native **640×400** PNGs — authored stage size, no upscale):  
+- Intermediates (native **640×400** PNGs, **120** pano frames by default):  
   `packages/www/.scene-previews/intermediates/{sceneId}/fXXX.png`
-- Master MP4 (from those PNGs):  
+- Master MP4 (**12 fps**, crf 17, full 640×400):  
   `packages/www/.scene-previews/master/{sceneId}.mp4`
-- OG GIFs (palette + optional downscale, default width 480):  
+- HQ WebM/VP9 (**12 fps**, 640×400):  
+  `packages/www/.scene-previews/webm/{sceneId}.webm`
+- OG GIF (**12 fps**, default **320** wide — motion over resolution):  
   `packages/www/.scene-previews/gif/{sceneId}.gif`
 - Manifest: `packages/www/.scene-previews/manifest.json`
+
+Prefer re-encoding GIF/WebP from intermediates when only size/fps change; use `--force` to recapture.
 
 Publish GIFs to public CDN under `previews/scenes/{sceneId}.gif` (same discipline as GameDB uploads). Point `NEXT_PUBLIC_SCENE_PREVIEWS_ORIGIN` at that origin so `generateMetadata` can emit absolute `og:image` URLs.
 

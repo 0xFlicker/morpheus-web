@@ -43,8 +43,9 @@ export type CaptureResult = {
   policyVersion: string;
 };
 
-const CAPTURE_POLICY_VERSION = 'og-gif-v1';
-const DEFAULT_PANO_FRAMES = 24;
+const CAPTURE_POLICY_VERSION = 'og-gif-v2-hq';
+/** ~5× the original 24-frame spin; dense samples for HQ masters + smooth GIF. */
+const DEFAULT_PANO_FRAMES = 120;
 /**
  * Authored / living-save entry heading (morpheus ROT / yaw3600).
  * Matches livingSaveCoordinator bootstrap.
@@ -52,18 +53,20 @@ const DEFAULT_PANO_FRAMES = 24;
 export const PANO_AUTHORED_ENTRY_YAW3600 = 1500;
 export const PANO_FULL_ROTATION = 3600;
 /**
- * Small left nudge so the first frame matches entry framing.
- * Half of one 24-frame sector (3600/24/2 = 75). A full FOV half-slice
- * (~352) overshot hard left in capture.
+ * Small left nudge so the first frame matches entry framing (~7.5°).
+ * Kept independent of pano frame count.
  */
-export const PANO_ENTRY_YAW_NUDGE = Math.round(PANO_FULL_ROTATION / 24 / 2); // 75
+export const PANO_ENTRY_YAW_NUDGE = 75;
 /** Capture start yaw after nudge. */
 export const PANO_ENTRY_YAW3600 =
   (PANO_AUTHORED_ENTRY_YAW3600 - PANO_ENTRY_YAW_NUDGE + PANO_FULL_ROTATION) %
   PANO_FULL_ROTATION; // 1425
 const DEFAULT_SPECIAL_MS = 3000;
-const SPECIAL_FPS = 8;
-const READY_TIMEOUT_MS = 45000;
+/** Original game animated bits are typically ~10–15 fps. */
+const SPECIAL_FPS = 12;
+/** Settle after each pano step (~12–15 fps capture cadence). */
+const PANO_STEP_MS = 50;
+const READY_TIMEOUT_MS = 120000;
 const POST_READY_SETTLE_MS = 200;
 
 /**
@@ -232,7 +235,7 @@ export function CaptureSession({
         const yaws = panoCaptureYawSequence(panoFrames, PANO_ENTRY_YAW3600);
         for (const yaw3600 of yaws) {
           dispatch(setRotation({ yaw3600, pitch: 0 }));
-          await sleep(80);
+          await sleep(PANO_STEP_MS);
           const dataUrl = grabFrameDataUrl();
           if (dataUrl) {
             frames.push(dataUrl);

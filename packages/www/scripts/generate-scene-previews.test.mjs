@@ -6,9 +6,9 @@ import {
 } from './generate-scene-previews.mjs';
 
 describe('generate-scene-previews helpers', () => {
-  it('builds capture URLs at native 640×400', () => {
-    expect(captureUrl('http://localhost:3000', 1010, 16)).toBe(
-      'http://localhost:3000/capture/scene/1010?frames=16&w=640&h=400',
+  it('builds capture URLs at native 640×400 with dense frame counts', () => {
+    expect(captureUrl('http://localhost:3000', 1010, 120)).toBe(
+      'http://localhost:3000/capture/scene/1010?frames=120&w=640&h=400',
     );
   });
 

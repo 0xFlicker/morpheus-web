@@ -16,11 +16,9 @@ describe('pano capture yaw', () => {
     expect(PANO_AUTHORED_ENTRY_YAW3600).toBe(1500);
     expect(PANO_ENTRY_YAW_NUDGE).toBe(75);
     expect(PANO_ENTRY_YAW3600).toBe(1425);
-    const yaws = panoCaptureYawSequence(24);
+    const yaws = panoCaptureYawSequence(120);
     expect(yaws[0]).toBe(1425);
-    expect(yaws).toHaveLength(24);
-    // Strictly non-decreasing along the shortest forward path from entry
-    // (allowing a single wrap at the end of the circle).
+    expect(yaws).toHaveLength(120);
     let wraps = 0;
     for (let i = 1; i < yaws.length; i += 1) {
       if (yaws[i] < yaws[i - 1]) {
@@ -28,7 +26,7 @@ describe('pano capture yaw', () => {
       }
     }
     expect(wraps).toBeLessThanOrEqual(1);
-    expect(new Set(yaws).size).toBe(24);
+    expect(new Set(yaws).size).toBe(120);
   });
 
   it('moves last captured frame to front for static poster without reordering mid-spin', () => {
