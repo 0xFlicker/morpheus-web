@@ -1,0 +1,282 @@
+/**
+ * Batch driver: open self-driving capture URLs, collect frames, encode OG GIFs.
+ *
+ * Requires: running Next app (CAPTURE_MODE or dev), Chromium via playwright,
+ * ffmpeg on PATH.
+ *
+ * Example:
+ *   yarn workspace morpheus-next preview:inventory --write
+ *   yarn workspace morpheus-next dev   # separate terminal
+ *   yarn workspace morpheus-next preview:generate --scene 1010
+ */
+
+import { spawn } from 'node:child_process';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import {
+  buildInventory,
+  computeDirtySet,
+  PREVIEW_POLICY_VERSION,
+} from './scene-preview-inventory.mjs';
+
+const packageDirectory = path.dirname(fileURLToPath(import.meta.url));
+const DEFAULT_OUT = path.resolve(packageDirectory, '../.scene-previews');
+const DEFAULT_MANIFEST = path.join(DEFAULT_OUT, 'manifest.json');
+const DEFAULT_BASE_URL = 'http://localhost:3000';
+
+export function parseGenerateArguments(argv = process.argv.slice(2)) {
+  const options = {
+    baseUrl: DEFAULT_BASE_URL,
+    outDir: DEFAULT_OUT,
+    manifestPath: DEFAULT_MANIFEST,
+    sceneIds: null,
+    allDirty: true,
+    dryRun: false,
+    maxWidth: 640,
+    concurrency: 1,
+  };
+  for (let i = 0; i < argv.length; i += 1) {
+    const arg = argv[i];
+    if (arg === '--base-url' && argv[i + 1]) {
+      options.baseUrl = argv[++i].replace(/\/$/, '');
+    } else if (arg === '--out' && argv[i + 1]) {
+      options.outDir = path.resolve(argv[++i]);
+    } else if (arg === '--manifest' && argv[i + 1]) {
+      options.manifestPath = path.resolve(argv[++i]);
+    } else if (arg === '--scene' && argv[i + 1]) {
+      options.sceneIds = options.sceneIds ?? [];
+      options.sceneIds.push(Number(argv[++i]));
+      options.allDirty = false;
+    } else if (arg === '--dry-run') {
+      options.dryRun = true;
+    } else if (arg === '--width' && argv[i + 1]) {
+      options.maxWidth = Number(argv[++i]);
+    } else if (arg === '--help' || arg === '-h') {
+      options.help = true;
+    }
+  }
+  return options;
+}
+
+export function captureUrl(baseUrl, sceneId, frames = 24) {
+  return `${baseUrl}/capture/scene/${sceneId}?frames=${frames}`;
+}
+
+export async function dataUrlToPngFile(dataUrl, filePath) {
+  const match = /^data:image\/png;base64,(.+)$/.exec(dataUrl);
+  if (!match) {
+    throw new Error('expected png data url');
+  }
+  const buffer = Buffer.from(match[1], 'base64');
+  await writeFile(filePath, buffer);
+}
+
+export function runFfmpegGif(framePattern, outputGif, maxWidth) {
+  return new Promise((resolve, reject) => {
+    const args = [
+      '-y',
+      '-framerate',
+      '8',
+      '-i',
+      framePattern,
+      '-vf',
+      `fps=8,scale=${maxWidth}:-1:flags=lanczos,split[s0][s1];[s0]palettegen=max_colors=128:stats_mode=diff[p];[s1][p]paletteuse=dither=bayer:bayer_scale=3`,
+      outputGif,
+    ];
+    const child = spawn('ffmpeg', args, { stdio: ['ignore', 'pipe', 'pipe'] });
+    let stderr = '';
+    child.stderr.on('data', (chunk) => {
+      stderr += chunk.toString();
+    });
+    child.on('error', reject);
+    child.on('close', (code) => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject(new Error(`ffmpeg exited ${code}: ${stderr.slice(-500)}`));
+      }
+    });
+  });
+}
+
+async function loadPlaywright() {
+  try {
+    return await import('playwright');
+  } catch {
+    throw new Error(
+      'playwright is required. Install with: yarn workspace morpheus-next add -D playwright',
+    );
+  }
+}
+
+export async function captureSceneInBrowser({
+  browser,
+  baseUrl,
+  sceneId,
+  framesDir,
+  panoFrames = 24,
+  timeoutMs = 90000,
+}) {
+  const page = await browser.newPage({
+    viewport: { width: 960, height: 600 },
+  });
+  try {
+    const url = captureUrl(baseUrl, sceneId, panoFrames);
+    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: timeoutMs });
+    await page.waitForFunction(
+      () => {
+        const state = document.documentElement.dataset.captureState;
+        return state === 'done' || state === 'failed';
+      },
+      { timeout: timeoutMs },
+    );
+    const result = await page.evaluate(() => window.__MORPHEUS_CAPTURE__);
+    if (!result || result.status !== 'done' || !result.frames?.length) {
+      throw new Error(
+        result?.error ??
+          `capture failed for scene ${sceneId}: ${result?.status ?? 'no result'}`,
+      );
+    }
+    await mkdir(framesDir, { recursive: true });
+    for (let i = 0; i < result.frames.length; i += 1) {
+      const filePath = path.join(
+        framesDir,
+        `f${String(i).padStart(3, '0')}.png`,
+      );
+      await dataUrlToPngFile(result.frames[i], filePath);
+    }
+    return {
+      sceneId,
+      kind: result.kind,
+      frameCount: result.frames.length,
+      framesDir,
+    };
+  } finally {
+    await page.close();
+  }
+}
+
+async function main() {
+  const options = parseGenerateArguments();
+  if (options.help) {
+    process.stdout.write(`Usage: node scripts/generate-scene-previews.mjs [options]
+
+Options:
+  --base-url <url>   Capture app base (default ${DEFAULT_BASE_URL})
+  --out <dir>        Output root (default .scene-previews)
+  --manifest <path>  Inventory/manifest path
+  --scene <id>       Only this scene (repeatable)
+  --width <n>        OG GIF max width (default 640)
+  --dry-run          Print dirty set only
+`);
+    return;
+  }
+
+  let previous = null;
+  try {
+    previous = JSON.parse(await readFile(options.manifestPath, 'utf8'));
+  } catch {
+    previous = null;
+  }
+
+  const inventory = await buildInventory({
+    sceneIds: options.sceneIds,
+  });
+  const { dirty } = computeDirtySet(
+    options.allDirty ? previous : null,
+    inventory,
+  );
+  const targets = options.sceneIds
+    ? inventory.scenes.filter((row) => options.sceneIds.includes(row.sceneId))
+    : dirty;
+
+  process.stdout.write(
+    JSON.stringify(
+      {
+        policyVersion: PREVIEW_POLICY_VERSION,
+        targetCount: targets.length,
+        targets: targets.map((row) => ({
+          sceneId: row.sceneId,
+          kind: row.kind,
+          inputHash: row.inputHash,
+        })),
+      },
+      null,
+      2,
+    ) + '\n',
+  );
+
+  if (options.dryRun || targets.length === 0) {
+    return;
+  }
+
+  const { chromium } = await loadPlaywright();
+  const browser = await chromium.launch({
+    headless: true,
+    args: [
+      '--enable-webgl',
+      '--ignore-gpu-blocklist',
+      '--use-gl=angle',
+      '--use-angle=metal',
+    ],
+  });
+
+  const gifDir = path.join(options.outDir, 'gif');
+  await mkdir(gifDir, { recursive: true });
+
+  const results = [];
+  try {
+    for (const row of targets) {
+      const framesDir = path.join(
+        options.outDir,
+        'intermediates',
+        String(row.sceneId),
+      );
+      process.stderr.write(`capturing scene ${row.sceneId} (${row.kind})\n`);
+      const captured = await captureSceneInBrowser({
+        browser,
+        baseUrl: options.baseUrl,
+        sceneId: row.sceneId,
+        framesDir,
+      });
+      const gifPath = path.join(gifDir, `${row.sceneId}.gif`);
+      const pattern = path.join(framesDir, 'f%03d.png');
+      await runFfmpegGif(pattern, gifPath, options.maxWidth);
+      results.push({
+        sceneId: row.sceneId,
+        kind: captured.kind,
+        frameCount: captured.frameCount,
+        gifPath,
+        inputHash: row.inputHash,
+      });
+      process.stderr.write(`wrote ${gifPath}\n`);
+    }
+  } finally {
+    await browser.close();
+  }
+
+  const nextManifest = {
+    ...inventory,
+    generatedAt: new Date().toISOString(),
+    results,
+  };
+  await mkdir(path.dirname(options.manifestPath), { recursive: true });
+  await writeFile(
+    options.manifestPath,
+    `${JSON.stringify(nextManifest, null, 2)}\n`,
+    'utf8',
+  );
+}
+
+const isDirectRun =
+  process.argv[1] &&
+  path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+
+if (isDirectRun) {
+  main().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  });
+}

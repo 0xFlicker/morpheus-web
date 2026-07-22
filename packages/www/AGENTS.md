@@ -18,6 +18,13 @@ Notes:
   build input when absent locally. The token must remain build-only; release
   setup and verification live in `docs/release/morpheus-vercel.md`.
 
+### Route migration contract
+
+- Current routes remain `/`, `/scene/*`, `/render/*`, and `/api/game-control`; the `/morpheus/*` migration has not landed yet.
+- For the unified site, move game routes physically under `src/app/morpheus/`. Keep `/` first-class; do not use Next `basePath` or a Cloudflare-only rewrite.
+- Migrate root-relative navigation, pathname parsing, render/OG URLs, MCP docs/tests, and the exact WebSocket match to `/morpheus/api/game-control` as one change. Decide explicitly whether old `/scene/*` URLs redirect.
+- Leave `NEXT_PUBLIC_MORPHEUS_GAMEDB_ORIGIN` and `/morpheus-assets` unchanged.
+
 ### WebSocket game-control broker (local dev)
 
 - Implemented in `packages/www/server.ts`
@@ -47,6 +54,13 @@ Living-save diagnostics are read-only and bounded:
 - **Scene route**: `src/app/scene/[sceneId]/page.tsx`
 - **Scene “runtime shell”**: `src/app/scene/stage-shell.tsx` (client component; renders `InteractiveStage`, handles transitions, WS status HUD in dev)
 - **Scene layout**: `src/app/scene/layout.tsx` (mounts `SceneStageShell` alongside child route content)
+
+### Rendering readiness
+
+- `stage-shell.tsx` owns the transition cover and commits pending scenes after `onSceneReady` (with a five-second escape hatch).
+- Asset/media readiness is insufficient: panorama readiness requires the active WebGL texture to be committed; movie readiness requires two fresh compositor frames for the exact presentation token.
+- Keep `preserveDrawingBuffer: true` for reliable pano capture. Cancel stale video-frame waits on replacement, ref detach, and unmount.
+- Preserve authored movie/panorama behavior and browser-check affected boundaries; scene `1010 → 101004` is the regression path for pano-to-movie seams.
 
 ### State management
 
