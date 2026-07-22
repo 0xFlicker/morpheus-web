@@ -43,6 +43,6 @@ Publish GIFs to public CDN under `previews/scenes/{sceneId}.gif` (same disciplin
 ## Policy notes
 
 - Fresh-start gamestate only (new-player activation)
-- Pano = full 360° WebGL loop from authored entry **1500** with a small left nudge (**−75** ROT → start **1425**, half of a 24-frame sector). Larger FOV half-slice (−352) overshot left; specials = timed motion grab of active special/TRN casts
+- Pano = full 360° WebGL loop from authored entry **1500** with a small left nudge (**−75** ROT → entry **1425**). Frame order starts on the former last sample so static GIF / OG clients show the best entry framing, then complete the revolution; specials = timed motion grab of active special/TRN casts
 - MCP is not used for batch capture
 - Capture route returns 404 when `CAPTURE_MODE` is off and not in development

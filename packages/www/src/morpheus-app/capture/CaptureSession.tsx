@@ -66,18 +66,25 @@ const SPECIAL_FPS = 8;
 const READY_TIMEOUT_MS = 45000;
 const POST_READY_SETTLE_MS = 200;
 
-/** Full 360° steps starting at capture entry yaw (morpheus ROT units 0–3600). */
+/**
+ * Full 360° yaw samples (morpheus ROT units 0–3600).
+ *
+ * First frame is the previous sequence’s last sample (entry + (n−1)·step), so
+ * static GIF clients (OG crawlers that freeze on frame 0) show the best entry
+ * framing. Remaining frames walk a full revolution and loop cleanly back.
+ */
 export function panoCaptureYawSequence(
   steps: number,
   entryYaw3600 = PANO_ENTRY_YAW3600,
 ): number[] {
   const count = Math.max(2, steps);
+  const step = PANO_FULL_ROTATION / count;
+  // Old last frame when starting at entry: entry + (count-1)*step ≡ entry - step
+  const startYaw =
+    (entryYaw3600 - step + PANO_FULL_ROTATION) % PANO_FULL_ROTATION;
   const yaws: number[] = [];
   for (let i = 0; i < count; i += 1) {
-    yaws.push(
-      Math.round(entryYaw3600 + (i * PANO_FULL_ROTATION) / count) %
-        PANO_FULL_ROTATION,
-    );
+    yaws.push(Math.round(startYaw + i * step) % PANO_FULL_ROTATION);
   }
   return yaws;
 }
