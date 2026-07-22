@@ -162,6 +162,7 @@ export async function captureSceneInBrowser({
     viewport: { width: NATIVE_WIDTH, height: NATIVE_HEIGHT },
     deviceScaleFactor: 1,
   });
+  page.setDefaultTimeout(timeoutMs);
   try {
     const url = captureUrl(baseUrl, sceneId, panoFrames);
     await page.goto(url, { waitUntil: 'domcontentloaded', timeout: timeoutMs });
@@ -170,6 +171,7 @@ export async function captureSceneInBrowser({
         const state = document.documentElement.dataset.captureState;
         return state === 'done' || state === 'failed';
       },
+      null,
       { timeout: timeoutMs },
     );
     const result = await page.evaluate(() => window.__MORPHEUS_CAPTURE__);

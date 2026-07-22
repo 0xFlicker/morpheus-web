@@ -147,7 +147,12 @@ export function listSceneIds(mapEntries) {
   const ids = [];
   for (const entry of mapEntries) {
     if (entry.type === 'Scene' && entry.data?.sceneId != null) {
-      ids.push(Number(entry.data.sceneId));
+      const id = Number(entry.data.sceneId);
+      // Skip non-playable / placeholder ids
+      if (!Number.isSafeInteger(id) || id <= 0) {
+        continue;
+      }
+      ids.push(id);
     }
   }
   ids.sort((a, b) => a - b);
