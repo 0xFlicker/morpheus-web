@@ -37,6 +37,9 @@ const CaptureScenePage = async ({
   const specialMsRaw = query.specialMs;
   const specialDurationMs =
     typeof specialMsRaw === 'string' ? Number(specialMsRaw) : undefined;
+  // Native authored stage is 640×400; ignore requests to capture larger.
+  const width = 640;
+  const height = 400;
 
   return (
     <CaptureClient
@@ -49,6 +52,8 @@ const CaptureScenePage = async ({
           ? specialDurationMs
           : undefined
       }
+      width={width}
+      height={height}
     />
   );
 };

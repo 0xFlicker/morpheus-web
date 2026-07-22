@@ -118,12 +118,16 @@ export type CaptureSessionProps = {
   height?: number;
 };
 
+/** Authored stage resolution — textures max out around this; do not upscale. */
+export const CAPTURE_NATIVE_WIDTH = 640;
+export const CAPTURE_NATIVE_HEIGHT = 400;
+
 export function CaptureSession({
   scene,
   panoFrames = DEFAULT_PANO_FRAMES,
   specialDurationMs = DEFAULT_SPECIAL_MS,
-  width = 960,
-  height = 600,
+  width = CAPTURE_NATIVE_WIDTH,
+  height = CAPTURE_NATIVE_HEIGHT,
 }: CaptureSessionProps) {
   const dispatch = useAppDispatch();
   const gamestates = useAppSelector(selectGamestatesAccessor);

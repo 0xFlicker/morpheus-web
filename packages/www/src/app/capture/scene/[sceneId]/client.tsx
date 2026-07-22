@@ -7,18 +7,24 @@ type CaptureClientProps = {
   scene: Scene;
   panoFrames?: number;
   specialDurationMs?: number;
+  width?: number;
+  height?: number;
 };
 
 export function CaptureClient({
   scene,
   panoFrames,
   specialDurationMs,
+  width,
+  height,
 }: CaptureClientProps) {
   return (
     <CaptureSession
       scene={scene}
       panoFrames={panoFrames}
       specialDurationMs={specialDurationMs}
+      width={width}
+      height={height}
     />
   );
 }

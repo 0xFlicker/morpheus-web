@@ -26,6 +26,12 @@ const DEFAULT_OUT = path.resolve(packageDirectory, '../.scene-previews');
 const DEFAULT_MANIFEST = path.join(DEFAULT_OUT, 'manifest.json');
 const DEFAULT_BASE_URL = 'http://localhost:3000';
 
+/** Authored stage size — source PNGs stay 640×400; GIF may downscale further. */
+export const NATIVE_WIDTH = 640;
+export const NATIVE_HEIGHT = 400;
+export const DEFAULT_PANO_FRAMES = 24;
+export const DEFAULT_GIF_WIDTH = 480;
+
 export function parseGenerateArguments(argv = process.argv.slice(2)) {
   const options = {
     baseUrl: DEFAULT_BASE_URL,
@@ -34,7 +40,9 @@ export function parseGenerateArguments(argv = process.argv.slice(2)) {
     sceneIds: null,
     allDirty: true,
     dryRun: false,
-    maxWidth: 640,
+    /** OG GIF width (≤ native 640). Full-res frames always written at 640×400. */
+    maxWidth: DEFAULT_GIF_WIDTH,
+    panoFrames: DEFAULT_PANO_FRAMES,
     concurrency: 1,
   };
   for (let i = 0; i < argv.length; i += 1) {
@@ -52,7 +60,9 @@ export function parseGenerateArguments(argv = process.argv.slice(2)) {
     } else if (arg === '--dry-run') {
       options.dryRun = true;
     } else if (arg === '--width' && argv[i + 1]) {
-      options.maxWidth = Number(argv[++i]);
+      options.maxWidth = Math.min(NATIVE_WIDTH, Number(argv[++i]));
+    } else if (arg === '--frames' && argv[i + 1]) {
+      options.panoFrames = Number(argv[++i]);
     } else if (arg === '--help' || arg === '-h') {
       options.help = true;
     }
@@ -60,8 +70,8 @@ export function parseGenerateArguments(argv = process.argv.slice(2)) {
   return options;
 }
 
-export function captureUrl(baseUrl, sceneId, frames = 24) {
-  return `${baseUrl}/capture/scene/${sceneId}?frames=${frames}`;
+export function captureUrl(baseUrl, sceneId, frames = DEFAULT_PANO_FRAMES) {
+  return `${baseUrl}/capture/scene/${sceneId}?frames=${frames}&w=${NATIVE_WIDTH}&h=${NATIVE_HEIGHT}`;
 }
 
 export async function dataUrlToPngFile(dataUrl, filePath) {
@@ -73,18 +83,8 @@ export async function dataUrlToPngFile(dataUrl, filePath) {
   await writeFile(filePath, buffer);
 }
 
-export function runFfmpegGif(framePattern, outputGif, maxWidth) {
+export function runFfmpeg(args) {
   return new Promise((resolve, reject) => {
-    const args = [
-      '-y',
-      '-framerate',
-      '8',
-      '-i',
-      framePattern,
-      '-vf',
-      `fps=8,scale=${maxWidth}:-1:flags=lanczos,split[s0][s1];[s0]palettegen=max_colors=128:stats_mode=diff[p];[s1][p]paletteuse=dither=bayer:bayer_scale=3`,
-      outputGif,
-    ];
     const child = spawn('ffmpeg', args, { stdio: ['ignore', 'pipe', 'pipe'] });
     let stderr = '';
     child.stderr.on('data', (chunk) => {
@@ -95,10 +95,49 @@ export function runFfmpegGif(framePattern, outputGif, maxWidth) {
       if (code === 0) {
         resolve();
       } else {
-        reject(new Error(`ffmpeg exited ${code}: ${stderr.slice(-500)}`));
+        reject(new Error(`ffmpeg exited ${code}: ${stderr.slice(-800)}`));
       }
     });
   });
+}
+
+/** Full-res intermediate MP4 from native 640×400 PNGs (no upscale). */
+export function runFfmpegMasterMp4(framePattern, outputMp4, framerate = 10) {
+  return runFfmpeg([
+    '-y',
+    '-framerate',
+    String(framerate),
+    '-i',
+    framePattern,
+    '-c:v',
+    'libx264',
+    '-pix_fmt',
+    'yuv420p',
+    '-crf',
+    '18',
+    '-preset',
+    'medium',
+    '-an',
+    outputMp4,
+  ]);
+}
+
+/** OG GIF: optional downscale from native frames + high-quality palette. */
+export function runFfmpegGif(framePattern, outputGif, maxWidth = DEFAULT_GIF_WIDTH) {
+  const scale =
+    maxWidth < NATIVE_WIDTH
+      ? `scale=${maxWidth}:-1:flags=lanczos,`
+      : '';
+  return runFfmpeg([
+    '-y',
+    '-framerate',
+    '10',
+    '-i',
+    framePattern,
+    '-vf',
+    `fps=10,${scale}split[s0][s1];[s0]palettegen=max_colors=256:stats_mode=diff[p];[s1][p]paletteuse=dither=bayer:bayer_scale=3`,
+    outputGif,
+  ]);
 }
 
 async function loadPlaywright() {
@@ -116,11 +155,12 @@ export async function captureSceneInBrowser({
   baseUrl,
   sceneId,
   framesDir,
-  panoFrames = 24,
+  panoFrames = DEFAULT_PANO_FRAMES,
   timeoutMs = 90000,
 }) {
   const page = await browser.newPage({
-    viewport: { width: 960, height: 600 },
+    viewport: { width: NATIVE_WIDTH, height: NATIVE_HEIGHT },
+    deviceScaleFactor: 1,
   });
   try {
     const url = captureUrl(baseUrl, sceneId, panoFrames);
@@ -168,7 +208,8 @@ Options:
   --out <dir>        Output root (default .scene-previews)
   --manifest <path>  Inventory/manifest path
   --scene <id>       Only this scene (repeatable)
-  --width <n>        OG GIF max width (default 640)
+  --frames <n>       Pano frame count (default ${DEFAULT_PANO_FRAMES})
+  --width <n>        OG GIF max width ≤640 (default ${DEFAULT_GIF_WIDTH}; source PNGs stay 640×400)
   --dry-run          Print dirty set only
 `);
     return;
@@ -224,9 +265,12 @@ Options:
   });
 
   const gifDir = path.join(options.outDir, 'gif');
+  const masterDir = path.join(options.outDir, 'master');
   await mkdir(gifDir, { recursive: true });
+  await mkdir(masterDir, { recursive: true });
 
   const results = [];
+  let done = 0;
   try {
     for (const row of targets) {
       const framesDir = path.join(
@@ -234,24 +278,44 @@ Options:
         'intermediates',
         String(row.sceneId),
       );
-      process.stderr.write(`capturing scene ${row.sceneId} (${row.kind})\n`);
-      const captured = await captureSceneInBrowser({
-        browser,
-        baseUrl: options.baseUrl,
-        sceneId: row.sceneId,
-        framesDir,
-      });
-      const gifPath = path.join(gifDir, `${row.sceneId}.gif`);
-      const pattern = path.join(framesDir, 'f%03d.png');
-      await runFfmpegGif(pattern, gifPath, options.maxWidth);
-      results.push({
-        sceneId: row.sceneId,
-        kind: captured.kind,
-        frameCount: captured.frameCount,
-        gifPath,
-        inputHash: row.inputHash,
-      });
-      process.stderr.write(`wrote ${gifPath}\n`);
+      process.stderr.write(
+        `[${done + 1}/${targets.length}] capturing scene ${row.sceneId} (${row.kind})\n`,
+      );
+      try {
+        const captured = await captureSceneInBrowser({
+          browser,
+          baseUrl: options.baseUrl,
+          sceneId: row.sceneId,
+          framesDir,
+          panoFrames: options.panoFrames,
+        });
+        const pattern = path.join(framesDir, 'f%03d.png');
+        const masterPath = path.join(masterDir, `${row.sceneId}.mp4`);
+        const gifPath = path.join(gifDir, `${row.sceneId}.gif`);
+        await runFfmpegMasterMp4(pattern, masterPath);
+        await runFfmpegGif(pattern, gifPath, options.maxWidth);
+        results.push({
+          sceneId: row.sceneId,
+          kind: captured.kind,
+          frameCount: captured.frameCount,
+          masterPath,
+          gifPath,
+          inputHash: row.inputHash,
+          status: 'ok',
+        });
+        process.stderr.write(`  wrote ${masterPath} + ${gifPath}\n`);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        process.stderr.write(`  FAIL scene ${row.sceneId}: ${message}\n`);
+        results.push({
+          sceneId: row.sceneId,
+          kind: row.kind,
+          status: 'failed',
+          error: message,
+          inputHash: row.inputHash,
+        });
+      }
+      done += 1;
     }
   } finally {
     await browser.close();
