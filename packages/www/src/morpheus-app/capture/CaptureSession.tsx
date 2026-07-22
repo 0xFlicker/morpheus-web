@@ -67,26 +67,36 @@ const READY_TIMEOUT_MS = 45000;
 const POST_READY_SETTLE_MS = 200;
 
 /**
- * Full 360° yaw samples (morpheus ROT units 0–3600).
- *
- * First frame is the previous sequence’s last sample (entry + (n−1)·step), so
- * static GIF clients (OG crawlers that freeze on frame 0) show the best entry
- * framing. Remaining frames walk a full revolution and loop cleanly back.
+ * Full 360° yaw samples, one continuous direction from entry
+ * (morpheus ROT units 0–3600). Do not start mid-orbit — that causes a
+ * visible jump when ready pose is already at entry.
  */
 export function panoCaptureYawSequence(
   steps: number,
   entryYaw3600 = PANO_ENTRY_YAW3600,
 ): number[] {
   const count = Math.max(2, steps);
-  const step = PANO_FULL_ROTATION / count;
-  // Old last frame when starting at entry: entry + (count-1)*step ≡ entry - step
-  const startYaw =
-    (entryYaw3600 - step + PANO_FULL_ROTATION) % PANO_FULL_ROTATION;
   const yaws: number[] = [];
   for (let i = 0; i < count; i += 1) {
-    yaws.push(Math.round(startYaw + i * step) % PANO_FULL_ROTATION);
+    yaws.push(
+      Math.round(entryYaw3600 + (i * PANO_FULL_ROTATION) / count) %
+        PANO_FULL_ROTATION,
+    );
   }
   return yaws;
+}
+
+/**
+ * After a continuous capture, move the last frame to the front so static
+ * GIF/OG clients show that poster without changing spin direction during grab.
+ * [f0, f1, …, f(n-1)] → [f(n-1), f0, f1, …, f(n-2)]
+ */
+export function rotateFramesPosterFirst<T>(frames: readonly T[]): T[] {
+  if (frames.length < 2) {
+    return [...frames];
+  }
+  const last = frames[frames.length - 1];
+  return [last, ...frames.slice(0, -1)];
 }
 
 function sleep(ms: number): Promise<void> {
@@ -214,6 +224,7 @@ export function CaptureSession({
     const frames: string[] = [];
     try {
       if (kind === 'pano') {
+        // Capture only in one direction from entry (matches ready pose).
         const yaws = panoCaptureYawSequence(panoFrames, PANO_ENTRY_YAW3600);
         for (const yaw3600 of yaws) {
           dispatch(setRotation({ yaw3600, pitch: 0 }));
@@ -252,13 +263,19 @@ export function CaptureSession({
         return;
       }
 
+      // Poster for static OG: last continuous sample becomes frame 0 in the
+      // exported list only — never by rewinding yaw mid-capture.
+      const exportFrames =
+        kind === 'pano' ? rotateFramesPosterFirst(frames) : frames;
+
       setStatus('done');
+      setFrameCount(exportFrames.length);
       publishResult({
         sceneId: scene.sceneId,
         kind,
         status: 'done',
-        frames,
-        frameCount: frames.length,
+        frames: exportFrames,
+        frameCount: exportFrames.length,
         policyVersion: CAPTURE_POLICY_VERSION,
       });
     } catch (caught) {

@@ -5,25 +5,37 @@ import {
   PANO_ENTRY_YAW3600,
   PANO_ENTRY_YAW_NUDGE,
   panoCaptureYawSequence,
+  rotateFramesPosterFirst,
 } from './CaptureSession';
 
 /**
  * CaptureSession is browser/WebGL heavy; pure helpers are covered here.
  */
 describe('pano capture yaw', () => {
-  it('puts former last sample first for static OG poster, full unique revolution', () => {
+  it('captures continuously from entry (no mid-orbit rewind)', () => {
     expect(PANO_AUTHORED_ENTRY_YAW3600).toBe(1500);
     expect(PANO_ENTRY_YAW_NUDGE).toBe(75);
     expect(PANO_ENTRY_YAW3600).toBe(1425);
     const yaws = panoCaptureYawSequence(24);
+    expect(yaws[0]).toBe(1425);
     expect(yaws).toHaveLength(24);
-    // Former last when starting at entry: entry + 23*step ≡ entry - step
-    const step = 3600 / 24;
-    const formerLast = Math.round(1425 - step + 3600) % 3600;
-    expect(yaws[0]).toBe(formerLast);
-    // Entry heading appears early in the loop (second sample)
-    expect(yaws[1]).toBe(1425);
+    // Strictly non-decreasing along the shortest forward path from entry
+    // (allowing a single wrap at the end of the circle).
+    let wraps = 0;
+    for (let i = 1; i < yaws.length; i += 1) {
+      if (yaws[i] < yaws[i - 1]) {
+        wraps += 1;
+      }
+    }
+    expect(wraps).toBeLessThanOrEqual(1);
     expect(new Set(yaws).size).toBe(24);
+  });
+
+  it('moves last captured frame to front for static poster without reordering mid-spin', () => {
+    const captured = ['a', 'b', 'c', 'd'];
+    expect(rotateFramesPosterFirst(captured)).toEqual(['d', 'a', 'b', 'c']);
+    // Live capture order unchanged
+    expect(captured).toEqual(['a', 'b', 'c', 'd']);
   });
 });
 
