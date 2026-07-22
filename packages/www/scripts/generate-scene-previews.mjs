@@ -24,15 +24,15 @@ const DEFAULT_BASE_URL = 'http://localhost:3000';
 /** Authored stage size — never upscale. */
 export const NATIVE_WIDTH = 640;
 export const NATIVE_HEIGHT = 400;
-/** Dense pano samples (~1.5° steps) so 24fps masters are smooth. */
-export const DEFAULT_PANO_FRAMES = 240;
+/** Dense pano samples (~0.75° steps) for smooth 60fps masters. */
+export const DEFAULT_PANO_FRAMES = 480;
 /** Prefer motion over resolution on GIF. */
 export const DEFAULT_GIF_WIDTH = 320;
-/** Smooth master / webm playback for panos. */
-export const DEFAULT_MASTER_FPS = 24;
-/** GIF can be lower fps (downsample in time + size from HQ sources). */
+/** Smooth shareable masters. */
+export const DEFAULT_MASTER_FPS = 60;
+/** GIF temporal downsample from dense sources. */
 export const DEFAULT_GIF_FPS = 12;
-export const DEFAULT_WEBM_FPS = 24;
+export const DEFAULT_WEBM_FPS = 60;
 
 export function parseGenerateArguments(argv = process.argv.slice(2)) {
   const options = {
@@ -115,7 +115,7 @@ export function runFfmpeg(args) {
   });
 }
 
-/** HQ master MP4 at native 640×400. */
+/** HQ master MP4 at native 640×400 (high fps, modest bitrate for share). */
 export function runFfmpegMasterMp4(
   framePattern,
   outputMp4,
@@ -132,9 +132,9 @@ export function runFfmpegMasterMp4(
     '-pix_fmt',
     'yuv420p',
     '-crf',
-    '17',
+    '18',
     '-preset',
-    'slow',
+    'medium',
     '-movflags',
     '+faststart',
     '-an',
@@ -218,7 +218,7 @@ export async function captureSceneInBrowser({
   sceneId,
   framesDir,
   panoFrames = DEFAULT_PANO_FRAMES,
-  timeoutMs = 180000,
+  timeoutMs = 360000,
 }) {
   const page = await browser.newPage({
     viewport: { width: NATIVE_WIDTH, height: NATIVE_HEIGHT },
