@@ -5,7 +5,10 @@ import type { Metadata, NextPage } from 'next';
 import Render from '@/morpheus-app/Render/Render';
 import { fetch as fetchScene } from '@soapbubble/morpheus-client/service/scene';
 import type { Scene } from 'morpheus/casts/types';
-import { scenePreviewGifUrl } from '@/lib/scenePreviewUrl';
+import {
+  scenePreviewMp4Url,
+  scenePreviewOgImage,
+} from '@/lib/scenePreviewUrl';
 
 type PageParams = {
   scene: string;
@@ -64,9 +67,11 @@ export async function generateMetadata({
     ? `Scene ${scene.sceneId} with ${scene.casts.length} casts`
     : 'Scene could not be loaded.';
   const url = baseUrl ? `${baseUrl}/render/${sceneId}` : undefined;
-  const previewImage = scenePreviewGifUrl(sceneId);
-  const images = previewImage
-    ? [{ url: previewImage, width: 640, height: 400, alt: title }]
+  const ogImage = scenePreviewOgImage(sceneId);
+  const images = ogImage ? [ogImage] : undefined;
+  const mp4 = scenePreviewMp4Url(sceneId);
+  const videos = mp4
+    ? [{ url: mp4, width: 640, height: 400, type: 'video/mp4' as const }]
     : undefined;
   return {
     title,
@@ -77,12 +82,13 @@ export async function generateMetadata({
       url,
       type: 'website',
       images,
+      videos,
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: previewImage ? [previewImage] : undefined,
+      images: ogImage ? [ogImage.url] : undefined,
     },
   };
 }

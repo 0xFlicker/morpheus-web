@@ -4,6 +4,9 @@ import {
   resolvePreviewsOrigin,
   scenePreviewGifPath,
   scenePreviewGifUrl,
+  scenePreviewMp4Url,
+  scenePreviewOgImage,
+  scenePreviewWebmUrl,
 } from './scenePreviewUrl';
 
 const keys = [
@@ -42,17 +45,35 @@ function setEnv(key: (typeof keys)[number], value: string | undefined) {
 }
 
 describe('scenePreviewUrl', () => {
-  it('builds stable preview path', () => {
+  it('builds stable preview paths', () => {
     expect(scenePreviewGifPath(1010)).toBe('previews/scenes/1010.gif');
   });
 
-  it('prefers SCENE_PREVIEWS_ORIGIN', () => {
-    setEnv('NEXT_PUBLIC_SCENE_PREVIEWS_ORIGIN', 'https://cdn.example/previews-root');
+  it('prefers SCENE_PREVIEWS_ORIGIN and builds gif/mp4/webm urls', () => {
+    setEnv('NEXT_PUBLIC_SCENE_PREVIEWS_ORIGIN', 'https://cdn.example');
     setEnv('NEXT_PUBLIC_SITE_URL', 'https://site.example');
-    expect(resolvePreviewsOrigin()).toBe('https://cdn.example/previews-root');
+    expect(resolvePreviewsOrigin()).toBe('https://cdn.example');
     expect(scenePreviewGifUrl(1010)).toBe(
-      'https://cdn.example/previews-root/previews/scenes/1010.gif',
+      'https://cdn.example/previews/scenes/1010.gif',
     );
+    expect(scenePreviewMp4Url(1010)).toBe(
+      'https://cdn.example/previews/scenes/1010.mp4',
+    );
+    expect(scenePreviewWebmUrl(1010)).toBe(
+      'https://cdn.example/previews/scenes/1010.webm',
+    );
+  });
+
+  it('builds OG image metadata at GIF dimensions', () => {
+    setEnv('NEXT_PUBLIC_MORPHEUS_GAMEDB_ORIGIN', 'https://blob.example');
+    const image = scenePreviewOgImage(1050);
+    expect(image).toEqual({
+      url: 'https://blob.example/previews/scenes/1050.gif',
+      width: 320,
+      height: 200,
+      type: 'image/gif',
+      alt: 'Morpheus scene 1050',
+    });
   });
 
   it('returns undefined without origin', () => {
@@ -60,5 +81,6 @@ describe('scenePreviewUrl', () => {
       setEnv(key, undefined);
     }
     expect(scenePreviewGifUrl(1010)).toBeUndefined();
+    expect(scenePreviewOgImage(1010)).toBeUndefined();
   });
 });

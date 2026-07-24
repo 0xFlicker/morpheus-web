@@ -46,7 +46,54 @@ When finished, the page sets `document.documentElement.dataset.captureState` to 
 
 Prefer re-encoding GIF/WebP from intermediates when only size/fps change; use `--force` to recapture.
 
-Publish GIFs to public CDN under `previews/scenes/{sceneId}.gif` (same discipline as GameDB uploads). Point `NEXT_PUBLIC_SCENE_PREVIEWS_ORIGIN` at that origin so `generateMetadata` can emit absolute `og:image` URLs.
+## Upload to Vercel Blob (public media store)
+
+Stable public keys (sibling to `GameDB/`):
+
+| Local file | Blob key |
+|------------|----------|
+| `gif/{id}.gif` | `previews/scenes/{id}.gif` |
+| `master/{id}.mp4` | `previews/scenes/{id}.mp4` |
+| `webm/{id}.webm` | `previews/scenes/{id}.webm` |
+
+```bash
+# Dry-run inventory
+yarn workspace morpheus-next upload:previews -- \
+  --report /tmp/previews-import.json --dry-run
+
+# Real upload (public-store token — see tokens below)
+BLOB_READ_WRITE_TOKEN=... yarn workspace morpheus-next upload:previews -- \
+  --report previews-import.json
+```
+
+### Blob tokens (important)
+
+There are **two** Blob stores:
+
+| Store | Host (example) | What lives there | Token in `.env.local` today |
+|-------|----------------|------------------|----------------------------|
+| **Private map** | (map store id in `BLOB_READ_WRITE_TOKEN`) | `morpheus.map.json` only | `BLOB_READ_WRITE_TOKEN` points here |
+| **Public media** | `NEXT_PUBLIC_MORPHEUS_GAMEDB_ORIGIN` host (`ol0swvwh4hjeaxzf…`) | `GameDB/…` + `previews/…` | **Need a separate RW token** |
+
+The private-map token **cannot** upload previews (store only lists `morpheus.map.json`).
+
+**Create a public-store RW token:** Vercel Dashboard → Storage → select the store behind `NEXT_PUBLIC_MORPHEUS_GAMEDB_ORIGIN` → Tokens → create read-write → export as `BLOB_READ_WRITE_TOKEN` for the upload command only (or a dedicated `BLOB_PUBLIC_READ_WRITE_TOKEN` if you prefer not to override the map token).
+
+Doppler has no Morpheus project with these secrets; Vercel project `morpheus-web-www` currently stores the **map** token under `BLOB_READ_WRITE_TOKEN`.
+
+### Site env for OG
+
+| Variable | Role |
+|----------|------|
+| `NEXT_PUBLIC_MORPHEUS_GAMEDB_ORIGIN` | Public Blob origin (fallback for preview URLs) |
+| `NEXT_PUBLIC_SCENE_PREVIEWS_ORIGIN` | Optional override; defaults to GameDB origin |
+
+`/scene/{id}` and `/render/{id}` set:
+
+- **`og:image` / Twitter image** → GIF (`previews/scenes/{id}.gif`, 320×200)
+- **`og:video`** (optional) → MP4 for platforms that honor it — **not** a substitute for `og:image`
+
+MP4 is **not** valid as `og:image`. GIF (or static image) is required for unfurl cards.
 
 ## Policy notes
 

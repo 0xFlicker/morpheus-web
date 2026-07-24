@@ -7,6 +7,7 @@
     "dev": "npx tsx server.ts",
     "mcp": "npx tsx mcp-server/index.ts",
     "upload:gamedb": "node scripts/upload-gamedb.mjs",
+    "upload:previews": "node scripts/upload-scene-previews.mjs",
     "preview:inventory": "node scripts/scene-preview-inventory.mjs",
     "preview:generate": "node scripts/generate-scene-previews.mjs",
     "vercel-build": "cd ../.. && yarn vercel-build",

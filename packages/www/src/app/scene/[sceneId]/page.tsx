@@ -1,7 +1,10 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getScene } from '@/app/actions';
-import { scenePreviewGifUrl } from '@/lib/scenePreviewUrl';
+import {
+  scenePreviewMp4Url,
+  scenePreviewOgImage,
+} from '@/lib/scenePreviewUrl';
 import { Client } from './client';
 
 type PageProps = {
@@ -17,11 +20,20 @@ export async function generateMetadata({
     ? `Morpheus Scene ${sceneId}`
     : 'Morpheus Scene';
   const description = `Interactive panorama scene ${raw}`;
-  const previewImage = Number.isFinite(sceneId)
-    ? scenePreviewGifUrl(sceneId)
-    : undefined;
-  const images = previewImage
-    ? [{ url: previewImage, width: 640, height: 400, alt: title }]
+  const ogImage =
+    Number.isFinite(sceneId) ? scenePreviewOgImage(sceneId) : undefined;
+  const images = ogImage ? [ogImage] : undefined;
+  // Optional: platforms that honor og:video (not a substitute for og:image).
+  const mp4 = Number.isFinite(sceneId) ? scenePreviewMp4Url(sceneId) : undefined;
+  const videos = mp4
+    ? [
+        {
+          url: mp4,
+          width: 640,
+          height: 400,
+          type: 'video/mp4' as const,
+        },
+      ]
     : undefined;
   return {
     title,
@@ -31,12 +43,13 @@ export async function generateMetadata({
       description,
       type: 'website',
       images,
+      videos,
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: previewImage ? [previewImage] : undefined,
+      images: ogImage ? [ogImage.url] : undefined,
     },
   };
 }

@@ -29,9 +29,11 @@ Create two stores with named owners recorded in the project settings:
 
 | Purpose | Access | Vercel variable | Value |
 | --- | --- | --- | --- |
-| Game media | public | `NEXT_PUBLIC_MORPHEUS_GAMEDB_ORIGIN` | Parent URL of `GameDB`, for example `https://<store>.public.blob.vercel-storage.com` |
+| Game media | public | `NEXT_PUBLIC_MORPHEUS_GAMEDB_ORIGIN` | Parent URL of `GameDB` (and scene `previews/…`), for example `https://<store>.public.blob.vercel-storage.com` |
+| Scene OG previews (optional override) | public | `NEXT_PUBLIC_SCENE_PREVIEWS_ORIGIN` | Defaults to GameDB origin; set only if previews live on a different public store |
 | Authored map | private | `MORPHEUS_MAP_BLOB_URL` | Full private Blob URL for `morpheus.map.json` |
-| Authored map read token | build-only | `BLOB_READ_WRITE_TOKEN` | Token scoped to the private map store |
+| Authored map read/write token | build-only | `BLOB_READ_WRITE_TOKEN` | Token scoped to the **private map store** (not the public GameDB store) |
+| Public media upload token | operator workstation | (export as `BLOB_READ_WRITE_TOKEN` for upload scripts) | Read-write token for the **public** store — used by `upload:gamedb` and `upload:previews` |
 
 Set the public origin for Preview and Production. Set the private-map URL and
 token only for trusted Preview and Production deployment refs. Never use a
