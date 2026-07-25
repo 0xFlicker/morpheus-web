@@ -39,3 +39,5 @@ tsconfig.tsbuildinfo
 # Morpheus files
 morpheus.map.json
 public/GameDB
+
+.scene-previews/

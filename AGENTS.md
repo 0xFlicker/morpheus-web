@@ -100,9 +100,3 @@ The `morpheus-game` MCP is for programmatic game control (scene loading, rotatio
 ## State management note (web)
 
 The Next app in `packages/www` now has a **Redux Toolkit** store at `packages/www/src/morpheus-app/store/store.ts` with typed hooks in `packages/www/src/morpheus-app/store/hooks.ts`. Prefer extending that store for new app-router UI/gameplay state (scene stack, rotation, etc.).
-
-## Open questions to resolve as we modernize
-
-- Confirm when we migrate from Yarn v1/Lerna to a modern runner (`turbo`, `pnpm`, etc.).
-- Clarify future home for auth once Next.js is upgraded (NextAuth vs custom).
-- Define how much of the old Morpheus server logic survives once the engine becomes a pure TS library.

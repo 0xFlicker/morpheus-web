@@ -74,6 +74,8 @@ interface InteractiveStageProps {
   onScenePresented?: (presentation: ScenePresentationRequest) => void;
   onHarnessClickReady?: (handler: HarnessClickHandler | null) => void;
   inputEnabled?: boolean;
+  /** When true, do not draw the game cursor (capture / OG stills). */
+  hideCursor?: boolean;
   onStableAction?: () => void;
   onInputControllerReady?: (controller: StageInputController | null) => void;
   skipSceneEntryGeneration?: number | null;
@@ -195,6 +197,7 @@ const InteractiveStage: FC<InteractiveStageProps> = ({
   onScenePresented,
   onHarnessClickReady,
   inputEnabled = true,
+  hideCursor = false,
   onStableAction,
   onInputControllerReady,
   skipSceneEntryGeneration = null,
@@ -400,6 +403,14 @@ const InteractiveStage: FC<InteractiveStageProps> = ({
       onActionSettled: onStableAction,
       skipSceneEntryGeneration,
     });
+
+  const specialCursor = useMemo(
+    () =>
+      hideCursor
+        ? { top: 0, left: 0, image: undefined as HTMLImageElement | undefined }
+        : cursor,
+    [cursor, hideCursor],
+  );
 
   useEffect(() => {
     onHarnessClickReady?.(inputEnabled ? clickHotspot : null);
@@ -723,7 +734,7 @@ const InteractiveStage: FC<InteractiveStageProps> = ({
         />
       )}
       <Special
-        cursor={cursor}
+        cursor={specialCursor}
         setDoneObserver={setSpecialMovieCast}
         stageScenes={specialScenes}
         pendingScenes={pendingSpecialScenes}
