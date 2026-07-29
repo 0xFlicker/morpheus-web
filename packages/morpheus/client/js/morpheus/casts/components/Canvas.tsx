@@ -102,6 +102,7 @@ const Canvas = ({
       onPointerMove={onPointerMove}
       onPointerCancel={onPointerCancel}
       onPointerLeave={onPointerLeave}
+      onContextMenu={(event) => event.preventDefault()}
       style={{
         position: 'absolute',
         cursor: 'none',
@@ -111,6 +112,10 @@ const Canvas = ({
         top: `${top}px`,
         zIndex: 1,
         touchAction: 'none',
+        userSelect: 'none',
+        WebkitUserSelect: 'none',
+        WebkitTouchCallout: 'none',
+        WebkitTapHighlightColor: 'transparent',
       }}
     />
   )

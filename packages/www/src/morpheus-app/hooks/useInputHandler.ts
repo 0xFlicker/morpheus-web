@@ -974,6 +974,7 @@ export function useInputHandler(params: {
   // Pointer handlers
   const onPointerDown = useCallback(
     (event: PointerEvent<HTMLCanvasElement>) => {
+      event.preventDefault();
       const suppression = resolvePointerSuppression(
         suppressedPointerIdRef.current,
         event.pointerId,
@@ -1044,6 +1045,7 @@ export function useInputHandler(params: {
 
   const onPointerMove = useCallback(
     (event: PointerEvent<HTMLCanvasElement>) => {
+      event.preventDefault();
       const suppression = resolvePointerSuppression(
         suppressedPointerIdRef.current,
         event.pointerId,
@@ -1110,6 +1112,7 @@ export function useInputHandler(params: {
 
   const onPointerUp = useCallback(
     (event: PointerEvent<HTMLCanvasElement>) => {
+      event.preventDefault();
       const suppression = resolvePointerSuppression(
         suppressedPointerIdRef.current,
         event.pointerId,

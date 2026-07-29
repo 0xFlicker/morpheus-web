@@ -710,6 +710,11 @@ const InteractiveStage: FC<InteractiveStageProps> = ({
         cursor: 'none',
         left: `${left}px`,
         top: `${top}px`,
+        touchAction: 'none',
+        userSelect: 'none',
+        WebkitUserSelect: 'none',
+        WebkitTouchCallout: 'none',
+        WebkitTapHighlightColor: 'transparent',
       }}
     >
       {(showPano || pendingPanoScenes.length > 0) && (
