@@ -148,13 +148,14 @@ const VideoEl = ({
       }}
       autoPlay={false}
       crossOrigin="anonymous"
+      playsInline
       webkit-playsinline="webkit-playsinline"
       loop={looping}
       onEnded={onVideoEnded}
       onCanPlayThrough={onVideoCanPlayThrough}
     >
-      <source src={getAssetUrl(`${url}.webm`)} type="video/webm" />
       <source src={getAssetUrl(`${url}.mp4`)} type="video/mp4" />
+      <source src={getAssetUrl(`${url}.webm`)} type="video/webm" />
     </video>
   )
 }
