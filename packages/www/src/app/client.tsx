@@ -32,7 +32,9 @@ export const Client = () => {
   const introCompletionGateRef = useRef(createIntroCompletionGate());
   const introPlaybackGenerationRef = useRef(0);
   const introPlaybackActiveRef = useRef(false);
-  const cancelIntroErrorListenerRef = useRef<(() => void) | undefined>();
+  const cancelIntroErrorListenerRef = useRef<(() => void) | undefined>(
+    undefined,
+  );
   const [phase, setPhase] = useState<TitlePhase>('title');
 
   useEffect(() => {
