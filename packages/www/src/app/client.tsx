@@ -9,6 +9,7 @@ import { MORPHEUS_INITIAL_SCENE_ID } from '@/morpheus-app/storage/livingSaveIden
 import { useLivingSaveCoordinator } from '@/morpheus-app/store/LivingSaveCoordinatorContext';
 import type { LivingSaveSlotSummary } from '@/morpheus-app/store/slices/livingSavesSlice';
 import { getAssetUrl } from '@/service/gamedb';
+import { createIntroCompletionGate } from './introCompletionGate';
 import styles from './title-screen.module.css';
 
 type TitlePhase = 'title' | 'intro' | 'error';
@@ -28,18 +29,35 @@ export const Client = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const mountedRef = useRef(true);
   const selectingSlotRef = useRef(false);
+  const introCompletionGateRef = useRef(createIntroCompletionGate());
+  const introPlaybackGenerationRef = useRef(0);
+  const introPlaybackActiveRef = useRef(false);
+  const cancelIntroErrorListenerRef = useRef<(() => void) | undefined>();
   const [phase, setPhase] = useState<TitlePhase>('title');
 
   useEffect(() => {
     mountedRef.current = true;
     return () => {
       mountedRef.current = false;
+      cancelIntroErrorListenerRef.current?.();
+      cancelIntroErrorListenerRef.current = undefined;
     };
   }, []);
 
   const startGame = useCallback(() => {
     router.push(`/scene/${MORPHEUS_INITIAL_SCENE_ID}`);
   }, [router]);
+
+  const finishIntro = useCallback(() => {
+    if (introCompletionGateRef.current.markIntroFinished()) {
+      startGame();
+    }
+  }, [startGame]);
+
+  const clearIntroErrorListener = useCallback(() => {
+    cancelIntroErrorListenerRef.current?.();
+    cancelIntroErrorListenerRef.current = undefined;
+  }, []);
 
   const playIntro = useCallback(() => {
     const video = videoRef.current;
@@ -48,14 +66,34 @@ export const Client = () => {
       return;
     }
 
+    const playbackGeneration = ++introPlaybackGenerationRef.current;
+    introPlaybackActiveRef.current = true;
+    clearIntroErrorListener();
+    const handleError = () => {
+      if (
+        mountedRef.current &&
+        introPlaybackActiveRef.current &&
+        playbackGeneration === introPlaybackGenerationRef.current
+      ) {
+        setPhase('error');
+      }
+    };
+    video.addEventListener('error', handleError, { once: true });
+    cancelIntroErrorListenerRef.current = () => {
+      video.removeEventListener('error', handleError);
+    };
     video.currentTime = 0;
     setPhase('intro');
     void video.play().catch(() => {
-      if (mountedRef.current) {
+      if (
+        mountedRef.current &&
+        introPlaybackActiveRef.current &&
+        playbackGeneration === introPlaybackGenerationRef.current
+      ) {
         setPhase('error');
       }
     });
-  }, []);
+  }, [clearIntroErrorListener]);
 
   const selectSlot = useCallback(
     async (slot: LivingSaveSlotSummary) => {
@@ -67,8 +105,16 @@ export const Client = () => {
       }
 
       selectingSlotRef.current = true;
+      const isNewSlot = slot.state === 'empty';
+      if (isNewSlot) {
+        // iOS only permits audible media to start directly from the tap that
+        // requested it. Creating the slot first crosses an async boundary and
+        // turns this into a policy-blocked autoplay attempt.
+        introCompletionGateRef.current.reset();
+        playIntro();
+      }
       const outcome =
-        slot.state === 'empty'
+        isNewSlot
           ? await coordinator.createNewSlot(slot.slotId)
           : await coordinator.restoreSlot(slot.slotId);
 
@@ -76,14 +122,26 @@ export const Client = () => {
         return;
       }
       if (!outcome.ok) {
+        if (isNewSlot) {
+          const video = videoRef.current;
+          introPlaybackActiveRef.current = false;
+          introPlaybackGenerationRef.current += 1;
+          clearIntroErrorListener();
+          introCompletionGateRef.current.reset();
+          video?.pause();
+          if (video) {
+            video.currentTime = 0;
+          }
+          setPhase('title');
+        }
         selectingSlotRef.current = false;
         return;
       }
-      if (slot.state === 'empty') {
-        playIntro();
+      if (isNewSlot && introCompletionGateRef.current.markSaveReady()) {
+        startGame();
       }
     },
-    [coordinator, phase, playIntro],
+    [clearIntroErrorListener, coordinator, phase, playIntro, startGame],
   );
 
   return (
@@ -113,16 +171,15 @@ export const Client = () => {
           className={styles.introMovie}
           preload="metadata"
           playsInline
-          onEnded={startGame}
-          onError={() => setPhase('error')}
+          onEnded={finishIntro}
         >
-          <source src={INTRO_WEBM} type="video/webm" />
           <source src={INTRO_MP4} type="video/mp4" />
+          <source src={INTRO_WEBM} type="video/webm" />
         </video>
         <button
           type="button"
           className={styles.skipButton}
-          onClick={startGame}
+          onClick={finishIntro}
           tabIndex={phase === 'intro' ? 0 : -1}
         >
           Skip intro
