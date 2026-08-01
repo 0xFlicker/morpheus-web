@@ -20,6 +20,12 @@ import {
   Cast,
 } from 'morpheus/casts/types'
 import { VideoController } from 'morpheus/casts/components/Videos'
+import {
+  calculateControlledFrameIndex,
+  type ControlledMoviePlaybackController,
+} from './controlledMovieFrame'
+
+export { calculateControlledFrameIndex } from './controlledMovieFrame'
 
 function getDrawSourceDimensions(img: DrawSource): { width: number; height: number } {
   if (img instanceof HTMLVideoElement) {
@@ -48,15 +54,6 @@ interface FrameLayout {
 }
 
 const frameLayoutCache = new WeakMap<DrawSource, FrameLayout>()
-
-// Composite states authored by TwoAxisSlider hotspots in morpheus.map.json.
-// Their least-significant axis has eight values, so the movie is sampled as
-// eight physical Y rows instead of as one linear animation.
-const TWO_AXIS_GRID_WIDTH_BY_GAMESTATE = new Map<number, number>([
-  [1020, 8],
-  [1021, 8],
-  [1034, 8],
-])
 
 // Known frame dimensions for different asset sources
 // New extracted assets use 352x288 (1.222 aspect ratio)
@@ -203,57 +200,6 @@ function getFrameLayout(
   return layout
 }
 
-export function calculateControlledFrameIndex({
-  value,
-  maxValue,
-  frames,
-  frameCount,
-  direction,
-  logicalGridWidth,
-}: {
-  value: number
-  maxValue: number
-  frames: number
-  frameCount: number
-  direction: number
-  logicalGridWidth?: number
-}): number {
-  const framesPerValue = Math.max(1, frames)
-  const logicalFrame = Math.max(0, Math.round(value)) * framesPerValue
-  const logicalMaxFrame = Math.max(0, maxValue) * framesPerValue
-
-  if (direction !== 0 || logicalMaxFrame === 0 || frameCount <= 1) {
-    return Math.min(Math.max(0, frameCount - 1), logicalFrame)
-  }
-
-  // TwoAxisSlider stores a square logical grid as row-major state. Converted
-  // movies contain many horizontal samples per Y row, so preserve the row
-  // boundary instead of interpolating through the end of the previous row.
-  if (
-    logicalGridWidth !== undefined &&
-    logicalGridWidth > 1 &&
-    framesPerValue === 1 &&
-    frameCount > maxValue + 1
-  ) {
-    const roundedValue = Math.min(maxValue, Math.max(0, Math.round(value)))
-    const column = roundedValue % logicalGridWidth
-    const row = Math.floor(roundedValue / logicalGridWidth)
-    const rowStart = Math.round((row * frameCount) / logicalGridWidth)
-    const rowEnd = Math.round(((row + 1) * frameCount) / logicalGridWidth)
-    const rowFrameCount = Math.max(1, rowEnd - rowStart)
-    const columnProgress =
-      logicalGridWidth <= 1 ? 0 : column / (logicalGridWidth - 1)
-
-    return Math.min(
-      frameCount - 1,
-      rowStart + Math.round(columnProgress * (rowFrameCount - 1))
-    )
-  }
-
-  const progress = Math.min(1, logicalFrame / logicalMaxFrame)
-  return Math.round(progress * (frameCount - 1))
-}
-
 function calculateFrameSourceRect(
   frameIndex: number,
   layout: FrameLayout
@@ -275,18 +221,16 @@ export function calculateControlledFrameOperation({
   img,
   gamestates,
   rect,
+  playback,
 }: {
   cast: ControlledMovieCast
   img: DrawSource
   gamestates: Gamestates
   rect: Rect
+  playback?: ControlledMoviePlaybackController
 }): Renderable {
   const { controlledMovieCallbacks, width, height } = cast
   const gameStateId = get(controlledMovieCallbacks, '[0].gameState', null)
-  const logicalGridWidth =
-    typeof gameStateId === 'number'
-      ? TWO_AXIS_GRID_WIDTH_BY_GAMESTATE.get(gameStateId)
-      : undefined
   const frames = get(controlledMovieCallbacks, '[0].frames', 1)
   const direction = get(controlledMovieCallbacks, '[0].direction', 0)
 
@@ -294,14 +238,19 @@ export function calculateControlledFrameOperation({
     // Read gamestate value at render time so it reflects current state
     const gs = gamestates.byId(gameStateId)
     const layout = getFrameLayout(img, width, height)
-    const frameIdx = calculateControlledFrameIndex({
-      value: gs.value,
-      maxValue: gs.maxValue,
-      frames,
-      frameCount: layout.frameCount,
-      direction,
-      logicalGridWidth,
-    })
+    const frameIdx = playback
+      ? playback.frameFor({
+          castId: cast.castId,
+          value: gs.value,
+          frames,
+          direction,
+          frameCount: layout.frameCount,
+        })
+      : calculateControlledFrameIndex({
+          value: gs.value,
+          frames,
+          frameCount: layout.frameCount,
+        })
 
     // Calculate source rectangle in sprite sheet grid (left-to-right, top-to-bottom)
     // This handles both single-row and grid layouts, including scaled sprite sheets
@@ -493,11 +442,13 @@ export function generateControlledRenderables({
   width,
   height,
   gamestates,
+  playback,
 }: {
   controlledCasts: ControlledImageRef[]
   width: number
   height: number
   gamestates: Gamestates
+  playback?: ControlledMoviePlaybackController
 }): Renderable[] {
   return controlledCasts.reduce((memo, [img, casts]) => {
     for (const cast of casts) {
@@ -510,6 +461,7 @@ export function generateControlledRenderables({
           cast,
           img,
           gamestates,
+          playback,
           rect: resizeToScreen({
             left: location.x,
             top: location.y,

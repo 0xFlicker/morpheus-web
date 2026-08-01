@@ -19,7 +19,7 @@ describe('controlled movie frame selection', () => {
     expect(countOccupiedAtlasFrames(new Uint8ClampedArray(5 * 4), 5)).toBe(5);
   });
 
-  it('maps cannon X values within each physical Y row', () => {
+  it('uses authored cannon frame indexes without atlas interpolation', () => {
     const frameFor = (value: number) =>
       calculateControlledFrameIndex({
         value,
@@ -31,12 +31,12 @@ describe('controlled movie frame selection', () => {
       });
 
     expect(frameFor(0)).toBe(0);
-    expect(frameFor(7)).toBe(29);
-    expect(frameFor(8)).toBe(30);
-    expect(frameFor(63)).toBe(239);
+    expect(frameFor(7)).toBe(7);
+    expect(frameFor(8)).toBe(8);
+    expect(frameFor(63)).toBe(63);
   });
 
-  it('keeps X fixed when the composite value advances to the next Y row', () => {
+  it('keeps composite cannon values on their authored frame indexes', () => {
     const frameFor = (value: number) =>
       calculateControlledFrameIndex({
         value,
@@ -47,11 +47,11 @@ describe('controlled movie frame selection', () => {
         logicalGridWidth: 8,
       });
 
-    expect(frameFor(3)).toBe(12);
-    expect(frameFor(11)).toBe(42);
+    expect(frameFor(3)).toBe(3);
+    expect(frameFor(11)).toBe(11);
   });
 
-  it('spreads the launch lever states over its full extracted movie', () => {
+  it('uses authored launch lever frame indexes', () => {
     expect(
       calculateControlledFrameIndex({
         value: 8,
@@ -60,7 +60,7 @@ describe('controlled movie frame selection', () => {
         frameCount: 33,
         direction: 0,
       }),
-    ).toBe(13);
+    ).toBe(8);
     expect(
       calculateControlledFrameIndex({
         value: 20,
@@ -69,10 +69,10 @@ describe('controlled movie frame selection', () => {
         frameCount: 33,
         direction: 0,
       }),
-    ).toBe(32);
+    ).toBe(20);
   });
 
-  it('keeps unrelated square-count gamestates on linear frame sampling', () => {
+  it('keeps unrelated gamestates on direct frame sampling', () => {
     expect(
       calculateControlledFrameIndex({
         value: 1,
@@ -81,7 +81,7 @@ describe('controlled movie frame selection', () => {
         frameCount: 12,
         direction: 0,
       }),
-    ).toBe(4);
+    ).toBe(1);
   });
 
   it('preserves direct frame indexing when the atlas already matches gamestate', () => {
