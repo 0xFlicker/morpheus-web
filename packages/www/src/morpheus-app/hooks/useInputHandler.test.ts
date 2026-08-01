@@ -88,15 +88,12 @@ describe('input lifecycle across scene transitions', () => {
     expect(readLiveGamestates().byId(1011).value).toBe(0);
   });
 
-  it('lets sliders drag regardless of their authored gesture', () => {
-    for (const type of [6, 7, 8]) {
+  it('lets continuous controls drag regardless of their authored gesture', () => {
+    for (const type of [5, 6, 7, 8]) {
       expect(
         isPointerDragHotspot(createHotspot({ type, gesture: 3 })),
       ).toBe(true);
     }
-    expect(
-      isPointerDragHotspot(createHotspot({ type: 5, gesture: 3 })),
-    ).toBe(false);
   });
 
   it('does not execute continuous controls as direct hover actions', () => {
