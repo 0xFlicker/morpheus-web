@@ -17,7 +17,107 @@ import {
   captureContinuousControls,
   updateCapturedContinuousControls,
 } from './continuousControls';
-import { isDirectPointerActionHotspot } from '../hooks/useInputHandler';
+import {
+  getMouseUpHotspots,
+  isDirectPointerActionHotspot,
+} from '../hooks/useInputHandler';
+
+function createThresholdGamestates(
+  stateId: number,
+  value: number,
+  branchStateIds: readonly [number, number],
+) {
+  const values = new Map<number, { value: number; maxValue: number }>([
+    [stateId, { value, maxValue: 12 }],
+    [branchStateIds[0], { value: 0, maxValue: 1 }],
+    [branchStateIds[1], { value: 0, maxValue: 1 }],
+  ]);
+
+  return {
+    byId(id: number) {
+      const state = values.get(id) ?? { value: 0, maxValue: 1 };
+      return {
+        stateId: id,
+        initialValue: 0,
+        minValue: 0,
+        stateWraps: 0,
+        ...state,
+      };
+    },
+  };
+}
+
+async function releaseAcrossThreshold(params: {
+  sceneId: number;
+  stateId: number;
+  branchStateIds: readonly [number, number];
+  initialValue: number;
+  horizontalDelta: number;
+}) {
+  const scene = await fetchScene(params.sceneId);
+  expect(scene).toBeDefined();
+  if (!scene) {
+    throw new Error(`Missing authored scene ${params.sceneId}`);
+  }
+
+  const hotspots = getHotspotCandidates(scene);
+  const slider = hotspots.find(
+    (hotspot) => hotspot.type === 6 && hotspot.param1 === params.stateId,
+  );
+  expect(slider).toBeDefined();
+  if (!slider) {
+    throw new Error(`Missing authored slider ${params.stateId}`);
+  }
+
+  const start = {
+    top: (slider.rectTop + slider.rectBottom) / 2,
+    left: (slider.rectLeft + slider.rectRight) / 2,
+  };
+  const releasePosition = {
+    top: start.top,
+    left: start.left + params.horizontalDelta,
+  };
+  const initialGamestates = createThresholdGamestates(
+    params.stateId,
+    params.initialValue,
+    params.branchStateIds,
+  );
+  const capture = captureContinuousControls({
+    hotspots,
+    gamestates: initialGamestates,
+    position: start,
+  });
+  const release = updateCapturedContinuousControls({
+    capture,
+    gamestates: initialGamestates,
+    currentPosition: releasePosition,
+    isPanoScene: false,
+  });
+  const mouseUpHotspots = getMouseUpHotspots({
+    hotspots,
+    gamestates: release.gamestates,
+    currentPosition: releasePosition,
+    startingPosition: start,
+  });
+
+  let currentGamestates = release.gamestates;
+  for (const hotspot of mouseUpHotspots) {
+    const result = handleHotspotAction({
+      hotspot,
+      gamestates: currentGamestates,
+      currentPosition: releasePosition,
+      startingPosition: start,
+      isPanoScene: false,
+    });
+    currentGamestates = withGamestateUpdates(
+      currentGamestates,
+      result.gamestateUpdates,
+    );
+    if (result.allDone) break;
+  }
+
+  return { currentGamestates, mouseUpHotspots, release };
+}
 
 describe('continuous control ownership', () => {
   it('retains the captured control across intermediate Always state updates', () => {
@@ -166,5 +266,43 @@ describe('continuous control ownership', () => {
       secondTransition?.casts.find((cast) => 'actionAtEnd' in cast)
         ?.actionAtEnd,
     ).toBe(203019);
+  });
+
+  it('uses scene 412052 final release state to disable the below-threshold MouseUp branch', async () => {
+    const result = await releaseAcrossThreshold({
+      sceneId: 412052,
+      stateId: 1403,
+      branchStateIds: [630, 1406],
+      initialValue: 1,
+      horizontalDelta: 20,
+    });
+
+    expect(result.release.gamestates.byId(1403).value).toBe(2);
+    expect(
+      result.mouseUpHotspots.filter((hotspot) =>
+        [630, 1406].includes(hotspot.param1),
+      ),
+    ).toEqual([]);
+    expect(result.currentGamestates.byId(630).value).toBe(0);
+    expect(result.currentGamestates.byId(1406).value).toBe(0);
+  });
+
+  it('uses scene 414052 final release state to enable the below-threshold MouseUp branch', async () => {
+    const result = await releaseAcrossThreshold({
+      sceneId: 414052,
+      stateId: 1402,
+      branchStateIds: [635, 1404],
+      initialValue: 2,
+      horizontalDelta: -20,
+    });
+
+    expect(result.release.gamestates.byId(1402).value).toBe(1);
+    expect(
+      result.mouseUpHotspots
+        .filter((hotspot) => [635, 1404].includes(hotspot.param1))
+        .map((hotspot) => hotspot.param1),
+    ).toEqual([635, 1404]);
+    expect(result.currentGamestates.byId(635).value).toBe(1);
+    expect(result.currentGamestates.byId(1404).value).toBe(1);
   });
 });

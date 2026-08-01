@@ -223,6 +223,21 @@ export function isDirectPointerActionHotspot(hotspot: Hotspot): boolean {
   return !isContinuousControl(hotspot);
 }
 
+export function getMouseUpHotspots(params: {
+  hotspots: Hotspot[];
+  gamestates: GamestatesAccessor;
+  currentPosition: { top: number; left: number };
+  startingPosition: { top: number; left: number };
+}): Hotspot[] {
+  return getActiveHotspots(params.hotspots, params.gamestates).filter(
+    (hotspot) =>
+      hotspotRectMatchesPosition(params.currentPosition)(hotspot) &&
+      hotspotRectMatchesPosition(params.startingPosition)(hotspot) &&
+      gesture.isMouseUp(hotspot) &&
+      isDirectPointerActionHotspot(hotspot),
+  );
+}
+
 export function useInputHandler(params: {
   scene: Scene;
   gamestates: GamestatesAccessor;
@@ -854,16 +869,15 @@ export function useInputHandler(params: {
       // Process mouse up hotspots after the final continuous-control update.
       // Click detection is handled in onPointerUp, which has downTime.
       if (wasUpped) {
-        for (const hotspot of activeHotspots) {
-          if (
-            nowInHotspots.has(hotspot) &&
-            hotspotRectMatchesPosition(startPos)(hotspot) &&
-            gesture.isMouseUp(hotspot) &&
-            isDirectPointerActionHotspot(hotspot)
-          ) {
-            if (processHotspotAction(hotspot, gamePos, startPos)) {
-              break;
-            }
+        const mouseUpHotspots = getMouseUpHotspots({
+          hotspots,
+          gamestates: eventGamestates,
+          currentPosition: gamePos,
+          startingPosition: startPos,
+        });
+        for (const hotspot of mouseUpHotspots) {
+          if (processHotspotAction(hotspot, gamePos, startPos)) {
+            break;
           }
         }
       }
