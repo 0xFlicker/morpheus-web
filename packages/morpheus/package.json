@@ -15,6 +15,7 @@
     "typecheck": "yarn run prepare:map && node ./scripts/clean-types.mjs && node ../../node_modules/typescript/bin/tsc -b tsconfig.types.json",
     "lint": "eslint client config server",
     "test": "node --test scripts/prepare-morpheus-map.test.mjs && jest client",
+    "test:controlled-movie": "vitest run client/js/morpheus/casts/hooks/useRenderables/transforms.spec.ts",
     "test:watch": "cross-env NODE_ENV=development jest client --watch"
   },
   "license": "ISC",
@@ -98,6 +99,7 @@
     "reselect": "^4.1.8",
     "rxjs": "^7.8.2",
     "three": "^0.182.0",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "vitest": "^4.0.17"
   }
 }

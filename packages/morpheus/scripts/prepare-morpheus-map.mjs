@@ -45,6 +45,27 @@ export function validateMorpheusMap(mapText) {
     throw validationError('every entry must have a nonempty type and object data')
   }
 
+  const staleScrapbookMovie = map.find(
+    ({ data }) =>
+      data.fileName === 'GameDB/Deck3Aft/scrbLGSPC' ||
+      data.fileName === 'GameDB/Deck3Aft/scrbclseSPC'
+  )
+  if (staleScrapbookMovie) {
+    throw validationError('scrapbook still migrations are not materialized')
+  }
+
+  const invalidScrapbookStill = map.find(
+    ({ data }) =>
+      (data.fileName === 'GameDB/Deck3Aft/scrbLGSTL' ||
+        data.fileName === 'GameDB/Deck3Aft/scrbclseSTL') &&
+      (data.image !== true || data.width !== 640 || data.height !== 400)
+  )
+  if (invalidScrapbookStill) {
+    throw validationError(
+      'canonical scrapbook stills must be 640x400 image casts'
+    )
+  }
+
   return map
 }
 

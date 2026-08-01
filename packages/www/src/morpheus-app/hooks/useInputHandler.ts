@@ -33,12 +33,16 @@ import {
   resolveAlwaysHotspotActions,
   resolveSceneEntryHotspotActions,
 } from '@/morpheus-app/hotspot/alwaysHotspots';
-import { handleSliderDrag } from '@/morpheus-app/hotspot/handleSliderDrag';
 import {
   getActiveHotspots,
   getHotspotCandidates,
-  withGamestateUpdates,
 } from '@/morpheus-app/hotspot/hotspotEligibility';
+import {
+  captureContinuousControls,
+  isContinuousControl,
+  updateCapturedContinuousControls,
+  type ContinuousControlCapture,
+} from '@/morpheus-app/hotspot/continuousControls';
 import {
   executeHarnessHotspotClick,
   type HarnessClickResult,
@@ -47,9 +51,7 @@ import { resolveCursor } from '@/morpheus-app/hotspot/handlers';
 import {
   gesture,
   hotspotRectMatchesPosition,
-  actionType,
 } from '@/morpheus-app/hotspot/matchers';
-import { or } from '@/utils/matchers';
 import type { ClickHotspotMatchedHotspot } from '@/lib/game-control-protocol';
 
 const ORIGINAL_HEIGHT = 400;
@@ -214,33 +216,26 @@ export function createLiveGamestatesReader(
 }
 
 export function isPointerDragHotspot(hotspot: Hotspot): boolean {
-  if (
-    or(
-      actionType.isHorizSlider,
-      actionType.isVertSlider,
-      actionType.isTwoAxisSlider,
-    )(hotspot)
-  ) {
-    return true;
-  }
-
-  return (
-    actionType.isRotate(hotspot) &&
-    or(
-      gesture.isMouseClick,
-      gesture.isMouseUp,
-      gesture.isMouseDown,
-    )(hotspot)
-  );
+  return isContinuousControl(hotspot);
 }
 
 export function isDirectPointerActionHotspot(hotspot: Hotspot): boolean {
-  return !or(
-    actionType.isRotate,
-    actionType.isHorizSlider,
-    actionType.isVertSlider,
-    actionType.isTwoAxisSlider,
-  )(hotspot);
+  return !isContinuousControl(hotspot);
+}
+
+export function getMouseUpHotspots(params: {
+  hotspots: Hotspot[];
+  gamestates: GamestatesAccessor;
+  currentPosition: { top: number; left: number };
+  startingPosition: { top: number; left: number };
+}): Hotspot[] {
+  return getActiveHotspots(params.hotspots, params.gamestates).filter(
+    (hotspot) =>
+      hotspotRectMatchesPosition(params.currentPosition)(hotspot) &&
+      hotspotRectMatchesPosition(params.startingPosition)(hotspot) &&
+      gesture.isMouseUp(hotspot) &&
+      isDirectPointerActionHotspot(hotspot),
+  );
 }
 
 export function useInputHandler(params: {
@@ -430,8 +425,8 @@ export function useInputHandler(params: {
     }
   }, [cursorIndex]);
 
-  // Slider hotspots frequently share castId 0, so preserve drag origins by state ID.
-  const sliderOldValuesRef = useRef<Map<number, number>>(new Map());
+  const continuousControlCaptureRef =
+    useRef<ContinuousControlCapture | null>(null);
   const gestureStartValuesRef = useRef<Map<number, number>>(new Map());
   const gestureStartRotationRef = useRef<Rotation | null>(null);
   const stableActionChangedRef = useRef(false);
@@ -460,7 +455,7 @@ export function useInputHandler(params: {
       if (suppressUntilRelease && pointerRef.current.isDown && captured) {
         suppressedPointerIdRef.current = captured.pointerId;
       }
-      sliderOldValuesRef.current.clear();
+      continuousControlCaptureRef.current = null;
       gestureStartValuesRef.current.clear();
       gestureStartRotationRef.current = null;
 
@@ -651,7 +646,6 @@ export function useInputHandler(params: {
       startingPosition: { top: number; left: number },
       eventGamestates: GamestatesAccessor = readLiveGamestates(),
     ) => {
-      const oldValue = sliderOldValuesRef.current.get(hotspot.param1);
       return handleHotspotAction({
         hotspot,
         gamestates: eventGamestates,
@@ -659,7 +653,6 @@ export function useInputHandler(params: {
         startingPosition,
         previousSceneId: previousSceneIdRef.current,
         isPanoScene,
-        oldValue,
       });
     },
     [isPanoScene, readLiveGamestates],
@@ -822,6 +815,14 @@ export function useInputHandler(params: {
 
       wasInHotspotsRef.current = nowInHotspots;
 
+      if (wasDown) {
+        continuousControlCaptureRef.current = captureContinuousControls({
+          hotspots: activeHotspots,
+          gamestates: eventGamestates,
+          position: startPos,
+        });
+      }
+
       // Process mouse leave hotspots
       if (wasMoved && leavingHotspots.size > 0) {
         for (const hotspot of activeHotspots) {
@@ -848,66 +849,36 @@ export function useInputHandler(params: {
         }
       }
 
-      // Process mouse up hotspots
-      // Note: Click detection is handled in onPointerUp which has access to downTime
-      if (wasUpped) {
-        for (const hotspot of activeHotspots) {
-          if (
-            nowInHotspots.has(hotspot) &&
-            hotspotRectMatchesPosition(startPos)(hotspot) &&
-            gesture.isMouseUp(hotspot) &&
-            isDirectPointerActionHotspot(hotspot)
-          ) {
-            if (processHotspotAction(hotspot, gamePos, startPos)) {
-              break;
-            }
-          }
+      // Continuous controls are owned by pointer capture, not by their
+      // authored gesture. Apply the release coordinate before ending capture.
+      if ((wasMoved && isDown) || wasUpped) {
+        eventGamestates = readLiveGamestates();
+        const controlUpdate = updateCapturedContinuousControls({
+          capture: continuousControlCaptureRef.current,
+          gamestates: eventGamestates,
+          currentPosition: gamePos,
+          previousSceneId: previousSceneIdRef.current,
+          isPanoScene,
+        });
+        eventGamestates = controlUpdate.gamestates;
+        for (const result of controlUpdate.results) {
+          applyHotspotActionResult(result);
         }
       }
 
-      // Process drag hotspots (mouse moved while down)
-      if (wasMoved && isDown) {
-        const sliderHotspots: Hotspot[] = [];
-        const rotateHotspots: Hotspot[] = [];
-        for (const hotspot of activeHotspots) {
-          if (
-            !hotspotRectMatchesPosition(startPos)(hotspot) ||
-            !isPointerDragHotspot(hotspot)
-          ) {
-            continue;
+      // Process mouse up hotspots after the final continuous-control update.
+      // Click detection is handled in onPointerUp, which has downTime.
+      if (wasUpped) {
+        const mouseUpHotspots = getMouseUpHotspots({
+          hotspots,
+          gamestates: eventGamestates,
+          currentPosition: gamePos,
+          startingPosition: startPos,
+        });
+        for (const hotspot of mouseUpHotspots) {
+          if (processHotspotAction(hotspot, gamePos, startPos)) {
+            break;
           }
-
-          if (
-            or(
-              actionType.isHorizSlider,
-              actionType.isVertSlider,
-              actionType.isTwoAxisSlider,
-            )(hotspot)
-          ) {
-            sliderHotspots.push(hotspot);
-          } else if (actionType.isRotate(hotspot)) {
-            rotateHotspots.push(hotspot);
-          }
-        }
-
-        if (sliderHotspots.length > 0) {
-          const gamestateUpdates = handleSliderDrag({
-            hotspots: sliderHotspots,
-            gamestates: eventGamestates,
-            currentPosition: gamePos,
-            startingPosition: startPos,
-            oldValues: sliderOldValuesRef.current,
-            isPanoScene,
-          });
-          eventGamestates = withGamestateUpdates(
-            eventGamestates,
-            gamestateUpdates,
-          );
-          applyHotspotActionResult({ gamestateUpdates, allDone: false });
-        }
-
-        for (const hotspot of rotateHotspots) {
-          processHotspotAction(hotspot, gamePos, startPos);
         }
       }
 
@@ -924,28 +895,11 @@ export function useInputHandler(params: {
             }
           }
         }
-
-        // Store oldValue for slider hotspots in the ref (not on the frozen hotspot object)
-        for (const hotspot of activeHotspots) {
-          if (
-            nowInHotspots.has(hotspot) &&
-            or(
-              actionType.isRotate,
-              actionType.isHorizSlider,
-              actionType.isVertSlider,
-              actionType.isTwoAxisSlider,
-            )(hotspot)
-          ) {
-            const gsState = gs.byId(hotspot.param1);
-            if (gsState) {
-              sliderOldValuesRef.current.set(hotspot.param1, gsState.value);
-            }
-          }
-        }
       }
 
       // Process "Always" hotspots with castId === 0 on every event
       // This is how the original game triggers scene changes based on gamestate
+      eventGamestates = readLiveGamestates();
       const alwaysResults = resolveAlwaysHotspotActions({
         hotspots,
         gamestates: eventGamestates,
@@ -1192,7 +1146,7 @@ export function useInputHandler(params: {
       }
 
       settlePendingAction();
-      sliderOldValuesRef.current.clear();
+      continuousControlCaptureRef.current = null;
       gestureStartValuesRef.current.clear();
       gestureStartRotationRef.current = null;
       if (event.currentTarget.hasPointerCapture(event.pointerId)) {
@@ -1258,7 +1212,7 @@ export function useInputHandler(params: {
     }
     pendingTransitionRef.current = null;
     stableActionChangedRef.current = false;
-    sliderOldValuesRef.current.clear();
+    continuousControlCaptureRef.current = null;
     gestureStartValuesRef.current.clear();
     gestureStartRotationRef.current = null;
     const captured = capturedPointerRef.current;

@@ -24,6 +24,7 @@ import {
   generateControlledRenderables,
   generateMovieCastRenderables,
 } from './transforms'
+import { createControlledMoviePlaybackController } from './controlledMovieFrame'
 import { flatten, uniqBy } from 'lodash'
 
 function describeRenderables(renderables: Renderable[]) {
@@ -53,6 +54,11 @@ export default function useRenderables(
   exitingScene: Scene | undefined,
   deps: any[]
 ): [MovieCast[], MovieSpecialCast[], SupportedSoundCasts[], Renderable[]] {
+  const activeSceneId = stageScenes[0]?.sceneId
+  const controlledMoviePlayback = useMemo(
+    () => createControlledMoviePlaybackController(),
+    [activeSceneId]
+  )
   const soundCasts = useMemo(() => {
     if (stageScenes.length) {
       return stageScenes[0].casts.filter(
@@ -213,6 +219,7 @@ export default function useRenderables(
           width,
           height,
           gamestates,
+          playback: controlledMoviePlayback,
         }),
       ]),
     ]
@@ -230,6 +237,7 @@ export default function useRenderables(
     gamestates,
     availableVideos,
     imagesLoaded,
+    controlledMoviePlayback,
     ...deps,
   ])
 
