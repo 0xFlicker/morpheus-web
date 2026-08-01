@@ -26,6 +26,36 @@ test('validates a nonempty authored map array', () => {
   )
 })
 
+test('requires scrapbook still migrations in the canonical map', () => {
+  assert.throws(
+    () =>
+      validateMorpheusMap(
+        JSON.stringify([
+          {
+            type: 'MovieSpecialCast',
+            data: { fileName: 'GameDB/Deck3Aft/scrbclseSPC' },
+          },
+        ])
+      ),
+    /scrapbook still migrations are not materialized/
+  )
+  assert.doesNotThrow(() =>
+    validateMorpheusMap(
+      JSON.stringify([
+        {
+          type: 'MovieSpecialCast',
+          data: {
+            fileName: 'GameDB/Deck3Aft/scrbclseSTL',
+            image: true,
+            width: 640,
+            height: 400,
+          },
+        },
+      ])
+    )
+  )
+})
+
 test('keeps a valid local map without fetching credentials', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'morpheus-map-'))
   const mapPath = join(directory, 'morpheus.map.json')
