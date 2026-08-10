@@ -15,6 +15,7 @@ import {
   listSceneIds,
   resolveSceneFromMap,
 } from './scene-preview-inventory.mjs';
+import { generateSceneCatalogFromSource } from './scene-catalog.mjs';
 
 const temporaryDirectories = [];
 
@@ -29,7 +30,13 @@ async function createMapFixture() {
   const map = [
     {
       type: 'GameState',
-      data: { stateId: 1, value: 0, maxValue: 1, minValue: 0, stateWraps: false },
+      data: {
+        stateId: 1,
+        value: 0,
+        maxValue: 1,
+        minValue: 0,
+        stateWraps: false,
+      },
     },
     {
       type: 'PanoCast',
@@ -77,8 +84,16 @@ async function createMapFixture() {
   ];
 
   const mapPath = path.join(root, 'morpheus.map.json');
-  await writeFile(mapPath, JSON.stringify(map));
-  return { root, gameDb, mapPath, map };
+  const source = JSON.stringify(map);
+  await writeFile(mapPath, source);
+  return {
+    root,
+    gameDb,
+    mapPath,
+    map,
+    source,
+    catalog: generateSceneCatalogFromSource(source),
+  };
 }
 
 afterEach(async () => {
@@ -124,7 +139,7 @@ describe('fresh-start activation', () => {
 
 describe('scene inventory', () => {
   it('lists scenes and classifies pano vs special under fresh-start', async () => {
-    const { gameDb, mapPath, map } = await createMapFixture();
+    const { gameDb, mapPath, map, catalog } = await createMapFixture();
     const gamestates = createGamestatesById(fetchInitialFromMap(map));
     expect(listSceneIds(map)).toEqual([1010, 2020]);
 
@@ -143,6 +158,7 @@ describe('scene inventory', () => {
     const inventory = await buildInventory({
       mapPath,
       gameDbRoot: gameDb,
+      catalog,
     });
     expect(inventory.sceneCount).toBe(2);
     expect(inventory.scenes.map((s) => s.kind)).toEqual(['pano', 'special']);
@@ -167,16 +183,52 @@ describe('scene inventory', () => {
     expect(row.inputHash).toBeTruthy();
   });
 
+  it('requires preview membership to match the shared catalog', async () => {
+    const { gameDb, mapPath, catalog } = await createMapFixture();
+
+    const inventory = await buildInventory({
+      mapPath,
+      gameDbRoot: gameDb,
+      catalog,
+    });
+    expect(inventory.scenes.map((scene) => scene.sceneId)).toEqual(
+      catalog.scenes.map((scene) => scene.sceneId),
+    );
+
+    await expect(
+      buildInventory({
+        mapPath,
+        gameDbRoot: gameDb,
+        catalog: { ...catalog, scenes: catalog.scenes.slice(1), sceneCount: 1 },
+      }),
+    ).rejects.toThrow(/catalog.*authoritative map/i);
+  });
+
   it('dirty set only includes scenes whose input hash changed', async () => {
-    const { gameDb, mapPath } = await createMapFixture();
-    const first = await buildInventory({ mapPath, gameDbRoot: gameDb });
-    const second = await buildInventory({ mapPath, gameDbRoot: gameDb });
+    const { gameDb, mapPath, catalog } = await createMapFixture();
+    const first = await buildInventory({
+      mapPath,
+      gameDbRoot: gameDb,
+      catalog,
+    });
+    const second = await buildInventory({
+      mapPath,
+      gameDbRoot: gameDb,
+      catalog,
+    });
     const { dirty, clean } = computeDirtySet(first, second);
     expect(dirty).toHaveLength(0);
     expect(clean).toHaveLength(2);
 
-    await writeFile(path.join(gameDb, 'Deck1', 'balcNWPAN.png'), 'pano-bytes-changed');
-    const third = await buildInventory({ mapPath, gameDbRoot: gameDb });
+    await writeFile(
+      path.join(gameDb, 'Deck1', 'balcNWPAN.png'),
+      'pano-bytes-changed',
+    );
+    const third = await buildInventory({
+      mapPath,
+      gameDbRoot: gameDb,
+      catalog,
+    });
     const diff = computeDirtySet(second, third);
     expect(diff.dirty.map((s) => s.sceneId)).toEqual([1010]);
     expect(diff.clean.map((s) => s.sceneId)).toEqual([2020]);

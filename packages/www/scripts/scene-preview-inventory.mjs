@@ -12,6 +12,28 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { DEFAULT_GAMEDB_SOURCE } from './gamedb-paths.mjs';
+import {
+  assertCatalogCurrent,
+  classifySceneKind,
+  createGamestatesById,
+  fetchInitialFromMap,
+  generateSceneCatalogFromSource,
+  getActiveVisualCasts,
+  isCastActive,
+  listSceneIds,
+  resolveSceneFromMap,
+  serializeSceneCatalog,
+} from './scene-catalog.mjs';
+
+export {
+  classifySceneKind,
+  createGamestatesById,
+  fetchInitialFromMap,
+  getActiveVisualCasts,
+  isCastActive,
+  listSceneIds,
+  resolveSceneFromMap,
+};
 
 const packageDirectory = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_MAP_PATH = path.resolve(
@@ -22,191 +44,13 @@ const DEFAULT_MANIFEST_PATH = path.resolve(
   packageDirectory,
   '../.scene-previews/manifest.json',
 );
+const DEFAULT_CATALOG_PATH = path.resolve(
+  packageDirectory,
+  '../src/generated/sceneCatalog.json',
+);
 
 /** Bump when capture/encode policy changes invalidates all rows. */
 export const PREVIEW_POLICY_VERSION = 'og-gif-v4-60fps';
-
-const TEST_TYPES = {
-  0: 'equalTo',
-  1: 'NotEqualTo',
-  2: 'GreaterThan',
-  3: 'LessThan',
-};
-
-const VISUAL_CAST_TYPES = new Set([
-  'PanoCast',
-  'PanoAnim',
-  'MovieSpecialCast',
-  'ControlledMovieCast',
-]);
-
-export function createGamestatesById(initialStates) {
-  const map = new Map();
-  for (const gs of initialStates) {
-    map.set(Number(gs.stateId), gs);
-  }
-  return {
-    byId(id) {
-      return map.get(Number(id));
-    },
-  };
-}
-
-export function fetchInitialFromMap(mapEntries) {
-  return mapEntries
-    .filter((entry) => entry.type === 'GameState')
-    .map((entry) => entry.data);
-}
-
-function doCompare(comparator, gamestates) {
-  const gs = gamestates.byId(comparator.gameStateId);
-  if (!gs) {
-    return false;
-  }
-  const gsValue = gs.value;
-  switch (TEST_TYPES[comparator.testType]) {
-    case 'equalTo':
-      return gsValue === comparator.value;
-    case 'NotEqualTo':
-      return gsValue !== comparator.value;
-    case 'GreaterThan':
-      return gsValue > comparator.value;
-    case 'LessThan':
-      return gsValue < comparator.value;
-    default:
-      return true;
-  }
-}
-
-/**
- * Mirrors packages/morpheus/client/js/morpheus/gamestate/isActive.ts isCastActive.
- */
-export function isCastActive({ cast, gamestates }) {
-  const { initiallyEnabled = true, comparators = [] } = cast;
-  let result = true;
-  for (const comparator of comparators) {
-    if (!doCompare(comparator, gamestates)) {
-      result = false;
-      break;
-    }
-  }
-  if (!initiallyEnabled) {
-    result = !result;
-  }
-  return result;
-}
-
-export function resolveSceneFromMap(mapEntries, sceneId) {
-  const foundScene = mapEntries.find(
-    (entry) =>
-      entry.type === 'Scene' &&
-      entry.data &&
-      Number(entry.data.sceneId) === Number(sceneId),
-  );
-  if (!foundScene) {
-    return null;
-  }
-
-  const unresolved = foundScene.data;
-  const resolveCastIds = (unresolved.casts ?? [])
-    .filter((cast) => cast && cast.ref && Number.isInteger(cast.ref.castId))
-    .map((cast) => Number(cast.ref.castId));
-
-  const resolvedCasts = new Map();
-  let found = 0;
-  for (const gameObject of mapEntries) {
-    const castId = Number(gameObject.data?.castId);
-    if (Number.isNaN(castId) || !resolveCastIds.includes(castId)) {
-      continue;
-    }
-    if (!resolvedCasts.has(castId)) {
-      found += 1;
-    }
-    resolvedCasts.set(castId, {
-      ...gameObject.data,
-      __t: gameObject.type,
-    });
-    if (resolveCastIds.length === found) {
-      break;
-    }
-  }
-
-  return {
-    sceneId: Number(unresolved.sceneId),
-    sceneType: Number(unresolved.sceneType ?? 0),
-    casts: (unresolved.casts ?? []).map((cast) => {
-      if (cast?.ref) {
-        return resolvedCasts.get(Number(cast.ref.castId)) ?? cast;
-      }
-      return cast;
-    }),
-  };
-}
-
-export function listSceneIds(mapEntries) {
-  const ids = [];
-  for (const entry of mapEntries) {
-    if (entry.type === 'Scene' && entry.data?.sceneId != null) {
-      const id = Number(entry.data.sceneId);
-      // Skip non-playable / placeholder ids
-      if (!Number.isSafeInteger(id) || id <= 0) {
-        continue;
-      }
-      ids.push(id);
-    }
-  }
-  ids.sort((a, b) => a - b);
-  return ids;
-}
-
-function isVisualCast(cast) {
-  if (!cast || typeof cast !== 'object') {
-    return false;
-  }
-  const type = cast.__t ?? cast.type;
-  if (typeof type === 'string' && VISUAL_CAST_TYPES.has(type)) {
-    return true;
-  }
-  // Hotspots have rect bounds and gesture; skip non-visual
-  if (
-    'rectLeft' in cast &&
-    'gesture' in cast &&
-    !cast.fileName &&
-    cast.__t !== 'PanoCast'
-  ) {
-    return false;
-  }
-  return Boolean(cast.fileName) && VISUAL_CAST_TYPES.has(String(type));
-}
-
-export function getActiveVisualCasts(scene, gamestates) {
-  const active = [];
-  for (const cast of scene.casts ?? []) {
-    if (!cast || typeof cast !== 'object') {
-      continue;
-    }
-    const type = cast.__t;
-    if (!type || !VISUAL_CAST_TYPES.has(type)) {
-      continue;
-    }
-    try {
-      if (!isCastActive({ cast, gamestates })) {
-        continue;
-      }
-    } catch {
-      continue;
-    }
-    active.push(cast);
-  }
-  return active;
-}
-
-export function classifySceneKind(activeVisualCasts) {
-  if (activeVisualCasts.some((cast) => cast.__t === 'PanoCast')) {
-    return 'pano';
-  }
-  return 'special';
-}
 
 /**
  * Map cast fileName (GameDB/Deck1/foo) to candidate files under the GameDB root.
@@ -222,14 +66,12 @@ export function mediaCandidatesForCast(cast, gameDbRoot) {
   if (type === 'PanoCast') {
     return [`${base}.png`, base];
   }
-  if (type === 'PanoAnim' || type === 'MovieSpecialCast' || type === 'ControlledMovieCast') {
-    return [
-      `${base}.webm`,
-      `${base}.mp4`,
-      `${base}.png`,
-      `${base}.webm`,
-      base,
-    ];
+  if (
+    type === 'PanoAnim' ||
+    type === 'MovieSpecialCast' ||
+    type === 'ControlledMovieCast'
+  ) {
+    return [`${base}.webm`, `${base}.mp4`, `${base}.png`, `${base}.webm`, base];
   }
   return [base, `${base}.png`, `${base}.webm`, `${base}.mp4`];
 }
@@ -263,9 +105,10 @@ export async function buildSceneRow({
   gamestates,
   gameDbRoot,
   policyVersion = PREVIEW_POLICY_VERSION,
+  kind: catalogKind,
 }) {
   const activeVisualCasts = getActiveVisualCasts(scene, gamestates);
-  const kind = classifySceneKind(activeVisualCasts);
+  const kind = catalogKind ?? classifySceneKind(activeVisualCasts);
   const activeCastIds = activeVisualCasts
     .map((cast) => Number(cast.castId))
     .filter((id) => !Number.isNaN(id))
@@ -324,13 +167,40 @@ export async function buildInventory({
   gameDbRoot = DEFAULT_GAMEDB_SOURCE,
   policyVersion = PREVIEW_POLICY_VERSION,
   sceneIds = null,
+  catalog = null,
+  catalogPath = DEFAULT_CATALOG_PATH,
 } = {}) {
   const raw = await readFile(mapPath, 'utf8');
   const mapEntries = JSON.parse(raw);
   const initial = fetchInitialFromMap(mapEntries);
   const gamestates = createGamestatesById(initial);
-  const allIds = listSceneIds(mapEntries);
-  const targets = sceneIds?.length ? sceneIds : allIds;
+  const generatedCatalog = generateSceneCatalogFromSource(raw);
+  let authoritativeCatalog = catalog;
+
+  if (authoritativeCatalog) {
+    if (
+      serializeSceneCatalog(authoritativeCatalog) !==
+      serializeSceneCatalog(generatedCatalog)
+    ) {
+      throw new Error('Scene catalog does not match the authoritative map');
+    }
+  } else {
+    const catalogText = await readFile(catalogPath, 'utf8');
+    assertCatalogCurrent({ catalogText, mapSource: raw });
+    authoritativeCatalog = JSON.parse(catalogText);
+  }
+
+  const catalogIds = authoritativeCatalog.scenes.map((scene) => scene.sceneId);
+  const catalogIdSet = new Set(catalogIds);
+  const catalogById = new Map(
+    authoritativeCatalog.scenes.map((scene) => [scene.sceneId, scene]),
+  );
+  const targets = sceneIds?.length ? sceneIds : catalogIds;
+  for (const sceneId of targets) {
+    if (!catalogIdSet.has(sceneId)) {
+      throw new Error(`Scene ${sceneId} is not in the authoritative catalog`);
+    }
+  }
 
   const scenes = [];
   for (const sceneId of targets) {
@@ -349,6 +219,7 @@ export async function buildInventory({
         gamestates,
         gameDbRoot,
         policyVersion,
+        kind: catalogById.get(sceneId).type === 'panorama' ? 'pano' : 'special',
       }),
     );
   }
@@ -417,7 +288,8 @@ export function parseArguments(argv = process.argv.slice(2)) {
 async function main() {
   const options = parseArguments();
   if (options.help) {
-    process.stdout.write(`Usage: node scripts/scene-preview-inventory.mjs [options]
+    process.stdout
+      .write(`Usage: node scripts/scene-preview-inventory.mjs [options]
 
 Options:
   --map <path>       Path to morpheus.map.json
