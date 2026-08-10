@@ -40,4 +40,19 @@ describe('special movie video', () => {
     expect(markup).toContain(' playsInline=""');
     expect(markup.indexOf('.mp4')).toBeLessThan(markup.indexOf('.webm'));
   });
+
+  it('marks zero-volume capture playback as muted autoplay media', () => {
+    const markup = renderToStaticMarkup(
+      <Videos
+        movieSpecialCasts={[movieCast]}
+        volume={0}
+        onVideoCastEnded={() => undefined}
+        onVideoCastCanPlaythrough={() => undefined}
+        onVideoCastFramePresented={() => undefined}
+        onVideoCastRef={() => undefined}
+      />,
+    );
+
+    expect(markup).toContain(' muted=""');
+  });
 });

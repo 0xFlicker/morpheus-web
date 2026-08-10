@@ -7,6 +7,7 @@ import {
 
 function frameCallbackVideo() {
   let callback: VideoFrameRequestCallback | undefined;
+  let endedListener: EventListenerOrEventListenerObject | undefined;
   const cancelVideoFrameCallback = vi.fn();
   const video: VideoFrameSource = {
     requestVideoFrameCallback: vi.fn((nextCallback) => {
@@ -14,7 +15,9 @@ function frameCallbackVideo() {
       return 17;
     }),
     cancelVideoFrameCallback,
-    addEventListener: vi.fn(),
+    addEventListener: vi.fn((type, listener) => {
+      if (type === 'ended') endedListener = listener;
+    }),
     removeEventListener: vi.fn(),
   };
 
@@ -33,6 +36,11 @@ function frameCallbackVideo() {
         processingDuration: 0,
         width: 320,
       });
+    },
+    endPlayback() {
+      if (typeof endedListener === 'function') {
+        endedListener(new Event('ended'));
+      }
     },
   };
 }
@@ -63,6 +71,18 @@ describe('video presentation readiness', () => {
 
     expect(cancelVideoFrameCallback).toHaveBeenCalledWith(17);
     expect(onPresented).not.toHaveBeenCalled();
+  });
+
+  it('accepts the final drawable frame from a one-frame movie', () => {
+    const { video, presentFrame, endPlayback } = frameCallbackVideo();
+    const onPresented = vi.fn();
+
+    waitForVideoFrames(video, 2, onPresented);
+    presentFrame();
+    expect(onPresented).not.toHaveBeenCalled();
+
+    endPlayback();
+    expect(onPresented).toHaveBeenCalledOnce();
   });
 
   it('falls back to the first playback time update', () => {

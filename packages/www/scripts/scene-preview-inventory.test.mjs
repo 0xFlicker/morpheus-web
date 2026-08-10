@@ -233,4 +233,39 @@ describe('scene inventory', () => {
     expect(diff.dirty.map((s) => s.sceneId)).toEqual([1010]);
     expect(diff.clean.map((s) => s.sceneId)).toEqual([2020]);
   });
+
+  it('keeps failed results and missing output sets dirty', async () => {
+    const { gameDb, mapPath, catalog } = await createMapFixture();
+    const inventory = await buildInventory({
+      mapPath,
+      gameDbRoot: gameDb,
+      catalog,
+    });
+    const previous = {
+      ...inventory,
+      results: [
+        {
+          sceneId: 1010,
+          inputHash: inventory.scenes[0].inputHash,
+          status: 'ok',
+        },
+        {
+          sceneId: 2020,
+          inputHash: inventory.scenes[1].inputHash,
+          status: 'failed',
+        },
+      ],
+    };
+
+    const failed = computeDirtySet(previous, inventory, {
+      completedSceneIds: new Set([1010, 2020]),
+    });
+    expect(failed.clean.map((scene) => scene.sceneId)).toEqual([1010]);
+    expect(failed.dirty.map((scene) => scene.sceneId)).toEqual([2020]);
+
+    const missing = computeDirtySet(previous, inventory, {
+      completedSceneIds: new Set(),
+    });
+    expect(missing.dirty.map((scene) => scene.sceneId)).toEqual([1010, 2020]);
+  });
 });

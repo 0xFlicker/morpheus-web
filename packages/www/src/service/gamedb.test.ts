@@ -39,10 +39,23 @@ describe('GameDB URL resolution', () => {
     );
   });
 
-  it('normalizes the engine public origin and keeps panorama animation direct', async () => {
-    const { getAssetUrl, getPanoAnimUrl, setBaseUrl } = await import(
-      '@soapbubble/morpheus-client/service/gamedb'
+  it('matches authored directory casing to the published GameDB tree', async () => {
+    const { getAssetUrl } = await loadGameDb();
+
+    expect(getAssetUrl('GameDB/harem/tapestrSPC', 'png')).toBe(
+      '/GameDB/Harem/tapestrSPC.png',
     );
+    expect(getAssetUrl('GameDB/cargoH/armANI', 'webm')).toBe(
+      '/GameDB/CargoH/armANI.webm',
+    );
+    expect(getAssetUrl('GameDB/H2OFront/waterPAN', 'png')).toBe(
+      '/GameDB/h2oFront/waterPAN.png',
+    );
+  });
+
+  it('normalizes the engine public origin and keeps panorama animation direct', async () => {
+    const { getAssetUrl, getPanoAnimUrl, setBaseUrl } =
+      await import('@soapbubble/morpheus-client/service/gamedb');
 
     setBaseUrl('https://media.example.com/');
 

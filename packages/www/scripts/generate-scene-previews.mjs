@@ -6,7 +6,7 @@
  */
 
 import { spawn } from 'node:child_process';
-import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, readFile, rename, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -15,6 +15,10 @@ import {
   computeDirtySet,
   PREVIEW_POLICY_VERSION,
 } from './scene-preview-inventory.mjs';
+import {
+  collectScenePreviewFiles,
+  completeSceneIds,
+} from './preview-paths.mjs';
 
 const packageDirectory = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_OUT = path.resolve(packageDirectory, '../.scene-previews');
@@ -90,6 +94,56 @@ export function parseGenerateArguments(argv = process.argv.slice(2)) {
 
 export function captureUrl(baseUrl, sceneId, frames = DEFAULT_PANO_FRAMES) {
   return `${baseUrl}/capture/scene/${sceneId}?frames=${frames}&w=${NATIVE_WIDTH}&h=${NATIVE_HEIGHT}`;
+}
+
+export function mergePreviewResults(previousResults, currentResults, scenes) {
+  const currentById = new Map(
+    currentResults.map((result) => [result.sceneId, result]),
+  );
+  const previousById = new Map(
+    (previousResults ?? []).map((result) => [result.sceneId, result]),
+  );
+  return scenes.flatMap((scene) => {
+    const current = currentById.get(scene.sceneId);
+    if (current) return [current];
+    const previous = previousById.get(scene.sceneId);
+    return previous?.inputHash === scene.inputHash ? [previous] : [];
+  });
+}
+
+export function isInfrastructureFailure(message) {
+  return (
+    message.includes('ERR_CONNECTION_REFUSED') ||
+    message.includes('Target page, context or browser has been closed') ||
+    message.includes('browser.newPage: Browser has been closed')
+  );
+}
+
+async function writeManifestAtomic(manifestPath, manifest) {
+  const temporaryPath = `${manifestPath}.${process.pid}.tmp`;
+  await mkdir(path.dirname(manifestPath), { recursive: true });
+  await writeFile(
+    temporaryPath,
+    `${JSON.stringify(manifest, null, 2)}\n`,
+    'utf8',
+  );
+  await rename(temporaryPath, manifestPath);
+}
+
+async function assertCaptureServerReady(baseUrl, sceneId) {
+  let response;
+  try {
+    response = await fetch(captureUrl(baseUrl, sceneId, 1));
+  } catch (error) {
+    throw new Error(
+      `Capture server is not reachable at ${baseUrl}: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
+  if (!response.ok) {
+    throw new Error(
+      `Capture route is not ready at ${baseUrl} (HTTP ${response.status})`,
+    );
+  }
 }
 
 export async function dataUrlToPngFile(dataUrl, filePath) {
@@ -198,9 +252,7 @@ export function runFfmpegGif(
   } = {},
 ) {
   const scale =
-    maxWidth < NATIVE_WIDTH
-      ? `scale=${maxWidth}:-1:flags=lanczos,`
-      : '';
+    maxWidth < NATIVE_WIDTH ? `scale=${maxWidth}:-1:flags=lanczos,` : '';
   return runFfmpeg([
     '-y',
     '-framerate',
@@ -324,7 +376,8 @@ async function encodeOutputsForScene({
 async function main() {
   const options = parseGenerateArguments();
   if (options.help) {
-    process.stdout.write(`Usage: node scripts/generate-scene-previews.mjs [options]
+    process.stdout
+      .write(`Usage: node scripts/generate-scene-previews.mjs [options]
 
 Options:
   --base-url <url>   Capture app base (default ${DEFAULT_BASE_URL})
@@ -343,22 +396,19 @@ Options:
   }
 
   let previous = null;
-  if (!options.force && !options.encodeOnly) {
-    try {
-      previous = JSON.parse(await readFile(options.manifestPath, 'utf8'));
-    } catch {
-      previous = null;
-    }
+  try {
+    previous = JSON.parse(await readFile(options.manifestPath, 'utf8'));
+  } catch {
+    previous = null;
   }
 
-  const inventory = await buildInventory({
-    sceneIds: options.sceneIds,
-  });
+  const inventory = await buildInventory();
+  const localFiles = await collectScenePreviewFiles(options.outDir);
+  const completedSceneIds = completeSceneIds(localFiles.files);
   const { dirty } = computeDirtySet(
-    options.allDirty && !options.force && !options.encodeOnly
-      ? previous
-      : null,
+    options.allDirty && !options.force && !options.encodeOnly ? previous : null,
     inventory,
+    { completedSceneIds },
   );
   let targets = options.sceneIds
     ? inventory.scenes.filter((row) => options.sceneIds.includes(row.sceneId))
@@ -418,6 +468,7 @@ Options:
 
   let browser = null;
   if (!options.encodeOnly) {
+    await assertCaptureServerReady(options.baseUrl, targets[0].sceneId);
     const { chromium } = await loadPlaywright();
     browser = await chromium.launch({
       headless: true,
@@ -432,6 +483,19 @@ Options:
 
   const results = [];
   let done = 0;
+  let consecutiveInfrastructureFailures = 0;
+  const createManifest = () => ({
+    ...inventory,
+    generatedAt: new Date().toISOString(),
+    encode: {
+      panoFrames: options.panoFrames,
+      masterFps: options.masterFps,
+      webmFps: options.webmFps,
+      gifFps: options.gifFps,
+      gifWidth: options.maxWidth,
+    },
+    results: mergePreviewResults(previous?.results, results, inventory.scenes),
+  });
   try {
     for (const row of targets) {
       const framesDir = path.join(
@@ -477,6 +541,7 @@ Options:
           inputHash: row.inputHash,
         });
         results.push(encoded);
+        consecutiveInfrastructureFailures = 0;
         process.stderr.write(
           `  wrote master mp4 + webm + gif (${frameCount} frames → gif @ ${options.gifFps}fps / ${options.maxWidth}px)\n`,
         );
@@ -490,8 +555,18 @@ Options:
           error: message,
           inputHash: row.inputHash,
         });
+        consecutiveInfrastructureFailures = isInfrastructureFailure(message)
+          ? consecutiveInfrastructureFailures + 1
+          : 0;
       }
       done += 1;
+      await writeManifestAtomic(options.manifestPath, createManifest());
+      if (consecutiveInfrastructureFailures >= 3) {
+        process.stderr.write(
+          'stopping after 3 consecutive capture infrastructure failures\n',
+        );
+        break;
+      }
     }
   } finally {
     if (browser) {
@@ -499,28 +574,27 @@ Options:
     }
   }
 
-  const nextManifest = {
-    ...inventory,
-    generatedAt: new Date().toISOString(),
-    encode: {
-      panoFrames: options.panoFrames,
-      masterFps: options.masterFps,
-      webmFps: options.webmFps,
-      gifFps: options.gifFps,
-      gifWidth: options.maxWidth,
-    },
-    results,
-  };
-  await mkdir(path.dirname(options.manifestPath), { recursive: true });
-  await writeFile(
-    options.manifestPath,
-    `${JSON.stringify(nextManifest, null, 2)}\n`,
-    'utf8',
-  );
+  const nextManifest = createManifest();
+  await writeManifestAtomic(options.manifestPath, nextManifest);
 
-  const ok = results.filter((r) => r.status === 'ok').length;
-  const failed = results.filter((r) => r.status === 'failed').length;
+  const ok = nextManifest.results.filter((r) => r.status === 'ok').length;
+  const failed = nextManifest.results.filter(
+    (r) => r.status === 'failed',
+  ).length;
   process.stderr.write(`done: ${ok} ok, ${failed} failed\n`);
+  const resultById = new Map(
+    nextManifest.results.map((result) => [result.sceneId, result]),
+  );
+  const targetFailures = targets.filter(
+    (target) => resultById.get(target.sceneId)?.status !== 'ok',
+  );
+  const fullRunIncomplete =
+    options.sceneIds === null && (failed > 0 || ok !== inventory.sceneCount);
+  if (targetFailures.length > 0 || fullRunIncomplete) {
+    throw new Error(
+      `Preview generation is incomplete: ${ok}/${inventory.sceneCount} scenes ready, ${failed} failed`,
+    );
+  }
 }
 
 const isDirectRun =

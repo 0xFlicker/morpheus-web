@@ -12,6 +12,7 @@
     "catalog:check": "yarn workspace @soapbubble/morpheus-client prepare:map && node scripts/generate-scene-catalog.mjs --check",
     "preview:inventory": "yarn run catalog:check && node scripts/scene-preview-inventory.mjs",
     "preview:generate": "yarn run catalog:check && node scripts/generate-scene-previews.mjs",
+    "preview:verify": "yarn run catalog:check && node scripts/verify-scene-preview-release.mjs",
     "vercel-build": "cd ../.. && yarn vercel-build",
     "build": "yarn run catalog:check && yarn run build:types && next build --webpack",
     "build:types": "node ../../node_modules/typescript/bin/tsc -b ../../tsconfig.build.json",

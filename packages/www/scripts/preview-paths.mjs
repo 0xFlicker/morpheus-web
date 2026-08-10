@@ -60,7 +60,10 @@ export async function collectScenePreviewFiles(
       }
       const stem = name.slice(0, -spec.ext.length);
       if (!/^\d+$/.test(stem)) {
-        skipped.push({ path: path.join(dir, name), reason: 'non-numeric-scene-id' });
+        skipped.push({
+          path: path.join(dir, name),
+          reason: 'non-numeric-scene-id',
+        });
         continue;
       }
       const sceneId = Number(stem);
@@ -89,4 +92,19 @@ export async function collectScenePreviewFiles(
 
   files.sort((a, b) => a.key.localeCompare(b.key));
   return { collisions, files, skipped, sourceRoot: path.resolve(sourceRoot) };
+}
+
+export function completeSceneIds(files, kinds = ['gif', 'mp4', 'webm']) {
+  const kindsByScene = new Map();
+  for (const file of files) {
+    if (file.size <= 0) continue;
+    const sceneKinds = kindsByScene.get(file.sceneId) ?? new Set();
+    sceneKinds.add(file.kind);
+    kindsByScene.set(file.sceneId, sceneKinds);
+  }
+  return new Set(
+    [...kindsByScene.entries()]
+      .filter(([, sceneKinds]) => kinds.every((kind) => sceneKinds.has(kind)))
+      .map(([sceneId]) => sceneId),
+  );
 }

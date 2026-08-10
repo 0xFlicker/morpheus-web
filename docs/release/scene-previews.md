@@ -22,6 +22,9 @@ yarn workspace morpheus-next preview:generate --scene 1010
 
 # Dry-run dirty set against existing manifest
 yarn workspace morpheus-next preview:generate --dry-run
+
+# Prove catalog, manifest, and all three local formats contain the same scenes
+yarn workspace morpheus-next preview:verify
 ```
 
 Capture URL (self-driving):
@@ -50,11 +53,11 @@ Prefer re-encoding GIF/WebP from intermediates when only size/fps change; use `-
 
 Stable public keys (sibling to `GameDB/`):
 
-| Local file | Blob key |
-|------------|----------|
-| `gif/{id}.gif` | `previews/scenes/{id}.gif` |
-| `master/{id}.mp4` | `previews/scenes/{id}.mp4` |
-| `webm/{id}.webm` | `previews/scenes/{id}.webm` |
+| Local file        | Blob key                    |
+| ----------------- | --------------------------- |
+| `gif/{id}.gif`    | `previews/scenes/{id}.gif`  |
+| `master/{id}.mp4` | `previews/scenes/{id}.mp4`  |
+| `webm/{id}.webm`  | `previews/scenes/{id}.webm` |
 
 ```bash
 # Dry-run inventory
@@ -64,16 +67,20 @@ yarn workspace morpheus-next upload:previews -- \
 # Real upload (public-store token — see tokens below)
 BLOB_READ_WRITE_TOKEN=... yarn workspace morpheus-next upload:previews -- \
   --report previews-import.json
+
+# After upload, also prove the upload report contains the exact same objects
+yarn workspace morpheus-next preview:verify -- \
+  --upload-report previews-import.json
 ```
 
 ### Blob tokens (important)
 
 There are **two** Blob stores:
 
-| Store | Host (example) | What lives there | Token in `.env.local` today |
-|-------|----------------|------------------|----------------------------|
-| **Private map** | (map store id in `BLOB_READ_WRITE_TOKEN`) | `morpheus.map.json` only | `BLOB_READ_WRITE_TOKEN` points here |
-| **Public media** | `NEXT_PUBLIC_MORPHEUS_GAMEDB_ORIGIN` host (`ol0swvwh4hjeaxzf…`) | `GameDB/…` + `previews/…` | **Need a separate RW token** |
+| Store            | Host (example)                                                  | What lives there          | Token in `.env.local` today         |
+| ---------------- | --------------------------------------------------------------- | ------------------------- | ----------------------------------- |
+| **Private map**  | (map store id in `BLOB_READ_WRITE_TOKEN`)                       | `morpheus.map.json` only  | `BLOB_READ_WRITE_TOKEN` points here |
+| **Public media** | `NEXT_PUBLIC_MORPHEUS_GAMEDB_ORIGIN` host (`ol0swvwh4hjeaxzf…`) | `GameDB/…` + `previews/…` | **Need a separate RW token**        |
 
 The private-map token **cannot** upload previews (store only lists `morpheus.map.json`).
 
@@ -83,10 +90,10 @@ Doppler has no Morpheus project with these secrets; Vercel project `morpheus-web
 
 ### Site env for OG
 
-| Variable | Role |
-|----------|------|
+| Variable                             | Role                                           |
+| ------------------------------------ | ---------------------------------------------- |
 | `NEXT_PUBLIC_MORPHEUS_GAMEDB_ORIGIN` | Public Blob origin (fallback for preview URLs) |
-| `NEXT_PUBLIC_SCENE_PREVIEWS_ORIGIN` | Optional override; defaults to GameDB origin |
+| `NEXT_PUBLIC_SCENE_PREVIEWS_ORIGIN`  | Optional override; defaults to GameDB origin   |
 
 `/scene/{id}` and `/render/{id}` set:
 

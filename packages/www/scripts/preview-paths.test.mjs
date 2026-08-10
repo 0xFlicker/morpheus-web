@@ -5,12 +5,15 @@ import path from 'node:path';
 
 import {
   collectScenePreviewFiles,
+  completeSceneIds,
   scenePreviewBlobKey,
 } from './preview-paths.mjs';
 
 const dirs = [];
 afterEach(async () => {
-  await Promise.all(dirs.splice(0).map((d) => rm(d, { recursive: true, force: true })));
+  await Promise.all(
+    dirs.splice(0).map((d) => rm(d, { recursive: true, force: true })),
+  );
 });
 
 describe('scenePreviewBlobKey', () => {
@@ -18,6 +21,18 @@ describe('scenePreviewBlobKey', () => {
     expect(scenePreviewBlobKey(1010, 'gif')).toBe('previews/scenes/1010.gif');
     expect(scenePreviewBlobKey(1010, 'mp4')).toBe('previews/scenes/1010.mp4');
     expect(scenePreviewBlobKey(1010, 'webm')).toBe('previews/scenes/1010.webm');
+  });
+
+  it('reports a scene complete only when every nonempty format exists', () => {
+    expect([
+      ...completeSceneIds([
+        { kind: 'gif', sceneId: 1010, size: 1 },
+        { kind: 'mp4', sceneId: 1010, size: 2 },
+        { kind: 'webm', sceneId: 1010, size: 3 },
+        { kind: 'gif', sceneId: 2020, size: 1 },
+        { kind: 'mp4', sceneId: 2020, size: 0 },
+      ]),
+    ]).toEqual([1010]);
   });
 });
 

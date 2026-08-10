@@ -137,6 +137,7 @@ const VideoEl = ({
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.volume = volume
+      videoRef.current.muted = volume === 0
     }
   }, [volume])
 
@@ -148,6 +149,7 @@ const VideoEl = ({
       }}
       autoPlay={false}
       crossOrigin="anonymous"
+      muted={volume === 0}
       playsInline
       webkit-playsinline="webkit-playsinline"
       loop={looping}

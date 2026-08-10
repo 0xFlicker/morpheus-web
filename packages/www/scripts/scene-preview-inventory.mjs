@@ -234,12 +234,20 @@ export async function buildInventory({
   };
 }
 
-export function computeDirtySet(previousManifest, nextInventory) {
+export function computeDirtySet(
+  previousManifest,
+  nextInventory,
+  { completedSceneIds = null } = {},
+) {
   const previousById = new Map(
     (previousManifest?.scenes ?? [])
       .filter((row) => row.inputHash)
       .map((row) => [row.sceneId, row]),
   );
+  const resultById = new Map(
+    (previousManifest?.results ?? []).map((row) => [row.sceneId, row]),
+  );
+  const hasGenerationResults = Array.isArray(previousManifest?.results);
   const dirty = [];
   const clean = [];
   for (const row of nextInventory.scenes) {
@@ -248,7 +256,19 @@ export function computeDirtySet(previousManifest, nextInventory) {
       continue;
     }
     const prev = previousById.get(row.sceneId);
-    if (!prev || prev.inputHash !== row.inputHash) {
+    const previousResult = resultById.get(row.sceneId);
+    const resultIsCurrent =
+      !hasGenerationResults ||
+      (previousResult?.status === 'ok' &&
+        previousResult.inputHash === row.inputHash);
+    const outputsAreComplete =
+      completedSceneIds === null || completedSceneIds.has(row.sceneId);
+    if (
+      !prev ||
+      prev.inputHash !== row.inputHash ||
+      !resultIsCurrent ||
+      !outputsAreComplete
+    ) {
       dirty.push(row);
     } else {
       clean.push(row);

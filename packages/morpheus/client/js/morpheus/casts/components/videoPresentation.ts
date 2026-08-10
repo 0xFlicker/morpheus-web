@@ -35,19 +35,28 @@ export function waitForVideoFrames(
   if (typeof video.requestVideoFrameCallback === 'function') {
     let remainingFrames = Math.max(1, frameCount)
     let callbackId: number | undefined
+    const handleEnded = () => {
+      if (callbackId !== undefined) {
+        video.cancelVideoFrameCallback?.(callbackId)
+      }
+      finish()
+    }
     const handleFrame = () => {
       if (!active) return
       remainingFrames -= 1
       if (remainingFrames === 0) {
+        video.removeEventListener('ended', handleEnded)
         finish()
       } else {
         callbackId = video.requestVideoFrameCallback?.(handleFrame)
       }
     }
+    video.addEventListener('ended', handleEnded, { once: true })
     callbackId = video.requestVideoFrameCallback(handleFrame)
     return () => {
       if (!active) return
       active = false
+      video.removeEventListener('ended', handleEnded)
       if (callbackId !== undefined) {
         video.cancelVideoFrameCallback?.(callbackId)
       }
