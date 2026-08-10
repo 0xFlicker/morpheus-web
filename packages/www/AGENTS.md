@@ -18,11 +18,13 @@ Notes:
   build input when absent locally. The token must remain build-only; release
   setup and verification live in `docs/release/morpheus-vercel.md`.
 
-### Route migration contract
+### Public route contract
 
-- Current routes remain `/`, `/scene/*`, `/render/*`, and `/api/game-control`; the `/morpheus/*` migration has not landed yet.
-- For the unified site, move game routes physically under `src/app/morpheus/`. Keep `/` first-class; do not use Next `basePath` or a Cloudflare-only rewrite.
-- Migrate root-relative navigation, pathname parsing, render/OG URLs, MCP docs/tests, and the exact WebSocket match to `/morpheus/api/game-control` as one change. Decide explicitly whether old `/scene/*` URLs redirect.
+- `/` is the public Soap Bubble Productions / Morpheus homepage.
+- `/morpheus` owns the persistent, full-game runtime. Authored scene changes do not change its URL.
+- `/scene/[sceneId]` owns an isolated explorer runtime. Authored scene changes replace the current browser address without remounting that runtime.
+- `/render/[scene]` and `/capture/scene/[sceneId]` remain root-level local preview tools with isolated, non-persistent runtimes.
+- The local WebSocket/MCP broker remains at `/api/game-control`; route work must not move or re-scope it.
 - Leave `NEXT_PUBLIC_MORPHEUS_GAMEDB_ORIGIN` and `/morpheus-assets` unchanged.
 
 ### WebSocket game-control broker (local dev)
@@ -50,14 +52,15 @@ Living-save diagnostics are read-only and bounded:
 
 ### App Router entry points
 
-- **Root layout**: `src/app/layout.tsx` wraps the app in `src/app/providers.tsx`
-- **Scene route**: `src/app/scene/[sceneId]/page.tsx`
-- **Scene “runtime shell”**: `src/app/scene/stage-shell.tsx` (client component; renders `InteractiveStage`, handles transitions, WS status HUD in dev)
-- **Scene layout**: `src/app/scene/layout.tsx` (mounts `SceneStageShell` alongside child route content)
+- **Root layout**: `src/app/layout.tsx` is public-site chrome only; it does not own a game store.
+- **Full game**: `src/app/morpheus/client.tsx` owns one persistent `RuntimeProvider` across title, intro, and stage phases.
+- **Scene explorer**: `src/app/scene/[sceneId]/client.tsx` owns one fresh explorer `RuntimeProvider` per direct entry.
+- **Shared runtime shell**: `src/morpheus-app/components/GameStageShell.tsx` renders `InteractiveStage` and handles authored transitions without owning route navigation.
+- **Preview tools**: render and capture routes own ephemeral tooling `RuntimeProvider` instances.
 
 ### Rendering readiness
 
-- `stage-shell.tsx` owns the transition cover and commits pending scenes after `onSceneReady` (with a five-second escape hatch).
+- `GameStageShell.tsx` owns the transition cover and commits pending scenes after `onSceneReady` (with a five-second escape hatch).
 - Asset/media readiness is insufficient: panorama readiness requires the active WebGL texture to be committed; movie readiness requires two fresh compositor frames for the exact presentation token.
 - Keep `preserveDrawingBuffer: true` for reliable pano capture. Cancel stale video-frame waits on replacement, ref detach, and unmount.
 - Preserve authored movie/panorama behavior and browser-check affected boundaries; scene `1010 → 101004` is the regression path for pano-to-movie seams.
@@ -70,7 +73,7 @@ There are two “stores” in this package:
 
 - **Store**: `src/morpheus-app/store/store.ts`
 - **Typed hooks**: `src/morpheus-app/store/hooks.ts`
-- **Provider wiring**: `src/app/providers.tsx` → used by `src/app/layout.tsx`
+- **Provider wiring**: `src/morpheus-app/runtime/RuntimeProvider.tsx` → owned by each game, explorer, or tooling route
 
 Current slices:
 - **Scene**: `src/morpheus-app/store/slices/sceneSlice.ts`
@@ -90,7 +93,7 @@ How to use in components:
 - For derived data, prefer `createSelector` (already used in `sceneSlice.ts`)
 
 Where it’s used today:
-- `src/app/scene/stage-shell.tsx` drives transitions + rotation via slice actions/selectors.
+- `src/morpheus-app/components/GameStageShell.tsx` drives transitions + rotation via slice actions/selectors.
 - `src/morpheus-app/systems/useSceneSystem.ts` is a hook-style integration point that initializes/prefetches scenes and exposes `stageScenes`.
 
 Adding a new slice (pattern):

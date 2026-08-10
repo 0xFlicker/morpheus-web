@@ -1,20 +1,30 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useCallback, useMemo } from 'react';
 import type { Scene } from '@soapbubble/morpheus-client/morpheus/casts/types';
-import { useAppDispatch } from '@/morpheus-app/store/hooks';
-import { scenePrefetched } from '@/morpheus-app/store/slices/sceneSlice';
+
+import { GameStageShell } from '@/morpheus-app/components/GameStageShell';
+import { RuntimeProvider } from '@/morpheus-app/runtime/RuntimeProvider';
+import { explorerRuntimePolicy } from '@/morpheus-app/runtime/runtimePolicy';
+import { replaceSceneAddress } from './sceneAddress';
 
 interface ClientProps {
   scene: Scene;
+  mcpSessionName: string | null;
 }
 
-export const Client = ({ scene }: ClientProps) => {
-  const dispatch = useAppDispatch();
+export const Client = ({ scene, mcpSessionName }: ClientProps) => {
+  const policy = useMemo(() => explorerRuntimePolicy(scene.sceneId), [scene]);
+  const handleCurrentSceneChange = useCallback((sceneId: number) => {
+    replaceSceneAddress(sceneId, window.history, window.location.search);
+  }, []);
 
-  useEffect(() => {
-    dispatch(scenePrefetched(scene));
-  }, [dispatch, scene]);
-
-  return null;
+  return (
+    <RuntimeProvider key={scene.sceneId} policy={policy} scene={scene}>
+      <GameStageShell
+        mcpSessionName={mcpSessionName}
+        onCurrentSceneChange={handleCurrentSceneChange}
+      />
+    </RuntimeProvider>
+  );
 };

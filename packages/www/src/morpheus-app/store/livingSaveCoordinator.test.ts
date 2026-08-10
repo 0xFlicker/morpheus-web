@@ -45,9 +45,7 @@ function createHarness(
   } = {},
 ) {
   const store = createAppStore();
-  const replacedRoutes: number[] = [];
-  let titleVisits = 0;
-  let validateEnvelope = async (
+  const validateEnvelope = async (
     envelope: Parameters<
       Parameters<typeof createLivingSaveCoordinator>[0]['validateEnvelope']
     >[0],
@@ -62,19 +60,10 @@ function createHarness(
     parseFileText: unconfiguredFileParser,
     validateEnvelope: (envelope) => validateEnvelope(envelope),
     fetchScene: async (sceneId) => scene(sceneId),
-    replaceRoute: (sceneId) => replacedRoutes.push(sceneId),
-    goToTitle: () => {
-      titleVisits += 1;
-    },
   });
   return {
     store,
     coordinator,
-    replacedRoutes,
-    titleVisits: () => titleVisits,
-    setValidation: (next: typeof validateEnvelope) => {
-      validateEnvelope = next;
-    },
   };
 }
 
@@ -102,41 +91,24 @@ describe('livingSaveCoordinator', () => {
       readRawPayload,
     });
 
-    await expect(harness.coordinator.readExportFile('slot-1')).resolves.toEqual({
-      ok: true,
-      value: {
-        contents: `${JSON.stringify(envelope, null, 2)}\n`,
-        suffix: 'resume-test',
+    await expect(harness.coordinator.readExportFile('slot-1')).resolves.toEqual(
+      {
+        ok: true,
+        value: {
+          contents: `${JSON.stringify(envelope, null, 2)}\n`,
+          suffix: 'resume-test',
+        },
       },
-    });
-    await expect(harness.coordinator.readExportFile('slot-2')).resolves.toEqual({
-      ok: true,
-      value: {
-        contents: '{\n  "legacy": true\n}\n',
-        suffix: 'unavailable',
-      },
-    });
-  });
-
-  it('lets a valid active slot outrank a conflicting route scene', async () => {
-    const envelope = createLivingSaveEnvelopeFixture({ activeSceneId: 2000 });
-    const catalog = occupyLivingSaveSlot(
-      createEmptyLivingSaveCatalogFixture(),
-      'slot-1',
-      envelope,
     );
-    const harness = createHarness(catalog);
-
-    await harness.coordinator.bootstrap({
-      routeSceneId: 1050,
-      mcpSessionName: null,
-    });
-
-    expect(harness.store.getState().scene.activeSceneId).toBe(2000);
-    expect(harness.replacedRoutes).toEqual([2000]);
-    expect(
-      harness.store.getState().livingSaves.skipSceneEntryActions,
-    ).toBe(true);
+    await expect(harness.coordinator.readExportFile('slot-2')).resolves.toEqual(
+      {
+        ok: true,
+        value: {
+          contents: '{\n  "legacy": true\n}\n',
+          suffix: 'unavailable',
+        },
+      },
+    );
   });
 
   it('keeps the title hub visible when an active slot exists', async () => {
@@ -148,75 +120,13 @@ describe('livingSaveCoordinator', () => {
     );
     const harness = createHarness(catalog);
 
-    await expect(
-      harness.coordinator.bootstrap({
-        routeSceneId: null,
-        mcpSessionName: null,
-      }),
-    ).resolves.toEqual({ ok: true, kind: 'title' });
+    await expect(harness.coordinator.bootstrap()).resolves.toEqual({
+      ok: true,
+      kind: 'title',
+    });
 
-    expect(harness.replacedRoutes).toEqual([]);
     expect(harness.store.getState().scene.activeSceneId).toBeNull();
     expect(harness.store.getState().livingSaves.activeSlotId).toBe('slot-1');
-  });
-
-  it('returns normal direct navigation to title when no slot is active', async () => {
-    const harness = createHarness(createEmptyLivingSaveCatalogFixture());
-
-    await harness.coordinator.bootstrap({
-      routeSceneId: 1050,
-      mcpSessionName: null,
-    });
-
-    expect(harness.titleVisits()).toBe(1);
-    expect(harness.store.getState().scene.activeSceneId).toBeNull();
-  });
-
-  it('admits a named development scene as volatile without an active slot', async () => {
-    const harness = createHarness(createEmptyLivingSaveCatalogFixture());
-
-    await harness.coordinator.bootstrap({
-      routeSceneId: 1050,
-      mcpSessionName: 'test-session',
-    });
-
-    expect(harness.store.getState().scene.activeSceneId).toBe(1050);
-    expect(harness.store.getState().livingSaves).toMatchObject({
-      activeSlotId: null,
-      saveHealth: 'volatile',
-      skipSceneEntryActions: false,
-    });
-  });
-
-  it('leaves live runtime untouched when the active envelope is unloadable', async () => {
-    const envelope = createLivingSaveEnvelopeFixture();
-    const catalog = occupyLivingSaveSlot(
-      createEmptyLivingSaveCatalogFixture(),
-      'slot-1',
-      envelope,
-    );
-    const harness = createHarness(catalog);
-    harness.setValidation(
-      async (): Promise<LivingSaveValidationResult> => ({
-        ok: false,
-        code: 'unavailable-scene',
-        reason: 'missing scene',
-      }),
-    );
-
-    await harness.coordinator.bootstrap({
-      routeSceneId: 1050,
-      mcpSessionName: null,
-    });
-
-    expect(harness.store.getState().scene.activeSceneId).toBeNull();
-    expect(harness.store.getState().gamestate.byId).toEqual(
-      createAppStore().getState().gamestate.byId,
-    );
-    expect(harness.store.getState().livingSaves.slots[0]).toMatchObject({
-      state: 'unloadable',
-      unloadableReason: 'unavailable-scene',
-    });
   });
 
   it('installs an empty slot only after its durable genesis record is created', async () => {
@@ -252,8 +162,6 @@ describe('livingSaveCoordinator', () => {
       parseFileText: unconfiguredFileParser,
       validateEnvelope: async (envelope) => ({ ok: true, envelope }),
       fetchScene: async (sceneId) => scene(sceneId),
-      replaceRoute: () => undefined,
-      goToTitle: () => undefined,
     });
 
     const created = coordinator.createNewSlot('slot-2');
@@ -324,8 +232,6 @@ describe('livingSaveCoordinator', () => {
         return { ok: true, envelope };
       },
       fetchScene: async (sceneId) => scene(sceneId),
-      replaceRoute: () => undefined,
-      goToTitle: () => undefined,
     });
 
     const stale = coordinator.restoreSlot('slot-1');
@@ -380,8 +286,6 @@ describe('livingSaveCoordinator', () => {
       parseFileText: unconfiguredFileParser,
       validateEnvelope: async (value) => ({ ok: true, envelope: value }),
       fetchScene: async (sceneId) => scene(sceneId),
-      replaceRoute: () => undefined,
-      goToTitle: () => undefined,
     });
 
     await expect(coordinator.deleteSlot('slot-1')).resolves.toEqual({
@@ -419,8 +323,6 @@ describe('livingSaveCoordinator', () => {
       }),
       validateEnvelope: async (value) => ({ ok: true, envelope: value }),
       fetchScene: async (sceneId) => scene(sceneId),
-      replaceRoute: () => undefined,
-      goToTitle: () => undefined,
     });
 
     await expect(

@@ -16,9 +16,14 @@ import styles from './game-menu.module.css';
 type GameMenuProps = {
   saveSlots: ReactNode;
   onBeforeOpen: () => void;
+  onReturnToTitle: () => void;
 };
 
-export const GameMenu = ({ saveSlots, onBeforeOpen }: GameMenuProps) => {
+export const GameMenu = ({
+  saveSlots,
+  onBeforeOpen,
+  onReturnToTitle,
+}: GameMenuProps) => {
   const dispatch = useAppDispatch();
   const menu = useAppSelector(selectGameMenu);
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -59,9 +64,7 @@ export const GameMenu = ({ saveSlots, onBeforeOpen }: GameMenuProps) => {
     backdropPressedRef.current = event.target === event.currentTarget;
   };
 
-  const handleBackdropPointerUp = (
-    event: PointerEvent<HTMLDialogElement>,
-  ) => {
+  const handleBackdropPointerUp = (event: PointerEvent<HTMLDialogElement>) => {
     event.stopPropagation();
     const closes =
       backdropPressedRef.current && event.target === event.currentTarget;
@@ -135,6 +138,15 @@ export const GameMenu = ({ saveSlots, onBeforeOpen }: GameMenuProps) => {
                 onClick={() => dispatch(showGameMenuSaveSlots())}
               >
                 Save Slots
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  close();
+                  onReturnToTitle();
+                }}
+              >
+                Return to Title
               </button>
             </nav>
           ) : (

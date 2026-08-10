@@ -1,16 +1,11 @@
 'use client';
 
-import {
-  createContext,
-  useContext,
-  type PropsWithChildren,
-} from 'react';
+import { createContext, useContext, type PropsWithChildren } from 'react';
 
 import type { LivingSaveCoordinator } from './livingSaveCoordinator';
 
-const LivingSaveCoordinatorContext = createContext<LivingSaveCoordinator | null>(
-  null,
-);
+const LivingSaveCoordinatorContext =
+  createContext<LivingSaveCoordinator | null>(null);
 
 type LivingSaveCoordinatorProviderProps = PropsWithChildren<{
   coordinator: LivingSaveCoordinator;
@@ -33,4 +28,8 @@ export function useLivingSaveCoordinator(): LivingSaveCoordinator {
     );
   }
   return coordinator;
+}
+
+export function useOptionalLivingSaveCoordinator(): LivingSaveCoordinator | null {
+  return useContext(LivingSaveCoordinatorContext);
 }

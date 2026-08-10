@@ -1,14 +1,13 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getScene } from '@/app/actions';
-import {
-  scenePreviewMp4Url,
-  scenePreviewOgImage,
-} from '@/lib/scenePreviewUrl';
+import { findScene, getSceneTypeLabel } from '@/lib/sceneCatalog';
+import { scenePreviewMp4Url, scenePreviewOgImage } from '@/lib/scenePreviewUrl';
 import { Client } from './client';
 
 type PageProps = {
   params: Promise<{ sceneId: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
 export async function generateMetadata({
@@ -16,15 +15,15 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { sceneId: raw } = await params;
   const sceneId = Number(raw);
-  const title = Number.isFinite(sceneId)
-    ? `Morpheus Scene ${sceneId}`
-    : 'Morpheus Scene';
-  const description = `Interactive panorama scene ${raw}`;
-  const ogImage =
-    Number.isFinite(sceneId) ? scenePreviewOgImage(sceneId) : undefined;
+  const catalogScene = findScene(sceneId);
+  const title = catalogScene ? `Morpheus Scene ${sceneId}` : 'Morpheus Scene';
+  const description = catalogScene
+    ? `Explore Morpheus scene ${sceneId}, a ${getSceneTypeLabel(catalogScene).toLowerCase()} scene.`
+    : 'Explore a scene from Morpheus.';
+  const ogImage = catalogScene ? scenePreviewOgImage(sceneId) : undefined;
   const images = ogImage ? [ogImage] : undefined;
   // Optional: platforms that honor og:video (not a substitute for og:image).
-  const mp4 = Number.isFinite(sceneId) ? scenePreviewMp4Url(sceneId) : undefined;
+  const mp4 = catalogScene ? scenePreviewMp4Url(sceneId) : undefined;
   const videos = mp4
     ? [
         {
@@ -54,13 +53,19 @@ export async function generateMetadata({
   };
 }
 
-const ScenePage = async ({ params }: PageProps) => {
-  const { sceneId } = await params;
-  const scene = await getScene(Number(sceneId));
+const ScenePage = async ({ params, searchParams }: PageProps) => {
+  const { sceneId: rawSceneId } = await params;
+  const sceneId = Number(rawSceneId);
+  if (!findScene(sceneId)) {
+    notFound();
+  }
+  const scene = await getScene(sceneId);
   if (!scene) {
     notFound();
   }
-  return <Client scene={scene} />;
+  const query = await searchParams;
+  const mcpSessionName = typeof query.mcp === 'string' ? query.mcp : null;
+  return <Client scene={scene} mcpSessionName={mcpSessionName} />;
 };
 
 export default ScenePage;

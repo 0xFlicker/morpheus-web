@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import type {
   Hotspot,
   Scene,
@@ -25,7 +24,7 @@ import type {
   ClickHotspotResult,
 } from '@/lib/game-control-protocol';
 import { useAppDispatch, useAppSelector } from '@/morpheus-app/store/hooks';
-import { useLivingSaveCoordinator } from '@/morpheus-app/store/LivingSaveCoordinatorContext';
+import { useOptionalLivingSaveCoordinator } from '@/morpheus-app/store/LivingSaveCoordinatorContext';
 import type { AppDispatch } from '@/morpheus-app/store/store';
 import { selectGamestatesAccessor } from '@/morpheus-app/store/slices/gamestateSlice';
 import { detachLivingSaveRuntime } from '@/morpheus-app/store/actions';
@@ -54,6 +53,7 @@ import type { LivingSaveSlotSummary } from '@/morpheus-app/store/slices/livingSa
 import { getHotspotCandidates } from '@/morpheus-app/hotspot/hotspotEligibility';
 import type { ScenePresentationRequest } from 'morpheus/casts/presentation';
 import { captureStageFrame } from '@/morpheus-app/capture/captureStageFrame';
+import { useRuntimePolicy } from '@/morpheus-app/runtime/RuntimeProvider';
 
 import '@/morpheus-app/runtime';
 
@@ -114,13 +114,20 @@ function getGestureName(gesture: number): string {
   return GESTURES[gesture] ?? `Unknown(${gesture})`;
 }
 
-export const SceneStageShell = () => {
-  const router = useRouter();
-  const livingSaveCoordinator = useLivingSaveCoordinator();
+export type GameStageShellProps = {
+  mcpSessionName: string | null;
+  onCurrentSceneChange?: (sceneId: number) => void;
+  onReturnToTitle?: () => void;
+};
+
+export const GameStageShell = ({
+  mcpSessionName,
+  onCurrentSceneChange,
+  onReturnToTitle,
+}: GameStageShellProps) => {
+  const policy = useRuntimePolicy();
+  const livingSaveCoordinator = useOptionalLivingSaveCoordinator();
   const checkpointCoordinator = useLivingSaveCheckpoint();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const mcpSessionName = searchParams.get('mcp');
 
   const gamestates = useAppSelector(selectGamestatesAccessor);
   const livingSaves = useAppSelector(selectLivingSaves);
@@ -242,10 +249,10 @@ export const SceneStageShell = () => {
     async (slot: LivingSaveSlotSummary) => {
       if (slot.state === 'empty') {
         dispatch(closeGameMenu());
-        router.push('/');
+        onReturnToTitle?.();
         return;
       }
-      if (slot.state === 'unloadable') {
+      if (slot.state === 'unloadable' || livingSaveCoordinator === null) {
         return;
       }
 
@@ -254,7 +261,7 @@ export const SceneStageShell = () => {
         dispatch(closeGameMenu());
       }
     },
-    [dispatch, livingSaveCoordinator, router],
+    [dispatch, livingSaveCoordinator, onReturnToTitle],
   );
 
   const getState = useCallback(() => {
@@ -339,27 +346,15 @@ export const SceneStageShell = () => {
     [dispatch],
   );
 
-  const pushSceneRoute = useCallback(
+  const reportCurrentScene = useCallback(
     (sceneId: number) => {
       if (lastPushedSceneIdRef.current === sceneId) {
         return;
       }
-      const url = mcpSessionName
-        ? `/scene/${sceneId}?mcp=${encodeURIComponent(mcpSessionName)}`
-        : `/scene/${sceneId}`;
-      // Avoid pushing the same URL we're already on (prevents duplicate history entries)
-      const currentSearch = searchParams.toString();
-      const currentUrl = currentSearch
-        ? `${pathname}?${currentSearch}`
-        : pathname;
-      if (currentUrl === url) {
-        lastPushedSceneIdRef.current = sceneId;
-        return;
-      }
       lastPushedSceneIdRef.current = sceneId;
-      router.push(url);
+      onCurrentSceneChange?.(sceneId);
     },
-    [mcpSessionName, pathname, router, searchParams],
+    [onCurrentSceneChange],
   );
 
   const commitPendingTransition = useCallback(
@@ -432,14 +427,14 @@ export const SceneStageShell = () => {
       };
       presentingTransitionRef.current = presentation;
       setPresentingTransition(presentation);
-      pushSceneRoute(transition.sceneId);
+      reportCurrentScene(transition.sceneId);
       if (transition.checkpointOnReady) {
         void checkpointCoordinator?.requestCheckpoint(
           transition.runtimeGeneration,
         );
       }
     },
-    [checkpointCoordinator, dispatch, pushSceneRoute],
+    [checkpointCoordinator, dispatch, reportCurrentScene],
   );
 
   const handleSceneAssetsReady = useCallback(
@@ -751,20 +746,23 @@ export const SceneStageShell = () => {
           pointerEvents: 'none',
         }}
       />
-      <GameMenu
-        saveSlots={
-          <LivingSaveSlotManager
-            title="Save Slots"
-            description="Switch journeys, or return to the title to begin an empty slot."
-            onSelect={(slot) => {
-              void handleSlotSelection(slot);
-            }}
-          />
-        }
-        onBeforeOpen={() => {
-          stageInputControllerRef.current?.cancelGesture();
-        }}
-      />
+      {policy.menus && livingSaveCoordinator !== null && (
+        <GameMenu
+          saveSlots={
+            <LivingSaveSlotManager
+              title="Save Slots"
+              description="Switch journeys, or return to the title to begin an empty slot."
+              onSelect={(slot) => {
+                void handleSlotSelection(slot);
+              }}
+            />
+          }
+          onBeforeOpen={() => {
+            stageInputControllerRef.current?.cancelGesture();
+          }}
+          onReturnToTitle={() => onReturnToTitle?.()}
+        />
+      )}
       {process.env.NODE_ENV === 'development' && (
         <div
           style={{

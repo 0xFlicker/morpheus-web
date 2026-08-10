@@ -1,18 +1,23 @@
 'use client';
 
 import type { CSSProperties } from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useReducer, useRef } from 'react';
+import { fetch as fetchScene } from '@soapbubble/morpheus-client/service/scene';
 
+import { GameStageShell } from '@/morpheus-app/components/GameStageShell';
 import { LivingSaveSlotManager } from '@/morpheus-app/components/save-slots/LivingSaveSlotManager';
-import { MORPHEUS_INITIAL_SCENE_ID } from '@/morpheus-app/storage/livingSaveIdentity';
+import { RuntimeProvider } from '@/morpheus-app/runtime/RuntimeProvider';
+import { gamePhaseReducer } from '@/morpheus-app/runtime/gamePhase';
+import { fullGameRuntimePolicy } from '@/morpheus-app/runtime/runtimePolicy';
 import { useLivingSaveCoordinator } from '@/morpheus-app/store/LivingSaveCoordinatorContext';
+import { useAppSelector } from '@/morpheus-app/store/hooks';
+import { createBrowserLivingSaveCoordinator } from '@/morpheus-app/store/livingSaveCoordinator';
+import { selectLivingSaves } from '@/morpheus-app/store/slices/livingSavesSlice';
 import type { LivingSaveSlotSummary } from '@/morpheus-app/store/slices/livingSavesSlice';
+import type { AppStore } from '@/morpheus-app/store/store';
 import { getAssetUrl } from '@/service/gamedb';
-import { createIntroCompletionGate } from './introCompletionGate';
+import { createIntroCompletionGate } from '../introCompletionGate';
 import styles from './title-screen.module.css';
-
-type TitlePhase = 'title' | 'intro' | 'error';
 
 const assetBase =
   process.env.NEXT_PUBLIC_MORPHEUS_ASSET_BASE?.replace(/\/+$/, '') ||
@@ -23,9 +28,9 @@ const TITLE_ART_STYLE: CSSProperties & { '--title-image': string } = {
   '--title-image': `url("${assetBase}/texture/title.png")`,
 };
 
-export const Client = () => {
-  const router = useRouter();
+const FullGame = ({ mcpSessionName }: { mcpSessionName: string | null }) => {
   const coordinator = useLivingSaveCoordinator();
+  const livingSaves = useAppSelector(selectLivingSaves);
   const videoRef = useRef<HTMLVideoElement>(null);
   const mountedRef = useRef(true);
   const selectingSlotRef = useRef(false);
@@ -35,7 +40,7 @@ export const Client = () => {
   const cancelIntroErrorListenerRef = useRef<(() => void) | undefined>(
     undefined,
   );
-  const [phase, setPhase] = useState<TitlePhase>('title');
+  const [phase, sendPhase] = useReducer(gamePhaseReducer, 'title');
 
   useEffect(() => {
     mountedRef.current = true;
@@ -46,9 +51,34 @@ export const Client = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (livingSaves.bootstrapPhase !== 'idle') {
+      return;
+    }
+    void coordinator.bootstrap();
+  }, [coordinator, livingSaves.bootstrapPhase]);
+
+  const clearIntroErrorListener = useCallback(() => {
+    cancelIntroErrorListenerRef.current?.();
+    cancelIntroErrorListenerRef.current = undefined;
+  }, []);
+
+  const stopIntroPlayback = useCallback(() => {
+    const video = videoRef.current;
+    introPlaybackActiveRef.current = false;
+    introPlaybackGenerationRef.current += 1;
+    clearIntroErrorListener();
+    video?.pause();
+    if (video) {
+      video.currentTime = 0;
+    }
+  }, [clearIntroErrorListener]);
+
   const startGame = useCallback(() => {
-    router.push(`/scene/${MORPHEUS_INITIAL_SCENE_ID}`);
-  }, [router]);
+    selectingSlotRef.current = false;
+    stopIntroPlayback();
+    sendPhase({ type: 'game-ready' });
+  }, [stopIntroPlayback]);
 
   const finishIntro = useCallback(() => {
     if (introCompletionGateRef.current.markIntroFinished()) {
@@ -56,15 +86,17 @@ export const Client = () => {
     }
   }, [startGame]);
 
-  const clearIntroErrorListener = useCallback(() => {
-    cancelIntroErrorListenerRef.current?.();
-    cancelIntroErrorListenerRef.current = undefined;
-  }, []);
+  const returnToTitle = useCallback(() => {
+    selectingSlotRef.current = false;
+    introCompletionGateRef.current.reset();
+    stopIntroPlayback();
+    sendPhase({ type: 'return-to-title' });
+  }, [stopIntroPlayback]);
 
   const playIntro = useCallback(() => {
     const video = videoRef.current;
     if (!video) {
-      setPhase('error');
+      sendPhase({ type: 'start-failed' });
       return;
     }
 
@@ -77,7 +109,7 @@ export const Client = () => {
         introPlaybackActiveRef.current &&
         playbackGeneration === introPlaybackGenerationRef.current
       ) {
-        setPhase('error');
+        sendPhase({ type: 'start-failed' });
       }
     };
     video.addEventListener('error', handleError, { once: true });
@@ -85,14 +117,13 @@ export const Client = () => {
       video.removeEventListener('error', handleError);
     };
     video.currentTime = 0;
-    setPhase('intro');
     void video.play().catch(() => {
       if (
         mountedRef.current &&
         introPlaybackActiveRef.current &&
         playbackGeneration === introPlaybackGenerationRef.current
       ) {
-        setPhase('error');
+        sendPhase({ type: 'start-failed' });
       }
     });
   }, [clearIntroErrorListener]);
@@ -113,28 +144,19 @@ export const Client = () => {
         // requested it. Creating the slot first crosses an async boundary and
         // turns this into a policy-blocked autoplay attempt.
         introCompletionGateRef.current.reset();
+        sendPhase({ type: 'new-game-selected' });
         playIntro();
       }
-      const outcome =
-        isNewSlot
-          ? await coordinator.createNewSlot(slot.slotId)
-          : await coordinator.restoreSlot(slot.slotId);
+      const outcome = isNewSlot
+        ? await coordinator.createNewSlot(slot.slotId)
+        : await coordinator.restoreSlot(slot.slotId);
 
       if (!mountedRef.current) {
         return;
       }
       if (!outcome.ok) {
         if (isNewSlot) {
-          const video = videoRef.current;
-          introPlaybackActiveRef.current = false;
-          introPlaybackGenerationRef.current += 1;
-          clearIntroErrorListener();
-          introCompletionGateRef.current.reset();
-          video?.pause();
-          if (video) {
-            video.currentTime = 0;
-          }
-          setPhase('title');
+          returnToTitle();
         }
         selectingSlotRef.current = false;
         return;
@@ -142,9 +164,21 @@ export const Client = () => {
       if (isNewSlot && introCompletionGateRef.current.markSaveReady()) {
         startGame();
       }
+      if (!isNewSlot) {
+        startGame();
+      }
     },
-    [clearIntroErrorListener, coordinator, phase, playIntro, startGame],
+    [coordinator, phase, playIntro, returnToTitle, startGame],
   );
+
+  if (phase === 'stage') {
+    return (
+      <GameStageShell
+        mcpSessionName={mcpSessionName}
+        onReturnToTitle={returnToTitle}
+      />
+    );
+  }
 
   return (
     <main className={styles.screen} data-title-phase={phase}>
@@ -191,11 +225,42 @@ export const Client = () => {
       {phase === 'error' && (
         <section className={styles.error} role="alert">
           <p>The game could not start.</p>
-          <button type="button" onClick={startGame}>
+          <button type="button" onClick={finishIntro}>
             Start game
           </button>
         </section>
       )}
     </main>
+  );
+};
+
+export const Client = ({
+  mcpSessionName = null,
+}: {
+  mcpSessionName?: string | null;
+}) => {
+  const createCoordinator = useCallback(
+    (store: AppStore) =>
+      createBrowserLivingSaveCoordinator({
+        dispatch: store.dispatch,
+        getState: store.getState,
+        fetchScene: async (sceneId) => {
+          try {
+            return (await fetchScene(sceneId)) ?? null;
+          } catch {
+            return null;
+          }
+        },
+      }),
+    [],
+  );
+
+  return (
+    <RuntimeProvider
+      policy={fullGameRuntimePolicy}
+      createLivingSaveCoordinator={createCoordinator}
+    >
+      <FullGame mcpSessionName={mcpSessionName} />
+    </RuntimeProvider>
   );
 };

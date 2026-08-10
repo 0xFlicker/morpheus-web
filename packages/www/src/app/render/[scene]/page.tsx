@@ -5,10 +5,9 @@ import type { Metadata, NextPage } from 'next';
 import Render from '@/morpheus-app/Render/Render';
 import { fetch as fetchScene } from '@soapbubble/morpheus-client/service/scene';
 import type { Scene } from 'morpheus/casts/types';
-import {
-  scenePreviewMp4Url,
-  scenePreviewOgImage,
-} from '@/lib/scenePreviewUrl';
+import { scenePreviewMp4Url, scenePreviewOgImage } from '@/lib/scenePreviewUrl';
+import { RuntimeProvider } from '@/morpheus-app/runtime/RuntimeProvider';
+import { toolingRuntimePolicy } from '@/morpheus-app/runtime/runtimePolicy';
 
 type PageParams = {
   scene: string;
@@ -98,7 +97,15 @@ const RenderScenePage = (async ({ params }) => {
   if (!scene) {
     notFound();
   }
-  return <Render scene={scene} />;
+  return (
+    <RuntimeProvider
+      key={scene.sceneId}
+      policy={toolingRuntimePolicy(scene.sceneId)}
+      scene={scene}
+    >
+      <Render scene={scene} />
+    </RuntimeProvider>
+  );
 }) as NextPage<PageProps>;
 
 export default RenderScenePage;

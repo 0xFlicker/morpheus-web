@@ -95,22 +95,17 @@ export type LivingSaveCoordinatorDependencies = {
     envelope: LivingSaveSessionEnvelope,
   ) => Promise<LivingSaveValidationResult>;
   fetchScene: (sceneId: number) => Promise<Scene | null>;
-  replaceRoute: (sceneId: number) => void;
-  goToTitle: () => void;
 };
 
 export type LivingSaveCoordinatorOutcome =
   | {
       ok: true;
-      kind: 'restored' | 'volatile' | 'title' | 'created' | 'managed';
+      kind: 'restored' | 'title' | 'created' | 'managed';
     }
   | { ok: false; reason: string };
 
 export type LivingSaveCoordinator = {
-  bootstrap: (params: {
-    routeSceneId: number | null;
-    mcpSessionName: string | null;
-  }) => Promise<LivingSaveCoordinatorOutcome>;
+  bootstrap: () => Promise<LivingSaveCoordinatorOutcome>;
   restoreSlot: (
     slotId: LivingSaveSlotId,
   ) => Promise<LivingSaveCoordinatorOutcome>;
@@ -160,9 +155,7 @@ export function createLivingSaveCoordinator(
 
   const isCurrent = (operationId: string) => currentOperationId === operationId;
 
-  const startOperation = (
-    kind: 'bootstrap' | 'restore' | 'manage',
-  ): string => {
+  const startOperation = (kind: 'bootstrap' | 'restore' | 'manage'): string => {
     operationSequence += 1;
     const operationId = createOperationId(kind, operationSequence);
     currentOperationId = operationId;
@@ -202,10 +195,9 @@ export function createLivingSaveCoordinator(
   const installEnvelope = async (params: {
     operationId: string;
     catalog: LivingSaveCatalog;
-    slotId: LivingSaveSlotId | null;
+    slotId: LivingSaveSlotId;
     envelope: LivingSaveSessionEnvelope;
-    saveHealth: 'saved' | 'volatile';
-    navigate: boolean;
+    saveHealth: 'saved';
     skipSceneEntryActions: boolean;
   }): Promise<LivingSaveCoordinatorOutcome> => {
     const validation = await dependencies.validateEnvelope(params.envelope);
@@ -278,13 +270,7 @@ export function createLivingSaveCoordinator(
       }),
     );
     currentOperationId = null;
-    if (params.navigate) {
-      dependencies.replaceRoute(validation.envelope.activeSceneId);
-    }
-    return {
-      ok: true,
-      kind: params.slotId === null ? 'volatile' : 'restored',
-    };
+    return { ok: true, kind: 'restored' };
   };
 
   const readCatalogForOperation = async (
@@ -388,75 +374,23 @@ export function createLivingSaveCoordinator(
       }),
     );
     currentOperationId = null;
-    dependencies.replaceRoute(validation.envelope.activeSceneId);
     return { ok: true, kind: 'restored' };
   };
 
-  const bootstrap: LivingSaveCoordinator['bootstrap'] = async ({
-    routeSceneId,
-    mcpSessionName,
-  }) => {
+  const bootstrap: LivingSaveCoordinator['bootstrap'] = async () => {
     const operationId = startOperation('bootstrap');
     const catalogResult = await readCatalogForOperation(operationId);
     if (catalogResult.status === 'failed') return catalogResult.outcome;
     const catalog = catalogResult.catalog;
 
-    if (routeSceneId === null) {
-      dependencies.dispatch(
-        livingSaveOperationCompleted({
-          operationId,
-          saveHealth: catalog.activeSlotId === null ? 'idle' : 'saved',
-        }),
-      );
-      currentOperationId = null;
-      return { ok: true, kind: 'title' };
-    }
-
-    if (catalog.activeSlotId !== null) {
-      const slot = catalog.slots[catalog.activeSlotId];
-      if (slot.kind !== 'occupied') {
-        dependencies.goToTitle();
-        return fail(
-          operationId,
-          slot.kind === 'unloadable' ? slot.reason : 'empty-target',
-        );
-      }
-      return installEnvelope({
-        operationId,
-        catalog,
-        slotId: catalog.activeSlotId,
-        envelope: slot.envelope,
-        saveHealth: 'saved',
-        navigate: routeSceneId !== slot.envelope.activeSceneId,
-        skipSceneEntryActions: true,
-      });
-    }
-
-    if (routeSceneId !== null && mcpSessionName) {
-      const envelope = {
-        ...createGenesisLivingSaveEnvelope(),
-        activeSceneId: routeSceneId,
-      };
-      return installEnvelope({
-        operationId,
-        catalog,
-        slotId: null,
-        envelope,
-        saveHealth: 'volatile',
-        navigate: false,
-        skipSceneEntryActions: false,
-      });
-    }
-
     dependencies.dispatch(
       livingSaveOperationCompleted({
         operationId,
-        saveHealth: 'idle',
+        saveHealth: catalog.activeSlotId === null ? 'idle' : 'saved',
       }),
     );
     currentOperationId = null;
-    if (routeSceneId !== null) dependencies.goToTitle();
-    return { ok: true, kind: 'managed' };
+    return { ok: true, kind: 'title' };
   };
 
   const createNewSlot: LivingSaveCoordinator['createNewSlot'] = async (
@@ -486,7 +420,6 @@ export function createLivingSaveCoordinator(
       slotId,
       envelope,
       saveHealth: 'saved',
-      navigate: false,
       skipSceneEntryActions: false,
     });
     return installed.ok ? { ok: true, kind: 'created' } : installed;
@@ -531,13 +464,10 @@ export function createLivingSaveCoordinator(
     if (!dependencies.deleteSlot) {
       return { ok: false, reason: 'unavailable-storage' };
     }
-    return runCatalogManagement(
-      slotId,
-      dependencies.deleteSlot,
-      (before) =>
-        before.activeSlotId === slotId
-          ? 'volatile'
-          : dependencies.getState().livingSaves.saveHealth,
+    return runCatalogManagement(slotId, dependencies.deleteSlot, (before) =>
+      before.activeSlotId === slotId
+        ? 'volatile'
+        : dependencies.getState().livingSaves.saveHealth,
     );
   };
 
@@ -663,8 +593,6 @@ export function createBrowserLivingSaveCoordinator(params: {
   dispatch: AppDispatch;
   getState: () => RootState;
   fetchScene: (sceneId: number) => Promise<Scene | null>;
-  replaceRoute: (sceneId: number) => void;
-  goToTitle: () => void;
 }): LivingSaveCoordinator {
   const initialGamestates = fetchInitial();
   const expectedGamestateBounds = Object.fromEntries(
@@ -692,8 +620,7 @@ export function createBrowserLivingSaveCoordinator(params: {
     importSlot: importLivingSaveSlot,
     readEnvelope: readLivingSaveEnvelope,
     readRawPayload: readLivingSaveRawPayload,
-    parseFileText: (text) =>
-      parseLivingSaveFileText(text, validationContext),
+    parseFileText: (text) => parseLivingSaveFileText(text, validationContext),
     validateEnvelope: (envelope) =>
       validateLivingSaveSessionEnvelope(envelope, validationContext),
   });

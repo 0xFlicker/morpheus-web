@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
-import { Providers } from '@/app/providers';
 
 const siteTitle = 'Morpheus';
 const siteDescription =
@@ -39,10 +38,9 @@ const RootLayout = ({ children }: { children: ReactNode }) => (
       style={{
         margin: 0,
         padding: 0,
-        overflow: 'hidden',
       }}
     >
-      <Providers>{children}</Providers>
+      {children}
     </body>
   </html>
 );
