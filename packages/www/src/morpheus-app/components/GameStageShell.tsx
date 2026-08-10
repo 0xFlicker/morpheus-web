@@ -697,6 +697,7 @@ export const GameStageShell = ({
   return (
     <div
       ref={stageRootRef}
+      data-current-scene={activeScene.sceneId}
       style={{
         width: sizing === 'container' ? '100%' : '100vw',
         height: sizing === 'container' ? '100%' : '100vh',

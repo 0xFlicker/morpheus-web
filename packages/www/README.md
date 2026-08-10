@@ -94,6 +94,7 @@ For production testing, consider:
 | `mcp` | Run the MCP server directly (normally auto-started by Cursor) |
 | `build` | Production build |
 | `start` | Production server |
+| `verify:public-site` | Browser-check the homepage, scene index, explorer, and stable full-game route against a running server |
 
 ## Vercel release
 
