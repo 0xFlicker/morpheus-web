@@ -23,11 +23,8 @@ describe('controlled movie frame selection', () => {
     const frameFor = (value: number) =>
       calculateControlledFrameIndex({
         value,
-        maxValue: 63,
         frames: 1,
         frameCount: 240,
-        direction: 0,
-        logicalGridWidth: 8,
       });
 
     expect(frameFor(0)).toBe(0);
@@ -40,11 +37,8 @@ describe('controlled movie frame selection', () => {
     const frameFor = (value: number) =>
       calculateControlledFrameIndex({
         value,
-        maxValue: 63,
         frames: 1,
         frameCount: 240,
-        direction: 0,
-        logicalGridWidth: 8,
       });
 
     expect(frameFor(3)).toBe(3);
@@ -55,19 +49,15 @@ describe('controlled movie frame selection', () => {
     expect(
       calculateControlledFrameIndex({
         value: 8,
-        maxValue: 20,
         frames: 1,
         frameCount: 33,
-        direction: 0,
       }),
     ).toBe(8);
     expect(
       calculateControlledFrameIndex({
         value: 20,
-        maxValue: 20,
         frames: 1,
         frameCount: 33,
-        direction: 0,
       }),
     ).toBe(20);
   });
@@ -76,10 +66,8 @@ describe('controlled movie frame selection', () => {
     expect(
       calculateControlledFrameIndex({
         value: 1,
-        maxValue: 3,
         frames: 1,
         frameCount: 12,
-        direction: 0,
       }),
     ).toBe(1);
   });
@@ -88,11 +76,8 @@ describe('controlled movie frame selection', () => {
     expect(
       calculateControlledFrameIndex({
         value: 8,
-        maxValue: 63,
         frames: 1,
         frameCount: 64,
-        direction: 0,
-        logicalGridWidth: 8,
       }),
     ).toBe(8);
   });

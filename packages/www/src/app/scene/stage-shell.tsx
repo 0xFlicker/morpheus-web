@@ -45,7 +45,7 @@ import {
   setRotation,
 } from '@/morpheus-app/store/slices/rotationSlice';
 import { selectLivingSaves } from '@/morpheus-app/store/slices/livingSavesSlice';
-import { requestLivingSaveCheckpoint } from '@/morpheus-app/store/livingSaveCheckpoint';
+import { useLivingSaveCheckpoint } from '@/morpheus-app/store/LivingSaveCheckpointContext';
 import {
   closeGameMenu,
   selectGameMenu,
@@ -117,6 +117,7 @@ function getGestureName(gesture: number): string {
 export const SceneStageShell = () => {
   const router = useRouter();
   const livingSaveCoordinator = useLivingSaveCoordinator();
+  const checkpointCoordinator = useLivingSaveCheckpoint();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const mcpSessionName = searchParams.get('mcp');
@@ -234,8 +235,8 @@ export const SceneStageShell = () => {
   );
 
   const handleStableAction = useCallback(() => {
-    void requestLivingSaveCheckpoint(runtimeGenerationRef.current);
-  }, []);
+    void checkpointCoordinator?.requestCheckpoint(runtimeGenerationRef.current);
+  }, [checkpointCoordinator]);
 
   const handleSlotSelection = useCallback(
     async (slot: LivingSaveSlotSummary) => {
@@ -433,10 +434,12 @@ export const SceneStageShell = () => {
       setPresentingTransition(presentation);
       pushSceneRoute(transition.sceneId);
       if (transition.checkpointOnReady) {
-        void requestLivingSaveCheckpoint(transition.runtimeGeneration);
+        void checkpointCoordinator?.requestCheckpoint(
+          transition.runtimeGeneration,
+        );
       }
     },
-    [dispatch, pushSceneRoute],
+    [checkpointCoordinator, dispatch, pushSceneRoute],
   );
 
   const handleSceneAssetsReady = useCallback(

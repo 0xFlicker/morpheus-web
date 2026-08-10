@@ -2,12 +2,10 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-import {
-  MAX_LIVING_SAVE_FILE_BYTES,
-} from '@/morpheus-app/storage/livingSaveFiles';
+import { MAX_LIVING_SAVE_FILE_BYTES } from '@/morpheus-app/storage/livingSaveFiles';
 import { useAppSelector } from '@/morpheus-app/store/hooks';
 import { useLivingSaveCoordinator } from '@/morpheus-app/store/LivingSaveCoordinatorContext';
-import { requestLivingSaveCheckpoint } from '@/morpheus-app/store/livingSaveCheckpoint';
+import { useLivingSaveCheckpoint } from '@/morpheus-app/store/LivingSaveCheckpointContext';
 import {
   selectLivingSaves,
   type LivingSaveSlotSummary,
@@ -22,10 +20,7 @@ type LivingSaveSlotManagerProps = {
   onSelect: (slot: LivingSaveSlotSummary) => void;
 };
 
-const fileNameForSlot = (
-  slot: LivingSaveSlotSummary,
-  suffix: string,
-): string =>
+const fileNameForSlot = (slot: LivingSaveSlotSummary, suffix: string): string =>
   `morpheus-${slot.slotId}-${suffix.replace(/[^a-zA-Z0-9_-]/g, '-')}.json`;
 
 export const LivingSaveSlotManager = ({
@@ -34,6 +29,7 @@ export const LivingSaveSlotManager = ({
   onSelect,
 }: LivingSaveSlotManagerProps) => {
   const coordinator = useLivingSaveCoordinator();
+  const checkpointCoordinator = useLivingSaveCheckpoint();
   const livingSaves = useAppSelector(selectLivingSaves);
   const [now, setNow] = useState(() => Date.now());
   const [localFailure, setLocalFailure] = useState<string | null>(null);
@@ -97,10 +93,7 @@ export const LivingSaveSlotManager = ({
       renderManagementActions={(slot) => {
         const tombstone = livingSaves.tombstones[slot.slotId];
         const undoSeconds = tombstone
-          ? Math.max(
-              0,
-              Math.ceil((tombstone.expiresAt - countdownNow) / 1000),
-            )
+          ? Math.max(0, Math.ceil((tombstone.expiresAt - countdownNow) / 1000))
           : 0;
 
         return (
@@ -110,9 +103,7 @@ export const LivingSaveSlotManager = ({
                 type="button"
                 className={styles.slotAction}
                 onClick={() => {
-                  void runManagement(() =>
-                    coordinator.undoDelete(slot.slotId),
-                  );
+                  void runManagement(() => coordinator.undoDelete(slot.slotId));
                 }}
               >
                 Undo ({undoSeconds}s)
@@ -167,21 +158,20 @@ export const LivingSaveSlotManager = ({
                 className={`${styles.slotAction} ${styles.deleteAction}`}
                 aria-label={`Delete slot ${slot.slotId.slice(-1)}`}
                 onClick={() => {
-                  void runManagement(() =>
-                    coordinator.deleteSlot(slot.slotId),
-                  );
+                  void runManagement(() => coordinator.deleteSlot(slot.slotId));
                 }}
               >
                 <span aria-hidden="true">🗑</span> Delete
               </button>
             )}
             {slot.active &&
+              checkpointCoordinator !== null &&
               livingSaves.saveHealth === 'save-unavailable' && (
                 <button
                   type="button"
                   className={styles.slotAction}
                   onClick={() => {
-                    void requestLivingSaveCheckpoint(
+                    void checkpointCoordinator.requestCheckpoint(
                       livingSaves.runtimeGeneration,
                     );
                   }}

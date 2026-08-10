@@ -1,13 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
 import { resetGame } from './actions';
-import { store } from './store';
+import { createAppStore } from './store';
 import { updateGamestate } from './slices/gamestateSlice';
 import { setRotation } from './slices/rotationSlice';
 import { requestScene } from './slices/sceneSlice';
 
 describe('resetGame', () => {
   it('restores all live Redux gameplay state', () => {
+    const store = createAppStore();
     const initialGamestate = Object.values(store.getState().gamestate.byId)[0];
     expect(initialGamestate).toBeDefined();
 

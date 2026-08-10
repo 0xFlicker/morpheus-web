@@ -3,7 +3,15 @@ import { fetchInitial } from '@soapbubble/morpheus-client/service/gameState';
 import type { Scene } from 'morpheus/casts/types';
 
 import { installLivingSaveRuntime } from './actions';
-import { createLivingSaveCheckpointCoordinator } from './livingSaveCheckpoint';
+import {
+  createLivingSaveCheckpointCoordinator,
+  createRuntimeCheckpointCoordinator,
+} from './livingSaveCheckpoint';
+import {
+  explorerRuntimePolicy,
+  fullGameRuntimePolicy,
+  toolingRuntimePolicy,
+} from '../runtime/runtimePolicy';
 import { updateGamestate } from './slices/gamestateSlice';
 import { createAppStore } from './store';
 import {
@@ -59,31 +67,34 @@ describe('living-save checkpoints', () => {
       expectedCatalogRevision: number;
       expectedSlotRevision: number;
     }> = [];
-    const checkpoints = createLivingSaveCheckpointCoordinator({
-      dispatch: store.dispatch,
-      getState: store.getState,
-      writeCheckpoint: async (params) => {
-        writes.push(params);
-        return {
-          ok: true,
-          value: {
-            ...catalog,
-            revision: catalog.revision + 1,
-            slots: {
-              ...catalog.slots,
-              'slot-1': {
-                kind: 'occupied',
-                slotId: 'slot-1',
-                revision: 2,
-                envelope: params.envelope,
+    const checkpoints = createLivingSaveCheckpointCoordinator(
+      fullGameRuntimePolicy,
+      {
+        dispatch: store.dispatch,
+        getState: store.getState,
+        writeCheckpoint: async (params) => {
+          writes.push(params);
+          return {
+            ok: true,
+            value: {
+              ...catalog,
+              revision: catalog.revision + 1,
+              slots: {
+                ...catalog.slots,
+                'slot-1': {
+                  kind: 'occupied',
+                  slotId: 'slot-1',
+                  revision: 2,
+                  envelope: params.envelope,
+                },
               },
             },
-          },
-        };
+          };
+        },
+        now: () => 1_800_000_000_000,
+        createResumePointId: () => 'next-resume',
       },
-      now: () => 1_800_000_000_000,
-      createResumePointId: () => 'next-resume',
-    });
+    );
 
     await checkpoints.requestCheckpoint(1);
 
@@ -107,16 +118,19 @@ describe('living-save checkpoints', () => {
   it('does not write for a volatile runtime or stale generation', async () => {
     const store = createAppStore();
     let writes = 0;
-    const checkpoints = createLivingSaveCheckpointCoordinator({
-      dispatch: store.dispatch,
-      getState: store.getState,
-      writeCheckpoint: async () => {
-        writes += 1;
-        return { ok: false, code: 'conflict' };
+    const checkpoints = createLivingSaveCheckpointCoordinator(
+      fullGameRuntimePolicy,
+      {
+        dispatch: store.dispatch,
+        getState: store.getState,
+        writeCheckpoint: async () => {
+          writes += 1;
+          return { ok: false, code: 'conflict' };
+        },
+        now: Date.now,
+        createResumePointId: () => 'unused',
       },
-      now: Date.now,
-      createResumePointId: () => 'unused',
-    });
+    );
 
     await checkpoints.requestCheckpoint(0);
     await checkpoints.requestCheckpoint(99);
@@ -145,16 +159,19 @@ describe('living-save checkpoints', () => {
       }),
     );
     let writes = 0;
-    const checkpoints = createLivingSaveCheckpointCoordinator({
-      dispatch: store.dispatch,
-      getState: store.getState,
-      writeCheckpoint: async () => {
-        writes += 1;
-        return { ok: false, code: 'conflict' };
+    const checkpoints = createLivingSaveCheckpointCoordinator(
+      fullGameRuntimePolicy,
+      {
+        dispatch: store.dispatch,
+        getState: store.getState,
+        writeCheckpoint: async () => {
+          writes += 1;
+          return { ok: false, code: 'conflict' };
+        },
+        now: Date.now,
+        createResumePointId: () => 'unused',
       },
-      now: Date.now,
-      createResumePointId: () => 'unused',
-    });
+    );
 
     await checkpoints.requestCheckpoint(1);
 
@@ -181,15 +198,18 @@ describe('living-save checkpoints', () => {
         skipSceneEntryActions: false,
       }),
     );
-    const checkpoints = createLivingSaveCheckpointCoordinator({
-      dispatch: store.dispatch,
-      getState: store.getState,
-      writeCheckpoint: async () => {
-        throw new Error('IndexedDB unavailable');
+    const checkpoints = createLivingSaveCheckpointCoordinator(
+      fullGameRuntimePolicy,
+      {
+        dispatch: store.dispatch,
+        getState: store.getState,
+        writeCheckpoint: async () => {
+          throw new Error('IndexedDB unavailable');
+        },
+        now: Date.now,
+        createResumePointId: () => 'unused',
       },
-      now: Date.now,
-      createResumePointId: () => 'unused',
-    });
+    );
 
     await expect(checkpoints.requestCheckpoint(1)).resolves.toBeUndefined();
 
@@ -197,5 +217,88 @@ describe('living-save checkpoints', () => {
       saveHealth: 'save-unavailable',
       failureReason: 'unavailable-storage',
     });
+  });
+
+  it('does not create checkpoint capability for explorer or tooling policies', () => {
+    const store = createAppStore();
+    const dependencies = {
+      dispatch: store.dispatch,
+      getState: store.getState,
+      writeCheckpoint: async () => ({
+        ok: false as const,
+        code: 'conflict' as const,
+      }),
+      now: Date.now,
+      createResumePointId: () => 'unused',
+    };
+
+    expect(
+      createRuntimeCheckpointCoordinator(
+        explorerRuntimePolicy(1050),
+        dependencies,
+      ),
+    ).toBeNull();
+    expect(
+      createRuntimeCheckpointCoordinator(
+        toolingRuntimePolicy(1050),
+        dependencies,
+      ),
+    ).toBeNull();
+  });
+
+  it('keeps independent stores and checkpoint coordinators isolated', async () => {
+    const firstStore = createAppStore();
+    const secondStore = createAppStore();
+    const envelope = createLivingSaveEnvelopeFixture({ activeSceneId: 2000 });
+    const catalog = occupyLivingSaveSlot(
+      createEmptyLivingSaveCatalogFixture(),
+      'slot-1',
+      envelope,
+    );
+
+    for (const runtimeStore of [firstStore, secondStore]) {
+      runtimeStore.dispatch(
+        installLivingSaveRuntime({
+          operationId: 'install',
+          catalog,
+          slotId: 'slot-1',
+          envelope,
+          activeScene: scene(2000),
+          returnScene: null,
+          saveHealth: 'saved',
+          skipSceneEntryActions: false,
+        }),
+      );
+    }
+
+    let firstWrites = 0;
+    let secondWrites = 0;
+    const createCoordinator = (
+      runtimeStore: ReturnType<typeof createAppStore>,
+      recordWrite: () => void,
+    ) =>
+      createLivingSaveCheckpointCoordinator(fullGameRuntimePolicy, {
+        dispatch: runtimeStore.dispatch,
+        getState: runtimeStore.getState,
+        writeCheckpoint: async () => {
+          recordWrite();
+          return { ok: false, code: 'conflict' };
+        },
+        now: Date.now,
+        createResumePointId: () => 'unused',
+      });
+
+    const first = createCoordinator(firstStore, () => {
+      firstWrites += 1;
+    });
+    createCoordinator(secondStore, () => {
+      secondWrites += 1;
+    });
+
+    await first.requestCheckpoint(1);
+
+    expect(firstWrites).toBe(1);
+    expect(secondWrites).toBe(0);
+    expect(secondStore.getState().livingSaves.saveHealth).toBe('saved');
   });
 });

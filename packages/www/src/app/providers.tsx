@@ -1,17 +1,17 @@
 'use client';
-import { FC, PropsWithChildren, useEffect, useMemo } from 'react';
+import { FC, PropsWithChildren, useEffect, useMemo, useState } from 'react';
 import { Provider } from 'react-redux';
 import { usePathname, useRouter } from 'next/navigation';
 import { fetch as fetchScene } from '@soapbubble/morpheus-client/service/scene';
 
-import { store } from '@/morpheus-app/store/store';
+import { createAppStore } from '@/morpheus-app/store/store';
 import { useAppSelector } from '@/morpheus-app/store/hooks';
 import { createBrowserLivingSaveCoordinator } from '@/morpheus-app/store/livingSaveCoordinator';
-import {
-  LivingSaveCoordinatorProvider,
-} from '@/morpheus-app/store/LivingSaveCoordinatorContext';
+import { LivingSaveCoordinatorProvider } from '@/morpheus-app/store/LivingSaveCoordinatorContext';
 import type { LivingSaveCoordinator } from '@/morpheus-app/store/livingSaveCoordinator';
 import { selectLivingSaves } from '@/morpheus-app/store/slices/livingSavesSlice';
+import { createBrowserLivingSaveCheckpointCoordinator } from '@/morpheus-app/store/livingSaveCheckpoint';
+import { LivingSaveCheckpointProvider } from '@/morpheus-app/store/LivingSaveCheckpointContext';
 
 function routeSceneId(pathname: string): number | null {
   const match = /^\/scene\/(\d+)$/.exec(pathname);
@@ -47,6 +47,7 @@ const LivingSaveBootstrap = ({
 export const Providers: FC<PropsWithChildren> = ({ children }) => {
   const router = useRouter();
   const pathname = usePathname();
+  const [store] = useState(createAppStore);
   const coordinator = useMemo(
     () =>
       createBrowserLivingSaveCoordinator({
@@ -72,14 +73,20 @@ export const Providers: FC<PropsWithChildren> = ({ children }) => {
         },
         goToTitle: () => router.replace('/'),
       }),
-    [router],
+    [router, store],
+  );
+  const checkpointCoordinator = useMemo(
+    () => createBrowserLivingSaveCheckpointCoordinator(store),
+    [store],
   );
 
   return (
     <Provider store={store}>
       <LivingSaveCoordinatorProvider coordinator={coordinator}>
-        <LivingSaveBootstrap coordinator={coordinator} pathname={pathname} />
-        {children}
+        <LivingSaveCheckpointProvider coordinator={checkpointCoordinator}>
+          <LivingSaveBootstrap coordinator={coordinator} pathname={pathname} />
+          {children}
+        </LivingSaveCheckpointProvider>
       </LivingSaveCoordinatorProvider>
     </Provider>
   );

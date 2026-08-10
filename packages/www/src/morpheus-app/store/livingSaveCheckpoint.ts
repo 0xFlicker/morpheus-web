@@ -14,12 +14,19 @@ import type {
   LivingSaveSlotId,
 } from '@/morpheus-app/storage/livingSaveTypes';
 import {
+  fullGameRuntimePolicy,
+  isPersistentRuntime,
+} from '@/morpheus-app/runtime/runtimePolicy';
+import type {
+  FullGameRuntimePolicy,
+  RuntimePolicy,
+} from '@/morpheus-app/runtime/runtimePolicy';
+import {
   livingSaveCheckpointFailed,
   livingSaveCheckpointStarted,
   livingSaveCheckpointSucceeded,
 } from './slices/livingSavesSlice';
-import { store } from './store';
-import type { AppDispatch, RootState } from './store';
+import type { AppDispatch, AppStore, RootState } from './store';
 
 type WriteCheckpointParams = {
   slotId: LivingSaveSlotId;
@@ -43,8 +50,12 @@ export type LivingSaveCheckpointCoordinator = {
 };
 
 export function createLivingSaveCheckpointCoordinator(
+  policy: FullGameRuntimePolicy,
   dependencies: LivingSaveCheckpointDependencies,
 ): LivingSaveCheckpointCoordinator {
+  if (!isPersistentRuntime(policy)) {
+    throw new Error('Living-save checkpoints require a persistent runtime');
+  }
   let inFlight: Promise<void> | null = null;
   let queuedGeneration: number | null = null;
 
@@ -135,16 +146,23 @@ export function createLivingSaveCheckpointCoordinator(
   return { requestCheckpoint };
 }
 
-const browserCheckpointCoordinator = createLivingSaveCheckpointCoordinator({
-  dispatch: store.dispatch,
-  getState: store.getState,
-  writeCheckpoint: writeLivingSaveCheckpoint,
-  now: Date.now,
-  createResumePointId: createLivingSaveResumePointId,
-});
+export function createRuntimeCheckpointCoordinator(
+  policy: RuntimePolicy,
+  dependencies: LivingSaveCheckpointDependencies,
+): LivingSaveCheckpointCoordinator | null {
+  return isPersistentRuntime(policy)
+    ? createLivingSaveCheckpointCoordinator(policy, dependencies)
+    : null;
+}
 
-export function requestLivingSaveCheckpoint(
-  runtimeGeneration: number,
-): Promise<void> {
-  return browserCheckpointCoordinator.requestCheckpoint(runtimeGeneration);
+export function createBrowserLivingSaveCheckpointCoordinator(
+  store: AppStore,
+): LivingSaveCheckpointCoordinator {
+  return createLivingSaveCheckpointCoordinator(fullGameRuntimePolicy, {
+    dispatch: store.dispatch,
+    getState: store.getState,
+    writeCheckpoint: writeLivingSaveCheckpoint,
+    now: Date.now,
+    createResumePointId: createLivingSaveResumePointId,
+  });
 }
