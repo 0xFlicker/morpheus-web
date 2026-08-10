@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState, type RefObject } from 'react';
 
 const ORIGINAL_HEIGHT = 400;
 const ORIGINAL_WIDTH = 640;
@@ -48,37 +48,60 @@ function getViewportSize(): { width: number; height: number } {
   };
 }
 
-export default function useResponsiveSize(): ResponsiveSize {
+function getAvailableSize(containerRef?: RefObject<HTMLElement | null>): {
+  width: number;
+  height: number;
+} {
+  const container = containerRef?.current;
+  if (container && container.clientWidth > 0 && container.clientHeight > 0) {
+    return {
+      width: container.clientWidth,
+      height: container.clientHeight,
+    };
+  }
+  return getViewportSize();
+}
+
+export default function useResponsiveSize(
+  containerRef?: RefObject<HTMLElement | null>,
+): ResponsiveSize {
   const lastSize = useRef<{ width: number; height: number } | null>(null);
-  
+
   const [size, setSize] = useState<ResponsiveSize>(() => {
-    const viewport = getViewportSize();
-    return calculateSize(viewport.width, viewport.height);
+    const available = getAvailableSize(containerRef);
+    return calculateSize(available.width, available.height);
   });
 
   useEffect(() => {
     const updateSize = () => {
-      const viewport = getViewportSize();
-      
+      const available = getAvailableSize(containerRef);
+
       if (
         lastSize.current &&
-        lastSize.current.width === viewport.width &&
-        lastSize.current.height === viewport.height
+        lastSize.current.width === available.width &&
+        lastSize.current.height === available.height
       ) {
         return;
       }
-      
-      lastSize.current = viewport;
-      setSize(calculateSize(viewport.width, viewport.height));
+
+      lastSize.current = available;
+      setSize(calculateSize(available.width, available.height));
     };
 
     updateSize();
 
+    const container = containerRef?.current;
+    let resizeObserver: ResizeObserver | null = null;
+    if (container && typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(updateSize);
+      resizeObserver.observe(container);
+    }
     window.addEventListener('resize', updateSize);
     return () => {
+      resizeObserver?.disconnect();
       window.removeEventListener('resize', updateSize);
     };
-  }, []);
+  }, [containerRef]);
 
   return size;
 }

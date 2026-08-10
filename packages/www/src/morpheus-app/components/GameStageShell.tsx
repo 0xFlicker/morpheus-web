@@ -118,12 +118,14 @@ export type GameStageShellProps = {
   mcpSessionName: string | null;
   onCurrentSceneChange?: (sceneId: number) => void;
   onReturnToTitle?: () => void;
+  sizing?: 'viewport' | 'container';
 };
 
 export const GameStageShell = ({
   mcpSessionName,
   onCurrentSceneChange,
   onReturnToTitle,
+  sizing = 'viewport',
 }: GameStageShellProps) => {
   const policy = useRuntimePolicy();
   const livingSaveCoordinator = useOptionalLivingSaveCoordinator();
@@ -137,7 +139,10 @@ export const GameStageShell = ({
   useEffect(() => {
     runtimeGenerationRef.current = livingSaves.runtimeGeneration;
   }, [livingSaves.runtimeGeneration]);
-  const { width, height, left, top } = useResponsiveSize();
+  const stageRootRef = useRef<HTMLDivElement>(null);
+  const { width, height, left, top } = useResponsiveSize(
+    sizing === 'container' ? stageRootRef : undefined,
+  );
   const dispatch: AppDispatch = useAppDispatch();
 
   const rotation = useAppSelector(selectRotation);
@@ -673,9 +678,10 @@ export const GameStageShell = ({
   ) {
     return (
       <div
+        ref={stageRootRef}
         style={{
-          width: '100vw',
-          height: '100vh',
+          width: sizing === 'container' ? '100%' : '100vw',
+          height: sizing === 'container' ? '100%' : '100vh',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -690,9 +696,10 @@ export const GameStageShell = ({
 
   return (
     <div
+      ref={stageRootRef}
       style={{
-        width: '100vw',
-        height: '100vh',
+        width: sizing === 'container' ? '100%' : '100vw',
+        height: sizing === 'container' ? '100%' : '100vh',
         backgroundColor: '#000',
         overflow: 'hidden',
         position: 'relative',

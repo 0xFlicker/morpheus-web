@@ -65,7 +65,9 @@ const ScenePage = async ({ params, searchParams }: PageProps) => {
   }
   const query = await searchParams;
   const mcpSessionName = typeof query.mcp === 'string' ? query.mcp : null;
-  return <Client scene={scene} mcpSessionName={mcpSessionName} />;
+  return (
+    <Client key={scene.sceneId} scene={scene} mcpSessionName={mcpSessionName} />
+  );
 };
 
 export default ScenePage;
