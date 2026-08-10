@@ -21,6 +21,7 @@ Notes:
 ### Public route contract
 
 - `/` is the public Soap Bubble Productions / Morpheus homepage.
+- `/scenes` is the server-rendered authoritative scene index. Its small client controller filters existing card markup and keeps only a bounded set of nearby preview videos active.
 - `/morpheus` owns the persistent, full-game runtime. Authored scene changes do not change its URL.
 - `/scene/[sceneId]` owns an isolated explorer runtime. Authored scene changes replace the current browser address without remounting that runtime.
 - `/render/[scene]` and `/capture/scene/[sceneId]` remain root-level local preview tools with isolated, non-persistent runtimes.

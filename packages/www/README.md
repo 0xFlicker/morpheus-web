@@ -6,6 +6,7 @@ Next.js frontend for the Morpheus game engine.
 
 - `/` — public Soap Bubble Productions / Morpheus homepage
 - `/morpheus` — the complete game with living saves and a stable URL
+- `/scenes` — complete server-rendered scene index with bounded preview playback
 - `/scene/[sceneId]` — isolated, linkable scene exploration from fresh game state
 - `/render/[scene]` and `/capture/scene/[sceneId]` — local preview tooling
 
