@@ -10,6 +10,10 @@ import { GameStageShell } from '@/morpheus-app/components/GameStageShell';
 import { RuntimeProvider } from '@/morpheus-app/runtime/RuntimeProvider';
 import { explorerRuntimePolicy } from '@/morpheus-app/runtime/runtimePolicy';
 import { replaceSceneAddress } from './sceneAddress';
+import {
+  readSceneMutedPreference,
+  writeSceneMutedPreference,
+} from './sceneAudioPreference';
 import { shareScene, type SceneShareOutcome } from './sceneSharing';
 import styles from './scene-page.module.css';
 
@@ -42,6 +46,17 @@ const resetLabels: Record<ResetFeedback, string> = {
   failed: 'Try reset again',
 };
 
+const SpeakerIcon = ({ isMuted }: { isMuted: boolean }) => (
+  <svg aria-hidden="true" className={styles.audioIcon} viewBox="0 0 24 24">
+    <path d="M4 9v6h4l5 4V5L8 9H4Z" />
+    {isMuted ? (
+      <path d="m17 9 4 4m0-4-4 4" />
+    ) : (
+      <path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" />
+    )}
+  </svg>
+);
+
 export const Client = ({ scene, mcpSessionName }: ClientProps) => {
   const [runtimeSeed, setRuntimeSeed] = useState<RuntimeSeed>({
     generation: 0,
@@ -50,6 +65,7 @@ export const Client = ({ scene, mcpSessionName }: ClientProps) => {
   const [currentSceneId, setCurrentSceneId] = useState(scene.sceneId);
   const [shareFeedback, setShareFeedback] = useState<ShareFeedback>('idle');
   const [resetFeedback, setResetFeedback] = useState<ResetFeedback>('idle');
+  const [isMuted, setIsMuted] = useState(true);
   const shareFeedbackTimerRef = useRef<number | null>(null);
   const resetFeedbackTimerRef = useRef<number | null>(null);
   const policy = useMemo(
@@ -72,6 +88,17 @@ export const Client = ({ scene, mcpSessionName }: ClientProps) => {
     },
     [],
   );
+
+  useEffect(() => {
+    try {
+      setIsMuted(readSceneMutedPreference(window.localStorage));
+    } catch (error) {
+      console.warn(
+        'Unable to read the scene explorer audio preference.',
+        error,
+      );
+    }
+  }, []);
 
   const clearFeedbackAfterDelay = useCallback(
     (timerRef: typeof shareFeedbackTimerRef, reset: () => void) => {
@@ -131,6 +158,21 @@ export const Client = ({ scene, mcpSessionName }: ClientProps) => {
     }
   }, [clearFeedbackAfterDelay, currentSceneId]);
 
+  const handleMuteToggle = useCallback(() => {
+    setIsMuted((current) => {
+      const next = !current;
+      try {
+        writeSceneMutedPreference(window.localStorage, next);
+      } catch (error) {
+        console.warn(
+          'Unable to save the scene explorer audio preference.',
+          error,
+        );
+      }
+      return next;
+    });
+  }, []);
+
   return (
     <div className={styles.page}>
       <a className={styles.skipLink} href="#scene-stage">
@@ -144,15 +186,11 @@ export const Client = ({ scene, mcpSessionName }: ClientProps) => {
         </div>
         <div className={styles.titleRow}>
           <div>
-            <p className={styles.kicker}>{sceneType} · Fresh game state</p>
+            <p className={styles.kicker}>{sceneType}</p>
             <h1 aria-live="polite">
               <span>Scene</span> {currentSceneId}
             </h1>
           </div>
-          <p className={styles.intro}>
-            This is the game, started here from a clean state. Click its
-            hotspots to follow the authored map; the scene folio follows along.
-          </p>
         </div>
       </header>
 
@@ -168,6 +206,7 @@ export const Client = ({ scene, mcpSessionName }: ClientProps) => {
                 mcpSessionName={mcpSessionName}
                 onCurrentSceneChange={handleCurrentSceneChange}
                 sizing="container"
+                volume={isMuted ? 0 : 0.5}
               />
             </RuntimeProvider>
           </div>
@@ -185,6 +224,16 @@ export const Client = ({ scene, mcpSessionName }: ClientProps) => {
                 onClick={() => void handleReset()}
               >
                 {resetLabels[resetFeedback]}
+              </button>
+              <button
+                type="button"
+                aria-label="Mute scene audio"
+                aria-pressed={isMuted}
+                className={styles.audioButton}
+                onClick={handleMuteToggle}
+              >
+                <SpeakerIcon isMuted={isMuted} />
+                {isMuted ? 'Muted' : 'Sound on'}
               </button>
               <button
                 type="button"

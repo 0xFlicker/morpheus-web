@@ -74,6 +74,7 @@ const AudioEl = ({
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = volume
+      audioRef.current.muted = volume === 0
     }
   }, [volume, audioRef.current])
 
@@ -83,6 +84,7 @@ const AudioEl = ({
       autoPlay={false}
       crossOrigin="anonymous"
       loop={looping}
+      muted={volume === 0}
       onEnded={onAudioEnded}
       onCanPlayThrough={onAudioCanPlayThrough}
     >

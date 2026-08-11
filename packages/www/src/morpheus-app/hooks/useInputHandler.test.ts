@@ -7,12 +7,26 @@ import {
 } from '@/morpheus-app/store/slices/gamestateSlice';
 import { createHotspot } from '@/morpheus-app/hotspot/harnessClick.fixtures';
 import {
+  clientPointToStagePoint,
   createLiveGamestatesReader,
   finishPointerInteraction,
   isDirectPointerActionHotspot,
   isPointerDragHotspot,
   resolvePointerSuppression,
 } from './useInputHandler';
+
+describe('embedded stage pointer coordinates', () => {
+  it('removes the stage viewport offset from client coordinates', () => {
+    expect(
+      clientPointToStagePoint({
+        clientX: 187.5,
+        clientY: 426.125,
+        stageLeft: 185.5,
+        stageTop: 424.125,
+      }),
+    ).toEqual({ left: 2, top: 2 });
+  });
+});
 
 describe('input lifecycle across scene transitions', () => {
   it('ends a held pointer gesture before the incoming scene can process it', () => {

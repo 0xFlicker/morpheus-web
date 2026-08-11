@@ -119,6 +119,7 @@ export type GameStageShellProps = {
   onCurrentSceneChange?: (sceneId: number) => void;
   onReturnToTitle?: () => void;
   sizing?: 'viewport' | 'container';
+  volume?: number;
 };
 
 export const GameStageShell = ({
@@ -126,6 +127,7 @@ export const GameStageShell = ({
   onCurrentSceneChange,
   onReturnToTitle,
   sizing = 'viewport',
+  volume = 0.5,
 }: GameStageShellProps) => {
   const policy = useRuntimePolicy();
   const livingSaveCoordinator = useOptionalLivingSaveCoordinator();
@@ -657,7 +659,7 @@ export const GameStageShell = ({
     [activeScene?.sceneId, waitForScene],
   );
 
-  const { state: gameControlState } = useGameControl({
+  useGameControl({
     sessionName: mcpSessionName,
     callbacks: useMemo(
       () => ({
@@ -719,6 +721,7 @@ export const GameStageShell = ({
           height={height}
           left={left}
           top={top}
+          volume={volume}
           onRotationChange={handleRotationChange}
           rotation={rotation}
           onTransition={handleSceneTransition}
@@ -770,27 +773,6 @@ export const GameStageShell = ({
           }}
           onReturnToTitle={() => onReturnToTitle?.()}
         />
-      )}
-      {process.env.NODE_ENV === 'development' && (
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 8,
-            right: 8,
-            padding: '4px 8px',
-            backgroundColor: gameControlState.isConnected
-              ? 'rgba(0, 255, 0, 0.3)'
-              : 'rgba(255, 0, 0, 0.3)',
-            color: '#fff',
-            fontSize: '10px',
-            borderRadius: 4,
-            pointerEvents: 'none',
-          }}
-        >
-          {gameControlState.isConnected
-            ? `WS: ${gameControlState.sessionId ?? 'connected'}`
-            : 'WS: disconnected'}
-        </div>
       )}
     </div>
   );

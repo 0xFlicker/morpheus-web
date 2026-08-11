@@ -162,6 +162,31 @@ function screenToGameCoords(params: {
   };
 }
 
+export function clientPointToStagePoint(params: {
+  clientX: number;
+  clientY: number;
+  stageLeft: number;
+  stageTop: number;
+}): { top: number; left: number } {
+  const { clientX, clientY, stageLeft, stageTop } = params;
+  return {
+    top: clientY - stageTop,
+    left: clientX - stageLeft,
+  };
+}
+
+function pointerEventToStagePoint(
+  event: PointerEvent<HTMLCanvasElement>,
+): { top: number; left: number } {
+  const stageBounds = event.currentTarget.getBoundingClientRect();
+  return clientPointToStagePoint({
+    clientX: event.clientX,
+    clientY: event.clientY,
+    stageLeft: stageBounds.left,
+    stageTop: stageBounds.top,
+  });
+}
+
 export interface PointerState {
   screenX: number;
   screenY: number;
@@ -246,8 +271,6 @@ export function useInputHandler(params: {
   panoObject: Object3D | undefined;
   rendererYaw3600: number;
   rendererPitch: number;
-  screenLeft: number;
-  screenTop: number;
   screenWidth: number;
   screenHeight: number;
   previousSceneId?: number;
@@ -264,8 +287,6 @@ export function useInputHandler(params: {
     panoObject,
     rendererYaw3600,
     rendererPitch,
-    screenLeft,
-    screenTop,
     screenWidth,
     screenHeight,
     previousSceneId,
@@ -303,8 +324,8 @@ export function useInputHandler(params: {
 
   const [cursor, setCursor] = useState<HTMLImageElement>();
   const [pointer, setPointer] = useState<PointerState>({
-    screenX: screenLeft,
-    screenY: screenTop,
+    screenX: 0,
+    screenY: 0,
     isDown: false,
     downTime: 0,
     startScreenX: 0,
@@ -364,8 +385,8 @@ export function useInputHandler(params: {
 
   // Convert screen coords to game coords
   const gamePosition = useMemo(() => {
-    const cursorTop = pointer.screenY - screenTop;
-    const cursorLeft = pointer.screenX - screenLeft;
+    const cursorTop = pointer.screenY;
+    const cursorLeft = pointer.screenX;
 
     const panoPosition = panoPositionFromScreen(cursorTop, cursorLeft);
     if (panoPosition) {
@@ -381,8 +402,6 @@ export function useInputHandler(params: {
   }, [
     pointer.screenX,
     pointer.screenY,
-    screenTop,
-    screenLeft,
     panoPositionFromScreen,
     rendererPitch,
     rendererYaw3600,
@@ -717,8 +736,8 @@ export function useInputHandler(params: {
         sweepRafRef.current = null;
       }
       const resetPointer = {
-        screenX: screenLeft,
-        screenY: screenTop,
+        screenX: 0,
+        screenY: 0,
         isDown: false,
         downTime: 0,
         startScreenX: 0,
@@ -729,7 +748,7 @@ export function useInputHandler(params: {
       pointerRef.current = resetPointer;
       setPointer(resetPointer);
     }
-  }, [finishCurrentPointerInteraction, scene.sceneId, screenLeft, screenTop]);
+  }, [finishCurrentPointerInteraction, scene.sceneId]);
 
   // Run entry rules for new scenes; replay Always settlement after a restore.
   const processedSceneIdRef = useRef<number | null>(null);
@@ -937,11 +956,11 @@ export function useInputHandler(params: {
       suppressedPointerIdRef.current = suppression.suppressedPointerId;
       if (suppression.shouldIgnore) return;
       if (!inputEnabledRef.current) return;
-      const { clientX, clientY } = event;
+      const { left: screenX, top: screenY } = pointerEventToStagePoint(event);
 
       // Compute game position immediately for startPos
-      const cursorTop = clientY - screenTop;
-      const cursorLeft = clientX - screenLeft;
+      const cursorTop = screenY;
+      const cursorLeft = screenX;
       let startGamePos = screenToGameCoords({
         top: cursorTop,
         left: cursorLeft,
@@ -956,12 +975,12 @@ export function useInputHandler(params: {
 
       const now = Date.now();
       const newPointerState = {
-        screenX: clientX,
-        screenY: clientY,
+        screenX,
+        screenY,
         isDown: true,
         downTime: now,
-        startScreenX: clientX,
-        startScreenY: clientY,
+        startScreenX: screenX,
+        startScreenY: screenY,
         startGameX: startGamePos.left,
         startGameY: startGamePos.top,
       };
@@ -987,8 +1006,6 @@ export function useInputHandler(params: {
       settlePendingAction();
     },
     [
-      screenTop,
-      screenLeft,
       screenHeight,
       screenWidth,
       panoPositionFromScreen,
@@ -1008,26 +1025,26 @@ export function useInputHandler(params: {
       suppressedPointerIdRef.current = suppression.suppressedPointerId;
       if (suppression.shouldIgnore) return;
       if (!inputEnabledRef.current) return;
-      const { clientX, clientY } = event;
+      const { left: screenX, top: screenY } = pointerEventToStagePoint(event);
       const prev = pointerRef.current;
 
       // Skip if position unchanged
-      if (prev.screenX === clientX && prev.screenY === clientY) {
+      if (prev.screenX === screenX && prev.screenY === screenY) {
         return;
       }
 
       // Update ref synchronously and state
       const newPointerState = {
         ...prev,
-        screenX: clientX,
-        screenY: clientY,
+        screenX,
+        screenY,
       };
       pointerRef.current = newPointerState;
       setPointer(newPointerState);
 
       // Compute current game position
-      const cursorTop = clientY - screenTop;
-      const cursorLeft = clientX - screenLeft;
+      const cursorTop = screenY;
+      const cursorLeft = screenX;
       let currentGamePos = screenToGameCoords({
         top: cursorTop,
         left: cursorLeft,
@@ -1054,8 +1071,6 @@ export function useInputHandler(params: {
       }
     },
     [
-      screenTop,
-      screenLeft,
       screenHeight,
       screenWidth,
       panoPositionFromScreen,
@@ -1075,12 +1090,12 @@ export function useInputHandler(params: {
       suppressedPointerIdRef.current = suppression.suppressedPointerId;
       if (suppression.shouldIgnore) return;
       if (!inputEnabledRef.current) return;
-      const { clientX, clientY } = event;
+      const { left: screenX, top: screenY } = pointerEventToStagePoint(event);
       const prev = pointerRef.current;
 
       // Compute current game position
-      const cursorTop = clientY - screenTop;
-      const cursorLeft = clientX - screenLeft;
+      const cursorTop = screenY;
+      const cursorLeft = screenX;
       let currentGamePos = screenToGameCoords({
         top: cursorTop,
         left: cursorLeft,
@@ -1094,8 +1109,8 @@ export function useInputHandler(params: {
       }
 
       const timeSinceDown = Date.now() - prev.downTime;
-      const dx = clientX - prev.startScreenX;
-      const dy = clientY - prev.startScreenY;
+      const dx = screenX - prev.startScreenX;
+      const dy = screenY - prev.startScreenY;
       const distanceMoved = Math.sqrt(dx * dx + dy * dy);
       const isClick =
         timeSinceDown < CLICK_THRESHOLD_MS &&
@@ -1105,8 +1120,8 @@ export function useInputHandler(params: {
       // Update ref synchronously and state - reset start positions so cursor doesn't match old drag start
       const newPointerState = {
         ...prev,
-        screenX: clientX,
-        screenY: clientY,
+        screenX,
+        screenY,
         isDown: false,
         startScreenX: 0,
         startScreenY: 0,
@@ -1155,8 +1170,6 @@ export function useInputHandler(params: {
       capturedPointerRef.current = null;
     },
     [
-      screenTop,
-      screenLeft,
       screenHeight,
       screenWidth,
       panoPositionFromScreen,
@@ -1175,12 +1188,12 @@ export function useInputHandler(params: {
       if (event.currentTarget.hasPointerCapture(event.pointerId)) {
         return;
       }
-      const { clientX, clientY } = event;
+      const { left: screenX, top: screenY } = pointerEventToStagePoint(event);
       const prev = pointerRef.current;
       const newPointerState = {
         ...prev,
-        screenX: clientX,
-        screenY: clientY,
+        screenX,
+        screenY,
         isDown: false,
         startScreenX: 0,
         startScreenY: 0,
@@ -1252,8 +1265,8 @@ export function useInputHandler(params: {
   return [
     {
       image: cursor,
-      top: pointer.screenY - screenTop,
-      left: pointer.screenX - screenLeft,
+      top: pointer.screenY,
+      left: pointer.screenX,
     },
     {
       onPointerUp,

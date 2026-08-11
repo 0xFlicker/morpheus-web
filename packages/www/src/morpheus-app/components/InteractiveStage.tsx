@@ -393,8 +393,6 @@ const InteractiveStage: FC<InteractiveStageProps> = ({
       panoObject,
       rendererYaw3600: internalToExternal(internalRotation.x),
       rendererPitch: internalRotation.y,
-      screenLeft: left,
-      screenTop: top,
       screenWidth: width,
       screenHeight: height,
       previousSceneId,

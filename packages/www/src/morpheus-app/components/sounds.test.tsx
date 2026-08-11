@@ -33,4 +33,18 @@ describe('background audio', () => {
 
     expect(markup).toMatch(/<audio[^>]*\bloop(?:=""|="true")?/);
   });
+
+  it('marks zero-volume background audio as muted', () => {
+    const markup = renderToStaticMarkup(
+      <Sounds
+        soundCasts={[makeBackgroundSound()]}
+        volume={0}
+        onAudioCastCanPlaythrough={() => undefined}
+        onAudioCastEnded={() => undefined}
+        onAudioCastRef={() => undefined}
+      />,
+    );
+
+    expect(markup).toContain(' muted=""');
+  });
 });

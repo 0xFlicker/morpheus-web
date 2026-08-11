@@ -82,10 +82,6 @@
 }
 
 .titleRow {
-  display: grid;
-  grid-template-columns: minmax(0, 3fr) minmax(17rem, 2fr);
-  gap: 3rem;
-  align-items: end;
   padding-block: clamp(2.3rem, 6vw, 5rem);
   border-bottom: 0.5rem solid var(--blue);
 }
@@ -125,14 +121,6 @@
   line-height: 1;
   text-shadow: none;
   text-transform: uppercase;
-}
-
-.intro {
-  max-width: 33rem;
-  margin: 0;
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: clamp(1.05rem, 2vw, 1.3rem);
-  line-height: 1.5;
 }
 
 .main {
@@ -205,6 +193,30 @@
   background: var(--paper);
 }
 
+.actions .audioButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  width: 8.5rem;
+}
+
+.audioButton[aria-pressed='true'] {
+  color: var(--ink);
+  background: var(--paper);
+}
+
+.audioIcon {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex: 0 0 auto;
+  fill: currentColor;
+  stroke: currentColor;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  stroke-width: 2;
+}
+
 .actions button:hover:not(:disabled),
 .actions button:focus-visible {
   transform: translate(3px, 3px);
@@ -262,11 +274,6 @@
     display: none;
   }
 
-  .titleRow {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-
   .controls {
     align-items: stretch;
     flex-direction: column;
@@ -278,6 +285,10 @@
   }
 
   .actions button {
+    width: 100%;
+  }
+
+  .actions .audioButton {
     width: 100%;
   }
 }
