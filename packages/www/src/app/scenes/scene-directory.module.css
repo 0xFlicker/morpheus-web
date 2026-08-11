@@ -279,11 +279,22 @@
   background-size: 12px 12px;
 }
 
+.previewFrame img,
 .previewFrame video {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.previewFrame video {
+  opacity: 0;
+}
+
+.previewFrame video[data-media-ready='true'] {
+  opacity: 1;
 }
 
 .previewIndex {

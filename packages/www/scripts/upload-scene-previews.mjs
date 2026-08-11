@@ -1,5 +1,5 @@
 /**
- * Upload pre-rendered scene previews (GIF / MP4 / WebM) to public Vercel Blob.
+ * Upload pre-rendered scene previews (poster PNG / GIF / MP4 / WebM) to public Vercel Blob.
  *
  * Requires BLOB_READ_WRITE_TOKEN for the **public media store** (same store as
  * GameDB — host matches NEXT_PUBLIC_MORPHEUS_GAMEDB_ORIGIN). The private map
@@ -21,6 +21,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import {
   collectScenePreviewFiles,
   DEFAULT_PREVIEWS_SOURCE,
+  PREVIEW_KINDS,
 } from './preview-paths.mjs';
 
 const CACHE_CONTROL_MAX_AGE = 86_400;
@@ -33,7 +34,7 @@ function usage() {
     '',
     'Options:',
     '  --source <dir>         Local .scene-previews root (default: packages/www/.scene-previews)',
-    '  --kinds gif,mp4,webm   Which outputs to upload (default: all three)',
+    '  --kinds gif,mp4,poster,webm  Which outputs to upload (default: all four)',
     '  --concurrency <1-32>   Parallel uploads (default 4)',
     '  --dry-run              Inventory only',
     '  --update               Allow overwrite; requires --expect prior report',
@@ -52,7 +53,7 @@ export function parseArguments(args) {
     resume: false,
     source: DEFAULT_PREVIEWS_SOURCE,
     update: false,
-    kinds: ['gif', 'mp4', 'webm'],
+    kinds: [...PREVIEW_KINDS],
   };
   for (let index = 0; index < args.length; index += 1) {
     const argument = args[index];
@@ -61,15 +62,25 @@ export function parseArguments(args) {
     else if (argument === '--resume') options.resume = true;
     else if (argument === '--concurrency') {
       const value = Number(args[index + 1]);
-      if (!Number.isInteger(value) || value < 1 || value > MAX_UPLOAD_CONCURRENCY) {
-        throw new Error(`--concurrency must be an integer from 1 to ${MAX_UPLOAD_CONCURRENCY}.`);
+      if (
+        !Number.isInteger(value) ||
+        value < 1 ||
+        value > MAX_UPLOAD_CONCURRENCY
+      ) {
+        throw new Error(
+          `--concurrency must be an integer from 1 to ${MAX_UPLOAD_CONCURRENCY}.`,
+        );
       }
       options.concurrency = value;
       index += 1;
     } else if (argument === '--kinds') {
       const value = args[index + 1];
-      if (!value || value.startsWith('--')) throw new Error('Missing value for --kinds');
-      options.kinds = value.split(',').map((k) => k.trim()).filter(Boolean);
+      if (!value || value.startsWith('--'))
+        throw new Error('Missing value for --kinds');
+      options.kinds = value
+        .split(',')
+        .map((k) => k.trim())
+        .filter(Boolean);
       index += 1;
     } else if (
       argument === '--source' ||
@@ -77,7 +88,8 @@ export function parseArguments(args) {
       argument === '--expect'
     ) {
       const value = args[index + 1];
-      if (!value || value.startsWith('--')) throw new Error(`Missing value for ${argument}`);
+      if (!value || value.startsWith('--'))
+        throw new Error(`Missing value for ${argument}`);
       options[argument.slice(2)] = path.resolve(value);
       index += 1;
     } else if (argument === '--help' || argument === '-h') {
@@ -87,7 +99,8 @@ export function parseArguments(args) {
     }
   }
 
-  if (!options.report) throw new Error('A --report path is required to record uploaded ETags.');
+  if (!options.report)
+    throw new Error('A --report path is required to record uploaded ETags.');
   if (options.update && !options.expect) {
     throw new Error('--update requires --expect <previous-report.json>.');
   }
@@ -108,15 +121,23 @@ async function readExpectedEtags(reportPath) {
   try {
     parsed = JSON.parse(await readFile(reportPath, 'utf8'));
   } catch (error) {
-    throw new Error(`Cannot read expected inventory report ${reportPath}: ${error.message}`);
+    throw new Error(
+      `Cannot read expected inventory report ${reportPath}: ${error.message}`,
+    );
   }
   if (!Array.isArray(parsed.files)) {
     throw new Error('Expected inventory report must contain a files array.');
   }
   const etags = new Map();
   for (const file of parsed.files) {
-    if (typeof file?.pathname !== 'string' || typeof file?.etag !== 'string' || !file.etag) {
-      throw new Error('Expected inventory report contains a file without pathname+etag.');
+    if (
+      typeof file?.pathname !== 'string' ||
+      typeof file?.etag !== 'string' ||
+      !file.etag
+    ) {
+      throw new Error(
+        'Expected inventory report contains a file without pathname+etag.',
+      );
     }
     if (etags.has(file.pathname)) {
       throw new Error(`Expected inventory report repeats ${file.pathname}.`);
@@ -131,7 +152,11 @@ function makeReport({ inventory, options, uploaded, errors, files }) {
     cacheControlMaxAge: CACHE_CONTROL_MAX_AGE,
     files,
     generatedAt: new Date().toISOString(),
-    mode: options.update ? 'update' : options.resume ? 'resume' : 'initial-import',
+    mode: options.update
+      ? 'update'
+      : options.resume
+        ? 'resume'
+        : 'initial-import',
     sourceRoot: inventory.sourceRoot,
     summary: {
       discovered: inventory.files.length,
@@ -155,8 +180,13 @@ export async function assertPublicMediaStore(list) {
   const paths = (root.blobs ?? []).map((b) => b.pathname);
   const onlyMap =
     paths.length > 0 &&
-    paths.every((p) => p === 'morpheus.map.json' || p.endsWith('/morpheus.map.json'));
-  if (onlyMap && !paths.some((p) => p.startsWith('GameDB/') || p.startsWith('previews/'))) {
+    paths.every(
+      (p) => p === 'morpheus.map.json' || p.endsWith('/morpheus.map.json'),
+    );
+  if (
+    onlyMap &&
+    !paths.some((p) => p.startsWith('GameDB/') || p.startsWith('previews/'))
+  ) {
     // Still allow empty public store (fresh). Only reject when store clearly is map-only.
     const sample = await list({ prefix: 'GameDB/', limit: 1 });
     const previews = await list({ prefix: 'previews/', limit: 1 });
@@ -190,8 +220,12 @@ export async function importScenePreviews(options) {
     );
   }
 
-  const expectedEtags = options.update ? await readExpectedEtags(options.expect) : null;
-  const resumedEtags = options.resume ? await readExpectedEtags(options.expect) : null;
+  const expectedEtags = options.update
+    ? await readExpectedEtags(options.expect)
+    : null;
+  const resumedEtags = options.resume
+    ? await readExpectedEtags(options.expect)
+    : null;
 
   let uploaded = 0;
   const errors = [];
@@ -201,13 +235,15 @@ export async function importScenePreviews(options) {
       options,
       uploaded: 0,
       errors,
-      files: inventory.files.map(({ contentType, key, size, kind, sceneId }) => ({
-        contentType,
-        kind,
-        pathname: key,
-        sceneId,
-        size,
-      })),
+      files: inventory.files.map(
+        ({ contentType, key, size, kind, sceneId }) => ({
+          contentType,
+          kind,
+          pathname: key,
+          sceneId,
+          size,
+        }),
+      ),
     });
     await writeReport(options.report, report);
     return report;
@@ -250,7 +286,11 @@ export async function importScenePreviews(options) {
           try {
             const existing = await head(file.key);
             const expectedEtag = resumedEtags.get(file.key);
-            if (expectedEtag && existing.etag === expectedEtag && existing.size === file.size) {
+            if (
+              expectedEtag &&
+              existing.etag === expectedEtag &&
+              existing.size === file.size
+            ) {
               results[fileIndex] = {
                 contentType: file.contentType,
                 etag: existing.etag,

@@ -100,9 +100,41 @@ async function verifySceneDirectory(browser, baseUrl, catalog, failures) {
     (await cards.count()) === catalog.sceneCount,
     `Scene index did not render ${catalog.sceneCount} cards`,
   );
-  await page.waitForTimeout(500);
-  const activeMedia = await page.locator('[data-media-active="true"]').count();
-  assert(activeMedia <= 24, `Scene index activated ${activeMedia} previews`);
+  const firstCard = cards.first();
+  const firstPoster = firstCard.locator('img');
+  const firstVideo = firstCard.locator('[data-scene-preview]');
+  await firstPoster.evaluate((image) => image.decode());
+  assert(
+    (await firstPoster.getAttribute('src'))?.endsWith('/1010.png'),
+    'Scene index did not render the first-frame poster',
+  );
+  assert(
+    (await page.locator('[data-scene-preview][src]').count()) === 0,
+    'Scene index loaded movies before interaction',
+  );
+
+  await firstCard.hover();
+  await page.waitForFunction(() => {
+    const video = document.querySelector('[data-scene-preview="1010"]');
+    return video instanceof HTMLVideoElement && !video.paused;
+  });
+  const timeBeforePause = await firstVideo.evaluate(
+    (video) => video.currentTime,
+  );
+  await page.mouse.move(0, 0);
+  await page.waitForFunction(() => {
+    const video = document.querySelector('[data-scene-preview="1010"]');
+    return video instanceof HTMLVideoElement && video.paused;
+  });
+  const pausedMovie = await firstVideo.evaluate((video) => ({
+    currentTime: video.currentTime,
+    hasSource: video.hasAttribute('src'),
+  }));
+  assert(pausedMovie.hasSource, 'Scene movie was unloaded when hover ended');
+  assert(
+    pausedMovie.currentTime >= timeBeforePause,
+    'Scene movie reset when hover ended',
+  );
 
   const query = String(catalog.scenes.at(-1).sceneId);
   await page.getByRole('searchbox', { name: 'Find a scene ID' }).fill(query);
@@ -119,6 +151,52 @@ async function verifySceneDirectory(browser, baseUrl, catalog, failures) {
   await assertNoHorizontalOverflow(page, '/scenes');
   await context.close();
 
+  const touchContext = await browser.newContext({
+    hasTouch: true,
+    viewport: { width: 390, height: 844 },
+  });
+  const touchPage = await touchContext.newPage();
+  registerPageFailures(touchPage, failures);
+  await touchPage.goto(`${baseUrl}/scenes`, {
+    waitUntil: 'domcontentloaded',
+  });
+  const touchCard = touchPage.locator('[data-scene-card]').first();
+  const touchVideo = touchCard.locator('[data-scene-preview]');
+  await touchCard.dispatchEvent('pointerdown', {
+    bubbles: true,
+    isPrimary: true,
+    pointerId: 1,
+    pointerType: 'touch',
+  });
+  await touchPage.waitForTimeout(550);
+  await touchPage.waitForFunction(() => {
+    const video = document.querySelector('[data-scene-preview="1010"]');
+    return video instanceof HTMLVideoElement && !video.paused;
+  });
+  const touchTimeBeforePause = await touchVideo.evaluate(
+    (video) => video.currentTime,
+  );
+  await touchCard.dispatchEvent('pointerup', {
+    bubbles: true,
+    isPrimary: true,
+    pointerId: 1,
+    pointerType: 'touch',
+  });
+  await touchPage.waitForFunction(() => {
+    const video = document.querySelector('[data-scene-preview="1010"]');
+    return video instanceof HTMLVideoElement && video.paused;
+  });
+  const pausedTouchMovie = await touchVideo.evaluate((video) => ({
+    currentTime: video.currentTime,
+    hasSource: video.hasAttribute('src'),
+  }));
+  assert(pausedTouchMovie.hasSource, 'Scene movie was unloaded after long tap');
+  assert(
+    pausedTouchMovie.currentTime >= touchTimeBeforePause,
+    'Scene movie reset after long tap',
+  );
+  await touchContext.close();
+
   const reducedContext = await browser.newContext({
     viewport: { width: 390, height: 844 },
     reducedMotion: 'reduce',
@@ -129,14 +207,12 @@ async function verifySceneDirectory(browser, baseUrl, catalog, failures) {
     waitUntil: 'domcontentloaded',
   });
   await reducedPage.locator('[data-scene-card]').first().waitFor();
-  await reducedPage.waitForTimeout(500);
-  const autoplaying = await reducedPage
-    .locator('[data-scene-preview]')
-    .evaluateAll(
-      (videos) =>
-        videos.filter((video) => !video.paused && video.autoplay).length,
-    );
-  assert(autoplaying === 0, 'Reduced-motion scene previews autoplayed');
+  await reducedPage.locator('[data-scene-card]').first().hover();
+  await reducedPage.waitForTimeout(100);
+  assert(
+    (await reducedPage.locator('[data-scene-preview][src]').count()) === 0,
+    'Reduced-motion scene preview loaded a movie',
+  );
   await assertNoHorizontalOverflow(reducedPage, '/scenes mobile');
   await reducedContext.close();
 }

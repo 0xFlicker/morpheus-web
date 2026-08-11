@@ -1,6 +1,6 @@
-# Scene OG preview GIFs
+# Scene preview media
 
-Offline pipeline that captures every scene via WebGL and publishes length-capped animated GIFs for `og:image`.
+Offline pipeline that captures every scene via WebGL and publishes a static first-frame poster plus animated preview formats.
 
 ## Prerequisites
 
@@ -23,7 +23,7 @@ yarn workspace morpheus-next preview:generate --scene 1010
 # Dry-run dirty set against existing manifest
 yarn workspace morpheus-next preview:generate --dry-run
 
-# Prove catalog, manifest, and all three local formats contain the same scenes
+# Prove catalog, manifest, and all four local formats contain the same scenes
 yarn workspace morpheus-next preview:verify
 ```
 
@@ -39,6 +39,7 @@ When finished, the page sets `document.documentElement.dataset.captureState` to 
 
 - Intermediates (native **640×400** PNGs, **480** pano frames ≈ 0.75° steps):  
   `packages/www/.scene-previews/intermediates/{sceneId}/fXXX.png`
+- Static poster (the existing first capture frame, **640×400**): `packages/www/.scene-previews/intermediates/{sceneId}/f000.png`
 - Master MP4 (**60 fps**, full 640×400 — smooth shareable spin, ~8s/rev):  
   `packages/www/.scene-previews/master/{sceneId}.mp4`
 - HQ WebM/VP9 (**60 fps**, 640×400):  
@@ -53,11 +54,12 @@ Prefer re-encoding GIF/WebP from intermediates when only size/fps change; use `-
 
 Stable public keys (sibling to `GameDB/`):
 
-| Local file        | Blob key                    |
-| ----------------- | --------------------------- |
-| `gif/{id}.gif`    | `previews/scenes/{id}.gif`  |
-| `master/{id}.mp4` | `previews/scenes/{id}.mp4`  |
-| `webm/{id}.webm`  | `previews/scenes/{id}.webm` |
+| Local file                    | Blob key                    |
+| ----------------------------- | --------------------------- |
+| `intermediates/{id}/f000.png` | `previews/scenes/{id}.png`  |
+| `gif/{id}.gif`                | `previews/scenes/{id}.gif`  |
+| `master/{id}.mp4`             | `previews/scenes/{id}.mp4`  |
+| `webm/{id}.webm`              | `previews/scenes/{id}.webm` |
 
 ```bash
 # Dry-run inventory
@@ -101,6 +103,10 @@ Doppler has no Morpheus project with these secrets; Vercel project `morpheus-web
 - **`og:video`** (optional) → MP4 for platforms that honor it — **not** a substitute for `og:image`
 
 MP4 is **not** valid as `og:image`. GIF (or static image) is required for unfurl cards.
+
+The public scene index loads the poster lazily. It does not attach the WebM
+source until mouse hover or a 500 ms touch hold. Releasing either interaction
+pauses on the current movie frame.
 
 ## Policy notes
 

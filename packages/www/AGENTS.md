@@ -9,6 +9,7 @@ Next.js (App Router) frontend for Morpheus. This package also contains the local
 - **Build**: `yarn workspace morpheus-next build`
 
 Notes:
+
 - Node is expected to be **>= 24** (see repo root `AGENTS.md`).
 - The MCP/WebSocket broker is **local-dev only** (production deploys won’t have the WS broker).
 - Public GameDB media uses `NEXT_PUBLIC_MORPHEUS_GAMEDB_ORIGIN`; copied UI
@@ -21,7 +22,7 @@ Notes:
 ### Public route contract
 
 - `/` is the public Soap Bubble Productions / Morpheus homepage.
-- `/scenes` is the server-rendered authoritative scene index. Its small client controller filters existing card markup and keeps only a bounded set of nearby preview videos active.
+- `/scenes` is the server-rendered authoritative scene index. Cards load `previews/scenes/{sceneId}.png` as lazy static posters; the small client controller attaches WebM only on hover or a 500 ms touch hold, then pauses in place when that interaction ends.
 - `/morpheus` owns the persistent, full-game runtime. Authored scene changes do not change its URL.
 - `/scene/[sceneId]` owns an isolated explorer runtime. Authored scene changes replace the current browser address without remounting that runtime.
 - `/render/[scene]` and `/capture/scene/[sceneId]` remain root-level local preview tools with isolated, non-persistent runtimes.
@@ -37,9 +38,11 @@ Notes:
   - **MCP**: `?client=mcp&session=<id>`
 
 The browser typically chooses the session name via the scene URL query param:
+
 - `/scene/1050?mcp=mySessionName`
 
 Hotspot click control is browser-authoritative:
+
 - `morpheus_click_hotspot` sends an exact hotspot selector to the connected browser and waits for a browser-reported result.
 - Static map data is only candidate discovery; active scene identity and gamestate eligibility are decided by the browser.
 - `morpheus_rotate_to_hotspot` is a viewing helper, not evidence that a click occurred.
@@ -77,6 +80,7 @@ There are two “stores” in this package:
 - **Provider wiring**: `src/morpheus-app/runtime/RuntimeProvider.tsx` → owned by each game, explorer, or tooling route
 
 Current slices:
+
 - **Scene**: `src/morpheus-app/store/slices/sceneSlice.ts`
   - `byId`: scene cache
   - `stack`: small LRU-ish stage stack (active + background scenes)
@@ -89,15 +93,18 @@ Current slices:
   - selectors: `selectRotation`, `selectRotationSeeded`
 
 How to use in components:
+
 - Prefer `useAppDispatch()` and `useAppSelector(...)` from `src/morpheus-app/store/hooks.ts`
 - Keep selectors **pure** and co-locate them with the slice when possible
 - For derived data, prefer `createSelector` (already used in `sceneSlice.ts`)
 
 Where it’s used today:
+
 - `src/morpheus-app/components/GameStageShell.tsx` drives transitions + rotation via slice actions/selectors.
 - `src/morpheus-app/systems/useSceneSystem.ts` is a hook-style integration point that initializes/prefetches scenes and exposes `stageScenes`.
 
 Adding a new slice (pattern):
+
 - Create `src/morpheus-app/store/slices/<thing>Slice.ts`
 - Export slice reducer + actions + selectors
 - Add the reducer to `configureStore({ reducer: { ... } })` in `src/morpheus-app/store/store.ts`

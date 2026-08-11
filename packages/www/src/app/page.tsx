@@ -56,7 +56,6 @@ export default function Home() {
               />
             </div>
             <figcaption className={styles.caption}>
-              <span>Original title artwork</span>
               <span>Soap Bubble Productions · 1998</span>
             </figcaption>
           </figure>

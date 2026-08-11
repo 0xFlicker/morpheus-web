@@ -5,6 +5,8 @@ import { getSceneTypeLabel, listScenes } from '@/lib/sceneCatalog';
 import {
   scenePreviewWebmPath,
   scenePreviewWebmUrl,
+  scenePreviewPosterPath,
+  scenePreviewPosterUrl,
 } from '@/lib/scenePreviewUrl';
 import { SceneDirectoryClient } from './scene-directory-client';
 import { SceneMediaController } from './scene-media-controller';
@@ -18,6 +20,12 @@ export const metadata: Metadata = {
 
 function previewSource(sceneId: number): string {
   return scenePreviewWebmUrl(sceneId) ?? `/${scenePreviewWebmPath(sceneId)}`;
+}
+
+function posterSource(sceneId: number): string {
+  return (
+    scenePreviewPosterUrl(sceneId) ?? `/${scenePreviewPosterPath(sceneId)}`
+  );
 }
 
 export default function ScenesPage() {
@@ -65,6 +73,14 @@ export default function ScenesPage() {
                 aria-label={`Explore scene ${scene.sceneId}, ${getSceneTypeLabel(scene)}`}
               >
                 <span className={styles.previewFrame} aria-hidden="true">
+                  <img
+                    src={posterSource(scene.sceneId)}
+                    alt=""
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                    decoding="async"
+                    width="640"
+                    height="400"
+                  />
                   <video
                     data-scene-preview={scene.sceneId}
                     data-src={previewSource(scene.sceneId)}

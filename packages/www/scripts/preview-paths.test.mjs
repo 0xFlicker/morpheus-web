@@ -20,6 +20,9 @@ describe('scenePreviewBlobKey', () => {
   it('maps kinds to stable public paths', () => {
     expect(scenePreviewBlobKey(1010, 'gif')).toBe('previews/scenes/1010.gif');
     expect(scenePreviewBlobKey(1010, 'mp4')).toBe('previews/scenes/1010.mp4');
+    expect(scenePreviewBlobKey(1010, 'poster')).toBe(
+      'previews/scenes/1010.png',
+    );
     expect(scenePreviewBlobKey(1010, 'webm')).toBe('previews/scenes/1010.webm');
   });
 
@@ -28,7 +31,8 @@ describe('scenePreviewBlobKey', () => {
       ...completeSceneIds([
         { kind: 'gif', sceneId: 1010, size: 1 },
         { kind: 'mp4', sceneId: 1010, size: 2 },
-        { kind: 'webm', sceneId: 1010, size: 3 },
+        { kind: 'poster', sceneId: 1010, size: 3 },
+        { kind: 'webm', sceneId: 1010, size: 4 },
         { kind: 'gif', sceneId: 2020, size: 1 },
         { kind: 'mp4', sceneId: 2020, size: 0 },
       ]),
@@ -37,13 +41,15 @@ describe('scenePreviewBlobKey', () => {
 });
 
 describe('collectScenePreviewFiles', () => {
-  it('inventories gif/master/webm by numeric scene id', async () => {
+  it('inventories poster/gif/master/webm by numeric scene id', async () => {
     const root = await mkdtemp(path.join(tmpdir(), 'previews-'));
     dirs.push(root);
     await mkdir(path.join(root, 'gif'), { recursive: true });
+    await mkdir(path.join(root, 'intermediates', '1010'), { recursive: true });
     await mkdir(path.join(root, 'master'), { recursive: true });
     await mkdir(path.join(root, 'webm'), { recursive: true });
     await writeFile(path.join(root, 'gif', '1010.gif'), 'g');
+    await writeFile(path.join(root, 'intermediates', '1010', 'f000.png'), 'p');
     await writeFile(path.join(root, 'master', '1010.mp4'), 'm');
     await writeFile(path.join(root, 'webm', '1010.webm'), 'w');
     await writeFile(path.join(root, 'gif', 'notes.txt'), 'x');
@@ -52,6 +58,7 @@ describe('collectScenePreviewFiles', () => {
     expect(inv.files.map((f) => f.key)).toEqual([
       'previews/scenes/1010.gif',
       'previews/scenes/1010.mp4',
+      'previews/scenes/1010.png',
       'previews/scenes/1010.webm',
     ]);
     expect(inv.files.every((f) => f.contentType)).toBe(true);

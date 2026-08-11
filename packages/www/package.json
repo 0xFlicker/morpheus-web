@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev:next": "next dev --webpack",
-    "dev": "npx tsx server.ts",
-    "mcp": "npx tsx mcp-server/index.ts",
+    "dev": "tsx --env-file=../../.env.local server.ts",
+    "mcp": "tsx mcp-server/index.ts",
     "upload:gamedb": "node scripts/upload-gamedb.mjs",
     "upload:previews": "node scripts/upload-scene-previews.mjs",
     "catalog:write": "yarn workspace @soapbubble/morpheus-client prepare:map && node scripts/generate-scene-catalog.mjs --write",
@@ -73,6 +73,7 @@
     "fake-indexeddb": "^6.2.5",
     "playwright": "1.61.1",
     "prettier": "^3.2.5",
+    "tsx": "4.23.12",
     "typescript": "^5.3.3",
     "vitest": "^4.0.17"
   }

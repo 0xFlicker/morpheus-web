@@ -6,6 +6,8 @@ import {
   scenePreviewGifUrl,
   scenePreviewMp4Url,
   scenePreviewOgImage,
+  scenePreviewPosterPath,
+  scenePreviewPosterUrl,
   scenePreviewWebmUrl,
 } from './scenePreviewUrl';
 
@@ -47,6 +49,7 @@ function setEnv(key: (typeof keys)[number], value: string | undefined) {
 describe('scenePreviewUrl', () => {
   it('builds stable preview paths', () => {
     expect(scenePreviewGifPath(1010)).toBe('previews/scenes/1010.gif');
+    expect(scenePreviewPosterPath(1010)).toBe('previews/scenes/1010.png');
   });
 
   it('prefers SCENE_PREVIEWS_ORIGIN and builds gif/mp4/webm urls', () => {
@@ -58,6 +61,9 @@ describe('scenePreviewUrl', () => {
     );
     expect(scenePreviewMp4Url(1010)).toBe(
       'https://cdn.example/previews/scenes/1010.mp4',
+    );
+    expect(scenePreviewPosterUrl(1010)).toBe(
+      'https://cdn.example/previews/scenes/1010.png',
     );
     expect(scenePreviewWebmUrl(1010)).toBe(
       'https://cdn.example/previews/scenes/1010.webm',

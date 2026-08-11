@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { verifyScenePreviewRelease } from './verify-scene-preview-release.mjs';
+import { PREVIEW_KINDS, scenePreviewBlobKey } from './preview-paths.mjs';
 
 function fixture() {
   const scenes = [1010, 2020].map((sceneId) => ({
@@ -8,8 +9,8 @@ function fixture() {
     sceneId,
   }));
   const files = scenes.flatMap(({ sceneId }) =>
-    ['gif', 'mp4', 'webm'].map((kind) => ({
-      key: `previews/scenes/${sceneId}.${kind}`,
+    PREVIEW_KINDS.map((kind) => ({
+      key: scenePreviewBlobKey(sceneId, kind),
       kind,
       sceneId,
       size: 10,
@@ -40,8 +41,8 @@ function fixture() {
 describe('verifyScenePreviewRelease', () => {
   it('accepts exact catalog, manifest, local, and upload sets', () => {
     expect(verifyScenePreviewRelease(fixture())).toEqual({
-      fileCount: 6,
-      formats: { gif: 2, mp4: 2, webm: 2 },
+      fileCount: 8,
+      formats: { gif: 2, mp4: 2, poster: 2, webm: 2 },
       sceneCount: 2,
       uploadVerified: true,
     });

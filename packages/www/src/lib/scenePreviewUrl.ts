@@ -44,6 +44,10 @@ export function scenePreviewMp4Path(sceneId: number): string {
   return `previews/scenes/${sceneId}.mp4`;
 }
 
+export function scenePreviewPosterPath(sceneId: number): string {
+  return `previews/scenes/${sceneId}.png`;
+}
+
 export function scenePreviewWebmPath(sceneId: number): string {
   return `previews/scenes/${sceneId}.webm`;
 }
@@ -62,6 +66,10 @@ export function scenePreviewGifUrl(sceneId: number): string | undefined {
 
 export function scenePreviewMp4Url(sceneId: number): string | undefined {
   return absoluteUrl(scenePreviewMp4Path(sceneId));
+}
+
+export function scenePreviewPosterUrl(sceneId: number): string | undefined {
+  return absoluteUrl(scenePreviewPosterPath(sceneId));
 }
 
 export function scenePreviewWebmUrl(sceneId: number): string | undefined {

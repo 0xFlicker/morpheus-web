@@ -15,8 +15,15 @@ export const DEFAULT_PREVIEWS_SOURCE = path.resolve(
 export const PREVIEW_KIND_DIRS = {
   gif: { localDir: 'gif', ext: '.gif', blobExt: '.gif' },
   mp4: { localDir: 'master', ext: '.mp4', blobExt: '.mp4' },
+  poster: {
+    localDir: 'intermediates',
+    blobExt: '.png',
+    sourceFile: 'f000.png',
+  },
   webm: { localDir: 'webm', ext: '.webm', blobExt: '.webm' },
 };
+
+export const PREVIEW_KINDS = Object.freeze(Object.keys(PREVIEW_KIND_DIRS));
 
 export function scenePreviewBlobKey(sceneId, kind) {
   const spec = PREVIEW_KIND_DIRS[kind];
@@ -33,7 +40,7 @@ export function scenePreviewBlobKey(sceneId, kind) {
  */
 export async function collectScenePreviewFiles(
   sourceRoot = DEFAULT_PREVIEWS_SOURCE,
-  { kinds = ['gif', 'mp4', 'webm'] } = {},
+  { kinds = PREVIEW_KINDS } = {},
 ) {
   const files = [];
   const skipped = [];
@@ -54,21 +61,40 @@ export async function collectScenePreviewFiles(
       continue;
     }
     for (const name of names) {
-      if (!name.endsWith(spec.ext)) {
+      let sceneId;
+      let absolutePath;
+      if (spec.sourceFile) {
+        if (!/^\d+$/.test(name)) {
+          skipped.push({
+            path: path.join(dir, name),
+            reason: 'non-numeric-scene-id',
+          });
+          continue;
+        }
+        sceneId = Number(name);
+        absolutePath = path.join(dir, name, spec.sourceFile);
+      } else if (!name.endsWith(spec.ext)) {
         skipped.push({ path: path.join(dir, name), reason: 'wrong-extension' });
         continue;
+      } else {
+        const stem = name.slice(0, -spec.ext.length);
+        if (!/^\d+$/.test(stem)) {
+          skipped.push({
+            path: path.join(dir, name),
+            reason: 'non-numeric-scene-id',
+          });
+          continue;
+        }
+        sceneId = Number(stem);
+        absolutePath = path.join(dir, name);
       }
-      const stem = name.slice(0, -spec.ext.length);
-      if (!/^\d+$/.test(stem)) {
-        skipped.push({
-          path: path.join(dir, name),
-          reason: 'non-numeric-scene-id',
-        });
+      let st;
+      try {
+        st = await stat(absolutePath);
+      } catch {
+        skipped.push({ path: absolutePath, reason: 'missing-file' });
         continue;
       }
-      const sceneId = Number(stem);
-      const absolutePath = path.join(dir, name);
-      const st = await stat(absolutePath);
       if (!st.isFile()) {
         skipped.push({ path: absolutePath, reason: 'not-file' });
         continue;
@@ -94,7 +120,7 @@ export async function collectScenePreviewFiles(
   return { collisions, files, skipped, sourceRoot: path.resolve(sourceRoot) };
 }
 
-export function completeSceneIds(files, kinds = ['gif', 'mp4', 'webm']) {
+export function completeSceneIds(files, kinds = PREVIEW_KINDS) {
   const kindsByScene = new Map();
   for (const file of files) {
     if (file.size <= 0) continue;

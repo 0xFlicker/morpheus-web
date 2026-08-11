@@ -3,15 +3,24 @@
 import { useEffect } from 'react';
 
 import {
-  chooseActiveSceneMedia,
-  type SceneMediaCandidate,
-} from './sceneMediaActivation';
+  MAX_RETAINED_SCENE_PREVIEWS,
+  SCENE_PREVIEW_LONG_PRESS_MS,
+  shouldPlayScenePreview,
+} from './scenePreviewPlayback';
 
 type MutableCandidate = {
+  card: HTMLElement;
+  hovered: boolean;
+  longPressed: boolean;
+  longPressTimer: number | undefined;
+  suppressClick: boolean;
+  suppressClickTimer: number | undefined;
   video: HTMLVideoElement;
-  focused: boolean;
-  nearViewport: boolean;
-  sequence: number;
+};
+
+type CurrentTouch = {
+  candidate: MutableCandidate;
+  pointerId: number;
 };
 
 export function SceneMediaController() {
@@ -19,123 +28,245 @@ export function SceneMediaController() {
     const videos = Array.from(
       document.querySelectorAll<HTMLVideoElement>('[data-scene-preview]'),
     );
-    const reduceMotion = window.matchMedia(
+    const motionPreference = window.matchMedia(
       '(prefers-reduced-motion: reduce)',
-    ).matches;
-    const candidates = new Map<string, MutableCandidate>();
-    let sequence = 0;
+    );
+    const candidates = new Map<HTMLElement, MutableCandidate>();
+    const loadedCandidates = new Set<MutableCandidate>();
+    let currentTouch: CurrentTouch | undefined;
+    let reduceMotion = motionPreference.matches;
 
     for (const video of videos) {
       const id = video.dataset.scenePreview;
       const source = video.dataset.src;
-      if (!id || !source) {
-        throw new Error('Scene preview is missing its ID or source');
+      const card = video.closest<HTMLElement>('[data-scene-card]');
+      if (!id || !source || !card) {
+        throw new Error('Scene preview is missing its card, ID, or source');
       }
-      candidates.set(id, {
+      candidates.set(card, {
+        card,
+        hovered: false,
+        longPressed: false,
+        longPressTimer: undefined,
+        suppressClick: false,
+        suppressClickTimer: undefined,
         video,
-        focused: false,
-        nearViewport: false,
-        sequence: 0,
       });
     }
 
-    const deactivate = (video: HTMLVideoElement) => {
-      if (!video.hasAttribute('src')) return;
-      video.pause();
-      video.removeAttribute('src');
-      video.load();
-      delete video.dataset.mediaActive;
+    const candidateFor = (
+      target: EventTarget | null,
+    ): MutableCandidate | undefined => {
+      if (!(target instanceof Element)) return undefined;
+      const card = target.closest<HTMLElement>('[data-scene-card]');
+      return card ? candidates.get(card) : undefined;
     };
 
-    const activate = (video: HTMLVideoElement) => {
-      if (video.hasAttribute('src')) return;
-      const source = video.dataset.src;
-      if (!source) {
-        throw new Error('Scene preview is missing its source');
+    const shouldPlay = (candidate: MutableCandidate) =>
+      shouldPlayScenePreview({
+        hovered: candidate.hovered,
+        longPressed: candidate.longPressed,
+        reduceMotion,
+      });
+
+    const pause = (candidate: MutableCandidate) => {
+      if (!candidate.video.hasAttribute('src')) return;
+      candidate.video.pause();
+      candidate.video.dataset.playback = 'paused';
+    };
+
+    const unload = (candidate: MutableCandidate) => {
+      pause(candidate);
+      candidate.video.removeAttribute('src');
+      candidate.video.load();
+      delete candidate.video.dataset.mediaReady;
+      delete candidate.video.dataset.playback;
+      loadedCandidates.delete(candidate);
+    };
+
+    const retain = (candidate: MutableCandidate) => {
+      loadedCandidates.delete(candidate);
+      loadedCandidates.add(candidate);
+      while (loadedCandidates.size > MAX_RETAINED_SCENE_PREVIEWS) {
+        const oldestInactive = [...loadedCandidates].find(
+          (retained) => retained !== candidate && !shouldPlay(retained),
+        );
+        if (!oldestInactive) return;
+        unload(oldestInactive);
       }
-      video.autoplay = !reduceMotion;
-      video.src = source;
-      video.load();
-      video.dataset.mediaActive = 'true';
-      if (!reduceMotion) {
-        void video.play().catch(() => {
+    };
+
+    const play = (candidate: MutableCandidate) => {
+      const { video } = candidate;
+      if (!video.hasAttribute('src')) {
+        const source = video.dataset.src;
+        if (!source) throw new Error('Scene preview is missing its source');
+        video.src = source;
+        video.load();
+      }
+      retain(candidate);
+      if (video.dataset.playback === 'loading' || !video.paused) return;
+      video.dataset.playback = 'loading';
+      void video
+        .play()
+        .then(() => {
+          video.dataset.mediaReady = 'true';
+          if (shouldPlay(candidate)) {
+            video.dataset.playback = 'playing';
+          } else {
+            pause(candidate);
+          }
+        })
+        .catch(() => {
           video.dataset.playback = 'paused';
         });
+    };
+
+    const reconcile = (candidate: MutableCandidate) => {
+      if (shouldPlay(candidate)) play(candidate);
+      else pause(candidate);
+    };
+
+    const clearLongPressTimer = (candidate: MutableCandidate) => {
+      if (candidate.longPressTimer === undefined) return;
+      window.clearTimeout(candidate.longPressTimer);
+      candidate.longPressTimer = undefined;
+    };
+
+    const scheduleClickReset = (candidate: MutableCandidate) => {
+      if (!candidate.suppressClick) return;
+      if (candidate.suppressClickTimer !== undefined) {
+        window.clearTimeout(candidate.suppressClickTimer);
       }
+      candidate.suppressClickTimer = window.setTimeout(() => {
+        candidate.suppressClick = false;
+        candidate.suppressClickTimer = undefined;
+      }, 750);
     };
 
-    const reconcile = () => {
-      const rows: SceneMediaCandidate[] = Array.from(
-        candidates,
-        ([id, candidate]) => ({
-          id,
-          focused: candidate.focused,
-          nearViewport: candidate.nearViewport,
-          sequence: candidate.sequence,
-        }),
-      );
-      const activeIds = new Set(chooseActiveSceneMedia(rows));
-      for (const [id, candidate] of candidates) {
-        if (activeIds.has(id)) activate(candidate.video);
-        else deactivate(candidate.video);
+    const finishCurrentTouch = (pointerId?: number) => {
+      if (!currentTouch) return;
+      if (pointerId !== undefined && currentTouch.pointerId !== pointerId) {
+        return;
       }
+      const { candidate } = currentTouch;
+      currentTouch = undefined;
+      clearLongPressTimer(candidate);
+      if (candidate.longPressed) {
+        candidate.longPressed = false;
+        reconcile(candidate);
+      }
+      scheduleClickReset(candidate);
     };
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (!(entry.target instanceof HTMLVideoElement)) continue;
-          const video = entry.target;
-          const id = video.dataset.scenePreview;
-          const candidate = id ? candidates.get(id) : undefined;
-          if (!candidate) continue;
-          candidate.nearViewport = entry.isIntersecting;
-          if (entry.isIntersecting) candidate.sequence = ++sequence;
-        }
-        reconcile();
-      },
-      { rootMargin: '600px 0px' },
-    );
-
-    const handleFocusIn = (event: FocusEvent) => {
-      if (!(event.target instanceof Element)) return;
-      const card = event.target.closest<HTMLElement>('[data-scene-card]');
-      const video = card?.querySelector<HTMLVideoElement>(
-        '[data-scene-preview]',
-      );
-      const id = video?.dataset.scenePreview;
-      const candidate = id ? candidates.get(id) : undefined;
-      if (!candidate) return;
-      candidate.focused = true;
-      candidate.sequence = ++sequence;
-      reconcile();
-    };
-
-    const handleFocusOut = (event: FocusEvent) => {
-      if (!(event.target instanceof Element)) return;
-      const card = event.target.closest<HTMLElement>('[data-scene-card]');
+    const handlePointerOver = (event: PointerEvent) => {
+      if (event.pointerType === 'touch') return;
+      const candidate = candidateFor(event.target);
       const relatedTarget =
         event.relatedTarget instanceof Node ? event.relatedTarget : null;
-      if (card?.contains(relatedTarget)) return;
-      const video = card?.querySelector<HTMLVideoElement>(
-        '[data-scene-preview]',
-      );
-      const id = video?.dataset.scenePreview;
-      const candidate = id ? candidates.get(id) : undefined;
-      if (!candidate) return;
-      candidate.focused = false;
-      reconcile();
+      if (!candidate || candidate.card.contains(relatedTarget)) return;
+      candidate.hovered = true;
+      reconcile(candidate);
     };
 
-    for (const video of videos) observer.observe(video);
-    document.addEventListener('focusin', handleFocusIn);
-    document.addEventListener('focusout', handleFocusOut);
+    const handlePointerOut = (event: PointerEvent) => {
+      if (event.pointerType === 'touch') return;
+      const candidate = candidateFor(event.target);
+      const relatedTarget =
+        event.relatedTarget instanceof Node ? event.relatedTarget : null;
+      if (!candidate || candidate.card.contains(relatedTarget)) return;
+      candidate.hovered = false;
+      reconcile(candidate);
+    };
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (event.pointerType !== 'touch') return;
+      finishCurrentTouch();
+      const candidate = candidateFor(event.target);
+      if (!candidate || reduceMotion) return;
+      currentTouch = { candidate, pointerId: event.pointerId };
+      candidate.longPressTimer = window.setTimeout(() => {
+        candidate.longPressTimer = undefined;
+        if (currentTouch?.pointerId !== event.pointerId) return;
+        candidate.longPressed = true;
+        candidate.suppressClick = true;
+        reconcile(candidate);
+      }, SCENE_PREVIEW_LONG_PRESS_MS);
+    };
+
+    const handlePointerUp = (event: PointerEvent) => {
+      finishCurrentTouch(event.pointerId);
+    };
+
+    const handlePointerCancel = (event: PointerEvent) => {
+      finishCurrentTouch(event.pointerId);
+    };
+
+    const handleClick = (event: MouseEvent) => {
+      const candidate = candidateFor(event.target);
+      if (!candidate?.suppressClick) return;
+      event.preventDefault();
+      candidate.suppressClick = false;
+      if (candidate.suppressClickTimer !== undefined) {
+        window.clearTimeout(candidate.suppressClickTimer);
+        candidate.suppressClickTimer = undefined;
+      }
+    };
+
+    const handleContextMenu = (event: MouseEvent) => {
+      const candidate = candidateFor(event.target);
+      if (
+        candidate &&
+        (currentTouch?.candidate === candidate || candidate.longPressed)
+      ) {
+        event.preventDefault();
+      }
+    };
+
+    const handleMotionPreferenceChange = (event: MediaQueryListEvent) => {
+      reduceMotion = event.matches;
+      if (!reduceMotion) return;
+      finishCurrentTouch();
+      for (const candidate of candidates.values()) {
+        candidate.hovered = false;
+        reconcile(candidate);
+      }
+    };
+
+    const handleScroll = () => {
+      finishCurrentTouch();
+    };
+
+    document.addEventListener('pointerover', handlePointerOver);
+    document.addEventListener('pointerout', handlePointerOut);
+    document.addEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('pointerup', handlePointerUp);
+    document.addEventListener('pointercancel', handlePointerCancel);
+    document.addEventListener('click', handleClick, true);
+    document.addEventListener('contextmenu', handleContextMenu);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    motionPreference.addEventListener('change', handleMotionPreferenceChange);
 
     return () => {
-      observer.disconnect();
-      document.removeEventListener('focusin', handleFocusIn);
-      document.removeEventListener('focusout', handleFocusOut);
-      for (const video of videos) deactivate(video);
+      document.removeEventListener('pointerover', handlePointerOver);
+      document.removeEventListener('pointerout', handlePointerOut);
+      document.removeEventListener('pointerdown', handlePointerDown);
+      document.removeEventListener('pointerup', handlePointerUp);
+      document.removeEventListener('pointercancel', handlePointerCancel);
+      document.removeEventListener('click', handleClick, true);
+      document.removeEventListener('contextmenu', handleContextMenu);
+      window.removeEventListener('scroll', handleScroll);
+      motionPreference.removeEventListener(
+        'change',
+        handleMotionPreferenceChange,
+      );
+      if (currentTouch) clearLongPressTimer(currentTouch.candidate);
+      for (const candidate of candidates.values()) {
+        if (candidate.suppressClickTimer !== undefined) {
+          window.clearTimeout(candidate.suppressClickTimer);
+        }
+        unload(candidate);
+      }
     };
   }, []);
 
