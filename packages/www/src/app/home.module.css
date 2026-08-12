@@ -78,6 +78,7 @@
   font-weight: 700;
   letter-spacing: -0.075em;
   line-height: 0.78;
+  text-align: center;
   text-shadow:
     3px 3px 0 var(--paper),
     6px 6px 0 var(--red);
@@ -87,6 +88,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0;
+  justify-content: center;
   border-top: 0.45rem solid var(--blue);
   border-bottom: 1px solid var(--ink);
 }
