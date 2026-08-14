@@ -104,9 +104,11 @@ Doppler has no Morpheus project with these secrets; Vercel project `morpheus-web
 
 MP4 is **not** valid as `og:image`. GIF (or static image) is required for unfurl cards.
 
-The public scene index loads the poster lazily. It does not attach the WebM
-source until mouse hover or a 500 ms touch hold. Releasing either interaction
-pauses on the current movie frame.
+The public scene index loads the poster lazily. It does not attach either video
+source until mouse hover or a 500 ms touch hold. At activation it prefers WebM
+when `video.canPlayType('video/webm')` reports support and otherwise selects the
+published MP4 fallback for Safari-compatible playback. Releasing either
+interaction pauses on the current movie frame.
 
 ## Policy notes
 

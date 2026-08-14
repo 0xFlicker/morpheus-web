@@ -3,6 +3,8 @@ import Link from 'next/link';
 
 import { getSceneTypeLabel, listScenes } from '@/lib/sceneCatalog';
 import {
+  scenePreviewMp4Path,
+  scenePreviewMp4Url,
   scenePreviewWebmPath,
   scenePreviewWebmUrl,
   scenePreviewPosterPath,
@@ -18,7 +20,11 @@ export const metadata: Metadata = {
     'Browse every authored scene in Morpheus and begin anywhere with a fresh game state.',
 };
 
-function previewSource(sceneId: number): string {
+function previewMp4Source(sceneId: number): string {
+  return scenePreviewMp4Url(sceneId) ?? `/${scenePreviewMp4Path(sceneId)}`;
+}
+
+function previewWebmSource(sceneId: number): string {
   return scenePreviewWebmUrl(sceneId) ?? `/${scenePreviewWebmPath(sceneId)}`;
 }
 
@@ -83,7 +89,8 @@ export default function ScenesPage() {
                   />
                   <video
                     data-scene-preview={scene.sceneId}
-                    data-src={previewSource(scene.sceneId)}
+                    data-src-mp4={previewMp4Source(scene.sceneId)}
+                    data-src-webm={previewWebmSource(scene.sceneId)}
                     muted
                     loop
                     playsInline

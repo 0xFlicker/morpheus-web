@@ -112,6 +112,14 @@ async function verifySceneDirectory(browser, baseUrl, catalog, failures) {
     (await page.locator('[data-scene-preview][src]').count()) === 0,
     'Scene index loaded movies before interaction',
   );
+  assert(
+    (await firstVideo.getAttribute('data-src-mp4'))?.endsWith('/1010.mp4'),
+    'Scene index did not expose the published MP4 fallback',
+  );
+  assert(
+    (await firstVideo.getAttribute('data-src-webm'))?.endsWith('/1010.webm'),
+    'Scene index did not expose the WebM preview source',
+  );
 
   await firstCard.hover();
   await page.waitForFunction(() => {
@@ -120,6 +128,10 @@ async function verifySceneDirectory(browser, baseUrl, catalog, failures) {
   });
   const timeBeforePause = await firstVideo.evaluate(
     (video) => video.currentTime,
+  );
+  assert(
+    (await firstVideo.getAttribute('data-media-source')) === 'webm',
+    'Compatible browser did not select the WebM preview source',
   );
   await page.mouse.move(0, 0);
   await page.waitForFunction(() => {
@@ -150,6 +162,41 @@ async function verifySceneDirectory(browser, baseUrl, catalog, failures) {
   );
   await assertNoHorizontalOverflow(page, '/scenes');
   await context.close();
+
+  const fallbackContext = await browser.newContext({
+    viewport: { width: 1440, height: 1000 },
+  });
+  await fallbackContext.addInitScript(() => {
+    const nativeCanPlayType = HTMLMediaElement.prototype.canPlayType;
+    Object.defineProperty(HTMLMediaElement.prototype, 'canPlayType', {
+      configurable: true,
+      value(type) {
+        if (type === 'video/webm') return '';
+        return nativeCanPlayType.call(this, type);
+      },
+    });
+  });
+  const fallbackPage = await fallbackContext.newPage();
+  registerPageFailures(fallbackPage, failures);
+  await fallbackPage.goto(`${baseUrl}/scenes`, {
+    waitUntil: 'domcontentloaded',
+  });
+  const fallbackCard = fallbackPage.locator('[data-scene-card]').first();
+  const fallbackVideo = fallbackCard.locator('[data-scene-preview]');
+  await fallbackCard.hover();
+  await fallbackPage.waitForFunction(() => {
+    const video = document.querySelector('[data-scene-preview="1010"]');
+    return (
+      video instanceof HTMLVideoElement &&
+      video.dataset.mediaSource === 'mp4' &&
+      !video.paused
+    );
+  });
+  assert(
+    (await fallbackVideo.getAttribute('src'))?.endsWith('/1010.mp4'),
+    'Unsupported WebM did not select the published MP4 fallback',
+  );
+  await fallbackContext.close();
 
   const touchContext = await browser.newContext({
     hasTouch: true,

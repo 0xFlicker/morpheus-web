@@ -29,6 +29,12 @@ function fixture() {
     files,
     uploadReport: {
       files: files.map((file) => ({
+        contentType: {
+          gif: 'image/gif',
+          mp4: 'video/mp4',
+          poster: 'image/png',
+          webm: 'video/webm',
+        }[file.kind],
         etag: `etag-${file.sceneId}-${file.kind}`,
         kind: file.kind,
         pathname: file.key,
@@ -71,6 +77,16 @@ describe('verifyScenePreviewRelease', () => {
     input.uploadReport.files.pop();
     expect(() => verifyScenePreviewRelease(input)).toThrow(
       'Upload report does not match local previews',
+    );
+  });
+
+  it('rejects an uploaded video with the wrong content type', () => {
+    const input = fixture();
+    input.uploadReport.files.find(
+      (file) => file.sceneId === 1010 && file.kind === 'mp4',
+    ).contentType = 'application/octet-stream';
+    expect(() => verifyScenePreviewRelease(input)).toThrow(
+      'Upload report has an invalid content type for previews/scenes/1010.mp4: expected video/mp4, got application/octet-stream',
     );
   });
 });

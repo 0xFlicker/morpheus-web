@@ -19,6 +19,13 @@ const DEFAULT_MANIFEST_PATH = path.resolve(
   '../.scene-previews/manifest.json',
 );
 
+const PREVIEW_CONTENT_TYPES = Object.freeze({
+  gif: 'image/gif',
+  mp4: 'video/mp4',
+  poster: 'image/png',
+  webm: 'video/webm',
+});
+
 function assertUniqueIds(label, ids) {
   const unique = new Set(ids);
   if (unique.size !== ids.length) {
@@ -121,6 +128,13 @@ export function verifyScenePreviewRelease({
       if (typeof file.etag !== 'string' || file.etag.length === 0) {
         throw new Error(
           `Upload report is missing an ETag for ${file.pathname}`,
+        );
+      }
+      const expectedContentType = PREVIEW_CONTENT_TYPES[file.kind];
+      if (file.contentType !== expectedContentType) {
+        throw new Error(
+          `Upload report has an invalid content type for ${file.pathname}: ` +
+            `expected ${expectedContentType}, got ${file.contentType ?? 'missing'}`,
         );
       }
       const expectedKey = scenePreviewBlobKey(file.sceneId, file.kind);

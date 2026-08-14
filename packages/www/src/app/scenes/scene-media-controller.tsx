@@ -5,8 +5,10 @@ import { useEffect } from 'react';
 import {
   MAX_RETAINED_SCENE_PREVIEWS,
   SCENE_PREVIEW_LONG_PRESS_MS,
+  selectScenePreviewSource,
   shouldPlayScenePreview,
 } from './scenePreviewPlayback';
+import type { ScenePreviewSources } from './scenePreviewPlayback';
 
 type MutableCandidate = {
   card: HTMLElement;
@@ -15,6 +17,7 @@ type MutableCandidate = {
   longPressTimer: number | undefined;
   suppressClick: boolean;
   suppressClickTimer: number | undefined;
+  sources: ScenePreviewSources;
   video: HTMLVideoElement;
 };
 
@@ -38,10 +41,13 @@ export function SceneMediaController() {
 
     for (const video of videos) {
       const id = video.dataset.scenePreview;
-      const source = video.dataset.src;
+      const mp4Source = video.dataset.srcMp4;
+      const webmSource = video.dataset.srcWebm;
       const card = video.closest<HTMLElement>('[data-scene-card]');
-      if (!id || !source || !card) {
-        throw new Error('Scene preview is missing its card, ID, or source');
+      if (!id || !mp4Source || !webmSource || !card) {
+        throw new Error(
+          'Scene preview is missing its card, ID, or media sources',
+        );
       }
       candidates.set(card, {
         card,
@@ -50,6 +56,7 @@ export function SceneMediaController() {
         longPressTimer: undefined,
         suppressClick: false,
         suppressClickTimer: undefined,
+        sources: { mp4: mp4Source, webm: webmSource },
         video,
       });
     }
@@ -80,6 +87,7 @@ export function SceneMediaController() {
       candidate.video.removeAttribute('src');
       candidate.video.load();
       delete candidate.video.dataset.mediaReady;
+      delete candidate.video.dataset.mediaSource;
       delete candidate.video.dataset.playback;
       loadedCandidates.delete(candidate);
     };
@@ -99,9 +107,12 @@ export function SceneMediaController() {
     const play = (candidate: MutableCandidate) => {
       const { video } = candidate;
       if (!video.hasAttribute('src')) {
-        const source = video.dataset.src;
-        if (!source) throw new Error('Scene preview is missing its source');
-        video.src = source;
+        const source = selectScenePreviewSource(
+          candidate.sources,
+          video.canPlayType.bind(video),
+        );
+        video.src = source.src;
+        video.dataset.mediaSource = source.kind;
         video.load();
       }
       retain(candidate);
