@@ -23,6 +23,7 @@ describe('public site content', () => {
   it('publishes only real internal and secure external destinations', () => {
     expect(publicDestinations.map((destination) => destination.id)).toEqual([
       'web-game',
+      'macos-download',
       'scene-explorer',
       'itch',
     ]);

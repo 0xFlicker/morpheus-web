@@ -15,7 +15,7 @@ export type SourcedParagraph = Readonly<{
 }>;
 
 export type PublicDestination = Readonly<{
-  id: 'web-game' | 'scene-explorer' | 'itch';
+  id: 'web-game' | 'macos-download' | 'scene-explorer' | 'itch';
   label: string;
   eyebrow: string;
   description: string;
@@ -72,6 +72,15 @@ export const publicDestinations: readonly PublicDestination[] = Object.freeze([
       'Enter through the original title sequence and keep a living save in this browser.',
     href: '/morpheus',
     external: false,
+  },
+  {
+    id: 'macos-download',
+    label: 'Download for macOS',
+    eyebrow: 'Native · Version 1.0 (3)',
+    description:
+      'Get the universal Apple silicon and Intel build for macOS 14 or later.',
+    href: 'https://ol0swvwh4hjeaxzf.public.blob.vercel-storage.com/downloads/Morpheus-1.0-3-macOS.zip?download=1',
+    external: true,
   },
   {
     id: 'scene-explorer',

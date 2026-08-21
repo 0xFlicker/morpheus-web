@@ -8,14 +8,14 @@ media paths; it is not a content-release or pointer system.
 
 Configure the `morpheus-web-www` Vercel project as follows:
 
-| Setting | Value |
-| --- | --- |
-| Root Directory | `packages/www` |
-| Framework | Next.js |
-| Node.js | `24.x` |
+| Setting         | Value                               |
+| --------------- | ----------------------------------- |
+| Root Directory  | `packages/www`                      |
+| Framework       | Next.js                             |
+| Node.js         | `24.x`                              |
 | Install command | Vercel default Yarn Classic install |
-| Build command | `yarn vercel-build` |
-| Build output | `.next` |
+| Build command   | `yarn vercel-build`                 |
+| Build output    | `.next`                             |
 
 `packages/www/vercel.json` and its `vercel-build` script are the
 source-controlled part of this configuration. That package script returns to
@@ -27,13 +27,13 @@ and produces the engine UI images before Next evaluates
 
 Create two stores with named owners recorded in the project settings:
 
-| Purpose | Access | Vercel variable | Value |
-| --- | --- | --- | --- |
-| Game media | public | `NEXT_PUBLIC_MORPHEUS_GAMEDB_ORIGIN` | Parent URL of `GameDB` (and scene `previews/…`), for example `https://<store>.public.blob.vercel-storage.com` |
-| Scene OG previews (optional override) | public | `NEXT_PUBLIC_SCENE_PREVIEWS_ORIGIN` | Defaults to GameDB origin; set only if previews live on a different public store |
-| Authored map | private | `MORPHEUS_MAP_BLOB_URL` | Full private Blob URL for `morpheus.map.json` |
-| Authored map read/write token | build-only | `BLOB_READ_WRITE_TOKEN` | Token scoped to the **private map store** (not the public GameDB store) |
-| Public media upload token | operator workstation | (export as `BLOB_READ_WRITE_TOKEN` for upload scripts) | Read-write token for the **public** store — used by `upload:gamedb` and `upload:previews` |
+| Purpose                               | Access               | Vercel variable                                        | Value                                                                                                         |
+| ------------------------------------- | -------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| Game media                            | public               | `NEXT_PUBLIC_MORPHEUS_GAMEDB_ORIGIN`                   | Parent URL of `GameDB` (and scene `previews/…`), for example `https://<store>.public.blob.vercel-storage.com` |
+| Scene OG previews (optional override) | public               | `NEXT_PUBLIC_SCENE_PREVIEWS_ORIGIN`                    | Defaults to GameDB origin; set only if previews live on a different public store                              |
+| Authored map                          | private              | `MORPHEUS_MAP_BLOB_URL`                                | Full private Blob URL for `morpheus.map.json`                                                                 |
+| Authored map read/write token         | build-only           | `BLOB_READ_WRITE_TOKEN`                                | Token scoped to the **private map store** (not the public GameDB store)                                       |
+| Public media upload token             | operator workstation | (export as `BLOB_READ_WRITE_TOKEN` for upload scripts) | Read-write token for the **public** store — used by `upload:gamedb` and `upload:previews`                     |
 
 Set the public origin for Preview and Production. Set the private-map URL and
 token only for trusted Preview and Production deployment refs. Never use a
@@ -57,6 +57,27 @@ BLOB_READ_WRITE_TOKEN=... yarn workspace morpheus-next upload:gamedb -- --report
 
 Keep the importer report and the source corpus location with the release
 record. Upload only rights-cleared converted archive media.
+
+## Native macOS download
+
+Publish notarized macOS exports in the public media store under immutable keys
+of the form `downloads/Morpheus-<version>-<build>-macOS.zip`. Do not overwrite a
+published build. Package the exported `.app` with `ditto -c -k
+--sequesterRsrc --keepParent`, extract the resulting ZIP into a temporary
+directory, and run `codesign --verify --deep --strict --verbose=4` against both
+the source and extracted app outside restricted execution sandboxes. Upload
+with the public media store token and serve the Blob `downloadUrl` so browsers
+receive an attachment response.
+
+Current public release:
+
+| Field         | Value                                                              |
+| ------------- | ------------------------------------------------------------------ |
+| App version   | `1.0 (3)`                                                          |
+| Compatibility | Universal `arm64` + `x86_64`; macOS 14 or later                    |
+| Blob key      | `downloads/Morpheus-1.0-3-macOS.zip`                               |
+| SHA-256       | `0d4b6f47bb802a8e377825c32984f33e03ca8a21aa58055f504d73ad837a3b88` |
+| Size          | `11,370,273` bytes                                                 |
 
 For a stable-path correction, retain the prior source, record the current
 ETag, and run the importer in its explicit update mode. Before it writes,
