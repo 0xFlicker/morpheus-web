@@ -23,6 +23,7 @@
     "ts:watch": "yarn ts --watch"
   },
   "dependencies": {
+    "@clerk/nextjs": "^7.7.8",
     "@modelcontextprotocol/sdk": "^1.25.2",
     "@react-three/fiber": "^9.4.2",
     "@reduxjs/toolkit": "^2.11.2",
