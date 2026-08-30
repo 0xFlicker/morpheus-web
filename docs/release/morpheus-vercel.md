@@ -73,11 +73,11 @@ Current public release:
 
 | Field         | Value                                                              |
 | ------------- | ------------------------------------------------------------------ |
-| App version   | `1.0 (3)`                                                          |
+| App version   | `1.0 (4)`                                                          |
 | Compatibility | Universal `arm64` + `x86_64`; macOS 14 or later                    |
-| Blob key      | `downloads/Morpheus-1.0-3-macOS.zip`                               |
-| SHA-256       | `0d4b6f47bb802a8e377825c32984f33e03ca8a21aa58055f504d73ad837a3b88` |
-| Size          | `11,370,273` bytes                                                 |
+| Blob key      | `downloads/Morpheus-1.0-4-macOS.zip`                               |
+| SHA-256       | `488d08f296c4bde661b8f3f2198112f6381afadd226f33b0bc8560d7f57ca98e` |
+| Size          | `11,378,662` bytes                                                 |
 
 For a stable-path correction, retain the prior source, record the current
 ETag, and run the importer in its explicit update mode. Before it writes,

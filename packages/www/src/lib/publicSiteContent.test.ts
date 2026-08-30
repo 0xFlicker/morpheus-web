@@ -41,4 +41,16 @@ describe('public site content', () => {
     expect(publicDestinations.map(({ id }) => id)).not.toContain('testflight');
     expect(publicSocialLinks).toHaveLength(0);
   });
+
+  it('publishes the current macOS release as a download', () => {
+    const macosDownload = publicDestinations.find(
+      ({ id }) => id === 'macos-download',
+    );
+
+    expect(macosDownload).toMatchObject({
+      eyebrow: 'Native · Version 1.0 (4)',
+      external: true,
+      href: 'https://ol0swvwh4hjeaxzf.public.blob.vercel-storage.com/downloads/Morpheus-1.0-4-macOS.zip?download=1',
+    });
+  });
 });
