@@ -48,9 +48,9 @@ describe('public site content', () => {
     );
 
     expect(macosDownload).toMatchObject({
-      eyebrow: 'Native · Version 1.0 (4)',
+      eyebrow: 'Native · Version 1.0 (5)',
       external: true,
-      href: 'https://ol0swvwh4hjeaxzf.public.blob.vercel-storage.com/downloads/Morpheus-1.0-4-macOS.zip?download=1',
+      href: 'https://ol0swvwh4hjeaxzf.public.blob.vercel-storage.com/downloads/Morpheus-1.0-5-macOS.zip?download=1',
     });
   });
 });
