@@ -185,6 +185,9 @@ export default function Home() {
         </ol>
         <div className={styles.footerLine}>
           <span>Soap Bubble Productions</span>
+          <a href="/privacy">Privacy</a>
+          <a href="/terms">Terms</a>
+          <a href="/support">Contact</a>
           <a href="#top">Back to top ↑</a>
         </div>
       </footer>

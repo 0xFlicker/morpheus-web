@@ -20,6 +20,10 @@ vi.mock('@clerk/nextjs/server', () => ({
   currentUser: clerkMocks.currentUser,
 }));
 
+vi.mock('./CloudDashboard', () => ({
+  default: () => <section>Bug reports</section>,
+}));
+
 import AdminPage from './page';
 
 describe('AdminPage', () => {
@@ -38,7 +42,7 @@ describe('AdminPage', () => {
   it('returns sign-in and sign-up completions to /admin', async () => {
     clerkMocks.auth.mockResolvedValue({ userId: null });
 
-    renderToStaticMarkup(await AdminPage());
+    renderToStaticMarkup(await AdminPage({}));
 
     expect(clerkMocks.signInProps).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -51,13 +55,13 @@ describe('AdminPage', () => {
   it('rejects another Clerk user without loading their profile', async () => {
     clerkMocks.auth.mockResolvedValue({ userId: 'user_someone_else' });
 
-    const markup = renderToStaticMarkup(await AdminPage());
+    const markup = renderToStaticMarkup(await AdminPage({}));
 
     expect(markup).toContain('Access denied');
     expect(clerkMocks.currentUser).not.toHaveBeenCalled();
   });
 
-  it('renders the empty bug-report shell for the verified owner', async () => {
+  it('renders the cloud dashboard for the verified owner', async () => {
     clerkMocks.auth.mockResolvedValue({ userId: 'user_admin' });
     clerkMocks.currentUser.mockResolvedValue({
       primaryEmailAddress: {
@@ -66,7 +70,7 @@ describe('AdminPage', () => {
       },
     });
 
-    const markup = renderToStaticMarkup(await AdminPage());
+    const markup = renderToStaticMarkup(await AdminPage({}));
 
     expect(markup).toContain('Bug reports');
     expect(markup).not.toContain('Access denied');

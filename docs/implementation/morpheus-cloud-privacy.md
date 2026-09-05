@@ -107,7 +107,7 @@ These are proposed product limits, not statutory deadlines. Configure and prove 
 | --- | --- |
 | Local saves | Until the player removes them or device/browser storage is cleared; explain that a browser may also evict data. |
 | Signed-in current saves, unresolved conflicts, discovery and achievements | While the account is kept, until the player deletes the relevant data/account. Preserve long-term resume; do not silently expire active account saves under a short diagnostics policy. |
-| Anonymous server saves and installation record | 180 days after the last successful game-service request, or until deletion. Local play must survive server expiry; distinguish expiration from authorized deletion. |
+| Anonymous server saves and installation record | 90 days after the last successful game-service request, or until deletion. Local play must survive server expiry; distinguish expiration from authorized deletion. |
 | Session/operational diagnostics | 30 days from the event; retain only the current revision/acknowledgment state actually required for future sync after that. |
 | Superseded save payloads | Delete after successful reconciliation; retain a competing branch only until the legitimate conflict is resolved. Keep deletion/revision metadata only as long as its documented sync/credential lifetime requires. |
 | Bug-report notes, structured data and attachments | 90 days from submission. If an issue needs longer investigation, remove player linkage and personal content before retaining a technical reproduction; do not silently retain the full report indefinitely. |

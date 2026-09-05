@@ -3,6 +3,7 @@ import { auth, currentUser } from '@clerk/nextjs/server';
 import type { Metadata } from 'next';
 
 import { getAdminAccess, getAdminSessionAccess } from './adminAccess';
+import CloudDashboard, { type AdminSearchParameters } from './CloudDashboard';
 import styles from './admin.module.css';
 
 export const metadata: Metadata = {
@@ -26,7 +27,11 @@ const RejectedAdmin = () => (
   </main>
 );
 
-const AdminPage = async () => {
+const AdminPage = async ({
+  searchParams,
+}: {
+  searchParams?: Promise<AdminSearchParameters>;
+}) => {
   const { userId } = await auth();
   const sessionAccess = getAdminSessionAccess({
     userId,
@@ -59,10 +64,13 @@ const AdminPage = async () => {
   return (
     <main className={styles.adminPage}>
       <header className={styles.header}>
-        <h1>Bug reports</h1>
+        <div>
+          <p className={styles.eyebrow}>Morpheus admin</p>
+          <h1>Player activity</h1>
+        </div>
         <UserButton />
       </header>
-      <section className={styles.emptyState} aria-label="Bug reports" />
+      <CloudDashboard searchParams={(await searchParams) ?? {}} />
     </main>
   );
 };

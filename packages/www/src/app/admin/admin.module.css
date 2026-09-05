@@ -75,11 +75,179 @@
 }
 
 .emptyState {
-  flex: 1;
-  min-height: 24rem;
+  margin: 0;
+  padding: 4rem 1.5rem;
+  color: #5e5e58;
+  line-height: 1.5;
+}
+
+.dashboard {
+  min-width: 0;
+  background: #fff;
   border: 1px solid #d6d6cf;
   border-radius: 0.75rem;
-  background: #ffffff;
+  overflow: hidden;
+}
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.5rem;
+  padding: 0 1.5rem;
+  border-bottom: 1px solid #d6d6cf;
+}
+.tabs a {
+  display: block;
+  padding: 1.1rem 0;
+  color: #5e5e58;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+.tabs a[aria-current='page'] {
+  color: #171714;
+  border-color: #171714;
+  font-weight: 600;
+}
+.viewNote {
+  margin: 0;
+  padding: 1.2rem 1.5rem;
+  color: #5e5e58;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.tableScroll {
+  overflow-x: auto;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.table th {
+  padding: 0.8rem 1.5rem;
+  background: #f8f8f5;
+  color: #5e5e58;
+  font-weight: 500;
+  border-block: 1px solid #e8e8e1;
+  white-space: nowrap;
+}
+.table td {
+  padding: 1.25rem 1.5rem;
+  vertical-align: top;
+  border-bottom: 1px solid #e8e8e1;
+  min-width: 9rem;
+}
+.table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.table code {
+  font-size: 0.75rem;
+  overflow-wrap: anywhere;
+}
+.table summary {
+  cursor: pointer;
+}
+.table details[open] summary {
+  margin-bottom: 0.75rem;
+}
+.reportColumn {
+  width: 45%;
+  min-width: 18rem !important;
+  max-width: 40rem;
+  overflow-wrap: anywhere;
+}
+.description {
+  white-space: pre-wrap;
+  margin: 0 0 1rem;
+}
+.player {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.meta {
+  display: block;
+  color: #5e5e58;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+}
+.percentage {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.sectionProgress {
+  margin: 0.5rem 0 0;
+  min-width: 17rem;
+}
+.sectionProgress > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.sectionProgress dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.achievements {
+  margin: 0;
+  padding-left: 1rem;
+}
+.attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+.attachments button {
+  color: #171714;
+  border: 1px solid #b3b3a9;
+  border-radius: 0.3rem;
+  background: #fff;
+  padding: 0.4rem 0.7rem;
+  font: inherit;
+  cursor: pointer;
+}
+.attachments button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+.attachments a,
+.pagination a,
+.emptyState a {
+  color: #343c28;
+  text-underline-offset: 0.2em;
+}
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid #e8e8e1;
+  font-size: 0.875rem;
+}
+.pagination span {
+  color: #5e5e58;
+}
+.dashboard :is(a, button, summary):focus-visible {
+  outline: 2px solid #4f6135;
+  outline-offset: 4px;
+  border-radius: 0.1rem;
+}
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 @media (max-width: 32rem) {
