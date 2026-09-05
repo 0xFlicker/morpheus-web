@@ -87,6 +87,18 @@ September 5, 2026 validation: all 31 focused Apple provider/grant/account/route 
 
 ## Deployment verification and monitoring
 
+### September 5 production release
+
+Production is deployment `dpl_HRwZcXNyfyjbXVxgyVZuTcrvXfxs`, commit `3401eff0d4b9be50e669603d8f70f5ffffaf6a7f`. It was built for the production target with `autoAssignCustomDomains:false`, checked before promotion, then explicitly promoted and verified at `www.soapbubble.xyz`. The preceding application remains available for rollback at `dpl_9vF985zK5U8xPBAzhtrHuV3FzMJ6`; rolling back must not drop the cloud database.
+
+Preview `dpl_H6EeAW3UTitZaUjakLv2qghK8kWk` uses the same code with development resources. Its stable webhook alias is `morpheus-web-www-git-codex-morpheus-cloud-flicks-projects.vercel.app`. Verify aliases explicitly after cross-target deployments: a redeploy can inherit its source branch alias.
+
+Actual production checks passed for saves/retries/ownership, private Blob reporting, anonymous admin denial, public browser play/report/erasure, and admin session/discovery/achievement/report browsing. The attachment manifest and authenticated diagnostic request returned successfully; Chrome blocked saving the downloaded JSON locally despite HTTP 200. Synthetic player/save/report records were cleaned up. The production Svix deletion example delivered HTTP 200 and its expected database effect was verified. A manual retention invocation passed with the configured secret (anonymous request: 401), and the initial release error-log check was empty. Next scheduled retention remains a separate observation.
+
+The development Clerk endpoint still cannot be verified through deployment protection. Automatic approval review rejected adding a dedicated automation bypass secret because it changes the project's access controls. The user has a scoped approval question; do not install a bypass indirectly or disable preview protection. If approved, configure a dedicated secret only in this endpoint's `x-vercel-protection-bypass` custom header, retain Clerk signature verification, and verify delivery. [Vercel's documented webhook automation method](https://vercel.com/docs/deployment-protection/methods-to-bypass-deployment-protection/protection-bypass-automation).
+
+Apple capability/profile-impact approval and Apple Developer sign-in remain pending. Native account setup and code are present, but production Apple credentials, real native/web identity parity (including Hide My Email), provider revocation, and final App Store privacy metadata are not verified. These requirements must be completed before the native Apple-authenticated release.
+
 Before production, verify the schema, matched Clerk keys, admin ID, dedicated report token, rate key, cron secret, webhook subscription/secret, and public Privacy/Terms/contact routes. Verify ordinary users and anonymous clients receive 401/403 from every admin API, including attachment downloads. Public browsing must not start Morpheus sessions. Test actual sign-in and two independent browsers; mock tests do not establish those flows.
 
 After release, inspect Vercel logs for `/api/cloud/`, `/api/webhooks/clerk`, `/api/maintenance/morpheus`, and the bounded `Morpheus Cloud request failed` marker. Healthy behavior is successful player registration/save acknowledgments, 409 only on stale ownership or competing progress, unauthorized admin denial, successful deletion deliveries, and a successful daily cleanup. Watch Neon storage/compute and private Blob object growth; receipts should remain small and report orphans should not accumulate past cleanup eligibility. Discovery aggregation currently reads played save records; measure query latency and database load before adding a materialized summary.
