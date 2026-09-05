@@ -12,6 +12,8 @@ import {
   showGameMenuSaveSlots,
 } from '@/morpheus-app/store/slices/gameMenuSlice';
 import styles from './game-menu.module.css';
+import { CloudReportPanel } from '@/morpheus-app/cloud/CloudReportPanel';
+import { CloudPlayerDetails } from '@/morpheus-app/cloud/CloudPlayerDetails';
 
 type GameMenuProps = {
   saveSlots: ReactNode;
@@ -128,6 +130,7 @@ export const GameMenu = ({
           onPointerDown={(event) => event.stopPropagation()}
           onPointerUp={(event) => event.stopPropagation()}
         >
+          <CloudPlayerDetails />
           {menu.screen === 'main' ? (
             <nav className={styles.mainActions} aria-label="Game menu">
               <button type="button" onClick={close}>
@@ -161,6 +164,7 @@ export const GameMenu = ({
               {saveSlots}
             </div>
           )}
+          <CloudReportPanel />
         </section>
       </dialog>
     </>

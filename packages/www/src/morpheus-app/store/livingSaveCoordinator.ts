@@ -17,6 +17,7 @@ import {
 } from '@/morpheus-app/storage/livingSaveFiles';
 import type { LivingSaveFileParseResult } from '@/morpheus-app/storage/livingSaveFiles';
 import { validateLivingSaveSessionEnvelope } from '@/morpheus-app/storage/livingSaveSchema';
+import { createLivingSaveValidationDefaults } from '@/morpheus-app/storage/livingSaveValidationDefaults';
 import {
   createLivingSaveResumePointId,
   MORPHEUS_INITIAL_SCENE_ID,
@@ -105,6 +106,7 @@ export type LivingSaveCoordinatorOutcome =
   | { ok: false; reason: string };
 
 export type LivingSaveCoordinator = {
+  cancel?: () => void;
   bootstrap: () => Promise<LivingSaveCoordinatorOutcome>;
   restoreSlot: (
     slotId: LivingSaveSlotId,
@@ -579,6 +581,9 @@ export function createLivingSaveCoordinator(
   };
 
   return {
+    cancel: () => {
+      currentOperationId = null;
+    },
     bootstrap,
     restoreSlot,
     createNewSlot,
@@ -594,19 +599,8 @@ export function createBrowserLivingSaveCoordinator(params: {
   getState: () => RootState;
   fetchScene: (sceneId: number) => Promise<Scene | null>;
 }): LivingSaveCoordinator {
-  const initialGamestates = fetchInitial();
-  const expectedGamestateBounds = Object.fromEntries(
-    initialGamestates.map((gamestate) => [
-      gamestate.stateId,
-      {
-        minimum: Math.min(gamestate.minValue, gamestate.value),
-        maximum: Math.max(gamestate.maxValue, gamestate.value),
-      },
-    ]),
-  );
   const validationContext = {
-    supportedGameDataVersions: [LIVING_SAVE_GAME_DATA_VERSION],
-    expectedGamestateBounds,
+    ...createLivingSaveValidationDefaults(),
     isSceneAvailable: async (sceneId: number) =>
       (await params.fetchScene(sceneId)) !== null,
   };

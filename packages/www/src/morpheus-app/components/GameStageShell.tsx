@@ -12,6 +12,7 @@ import InteractiveStage, {
   ExternalRotation,
   type StageInputController,
 } from '@/morpheus-app/components/InteractiveStage';
+import { DiscoverySummary } from '@/morpheus-app/cloud/CloudPlayerDetails';
 import { GameMenu } from '@/morpheus-app/components/GameMenu';
 import { LivingSaveSlotManager } from '@/morpheus-app/components/save-slots/LivingSaveSlotManager';
 import useResponsiveSize from '@/morpheus-app/hooks/useResponsiveSize';
@@ -757,6 +758,7 @@ export const GameStageShell = ({
           pointerEvents: 'none',
         }}
       />
+      {policy.menus && <DiscoverySummary overlay />}
       {policy.menus && livingSaveCoordinator !== null && (
         <GameMenu
           saveSlots={

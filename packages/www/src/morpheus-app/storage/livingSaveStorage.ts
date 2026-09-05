@@ -1,4 +1,16 @@
 import { z } from 'zod';
+import { cloudProgressKey, type CloudSave } from '@/lib/cloud/protocol';
+
+import {
+  MAX_LOCAL_SAVE_CANDIDATES,
+  cloudViewKey,
+  type CloudLocalMetadata,
+  CLOUD_LOCAL_CHANGE_EVENT,
+  CLOUD_LOCAL_METADATA_KEY,
+  cloudLocalMetadataSchema,
+  createCloudLocalMetadata,
+  updateCloudLocalMetadata,
+} from '@/morpheus-app/cloud/localMetadata';
 
 import { parseLivingSaveSessionEnvelope } from './livingSaveSchema';
 import {
@@ -23,6 +35,38 @@ export const LIVING_SAVE_DATABASE_NAME = 'morpheus_living_saves';
 export const LIVING_SAVE_DATABASE_VERSION = 1;
 export const LIVING_SAVE_STORE_NAME = 'catalog';
 export const LIVING_SAVE_CATALOG_KEY = 'living-save-catalog';
+
+// Each browser tab fences its own runtime's writes against the shared catalog owner.
+let browserIdentityFence: string | null | undefined;
+export function setLivingSaveIdentityFence(
+  identityKey: string | null | undefined,
+): void {
+  browserIdentityFence = identityKey;
+}
+
+type WriterBase = {
+  identityKey: string | null;
+  revision: number;
+  save: CloudSave;
+};
+const writerBases = new Map<string, WriterBase>();
+let browserWriterId: string | undefined;
+export function getLivingSaveWriterId(): string {
+  // A new page gets a new writer: duplicating a tab can clone sessionStorage.
+  browserWriterId ??= crypto.randomUUID();
+  return browserWriterId;
+}
+
+const writerKey = (writerId: string, slotId: LivingSaveSlotId) =>
+  `${writerId}:${slotId}`;
+type WriterTransaction = {
+  writerId: string;
+  slotId: LivingSaveSlotId;
+  checkpoint?: {
+    envelope: LivingSaveSessionEnvelope;
+    expectedSlotRevision: number;
+  };
+};
 
 const slotIdSchema = z.enum(LIVING_SAVE_SLOT_IDS);
 const rawSlotSchema = z
@@ -66,14 +110,12 @@ type CatalogMutation =
   | { ok: true; catalog: RawLivingSaveCatalog }
   | {
       ok: false;
-      code: Exclude<
-        LivingSaveResult<never>,
-        { ok: true }
-      >['code'];
+      code: Exclude<LivingSaveResult<never>, { ok: true }>['code'];
       reason?: string;
+      checkpointRetained?: true;
     };
 
-function createEmptyRawCatalog(): RawLivingSaveCatalog {
+export function createEmptyRawCatalog(): RawLivingSaveCatalog {
   return {
     format: LIVING_SAVE_CATALOG_FORMAT,
     schemaVersion: LIVING_SAVE_CATALOG_SCHEMA_VERSION,
@@ -88,7 +130,7 @@ function createEmptyRawCatalog(): RawLivingSaveCatalog {
   };
 }
 
-function openDatabase(): Promise<IDBDatabase> {
+export function openLivingSaveDatabase(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
     if (typeof indexedDB === 'undefined') {
       reject(new Error('IndexedDB is unavailable'));
@@ -110,7 +152,7 @@ function openDatabase(): Promise<IDBDatabase> {
   });
 }
 
-function parseRawCatalog(value: unknown): RawLivingSaveCatalog | null {
+export function parseRawCatalog(value: unknown): RawLivingSaveCatalog | null {
   const parsed = rawCatalogSchema.safeParse(value);
   return parsed.success ? parsed.data : null;
 }
@@ -149,7 +191,7 @@ function classifySlot(
   };
 }
 
-function classifyCatalog(raw: RawLivingSaveCatalog): LivingSaveCatalog {
+export function classifyCatalog(raw: RawLivingSaveCatalog): LivingSaveCatalog {
   const slots = {
     'slot-1': classifySlot('slot-1', raw.slots['slot-1']),
     'slot-2': classifySlot('slot-2', raw.slots['slot-2']),
@@ -177,30 +219,178 @@ function classifyCatalog(raw: RawLivingSaveCatalog): LivingSaveCatalog {
   };
 }
 
+function prepareLocalCheckpoint(
+  catalog: RawLivingSaveCatalog,
+  metadata: CloudLocalMetadata,
+  writer: WriterTransaction,
+  base: WriterBase | undefined,
+): {
+  mutation: CatalogMutation;
+  metadata: CloudLocalMetadata;
+  notify?: boolean;
+} {
+  const checkpoint = writer.checkpoint;
+  if (!checkpoint) throw new Error('A checkpoint envelope is required.');
+  const currentSlot = catalog.slots[writer.slotId];
+  const current = metadata.slots[writer.slotId];
+  const prior = current.localCandidates.find(
+    (candidate) => candidate.writerId === writer.writerId,
+  );
+  const validBase =
+    base?.identityKey === metadata.identityKey ? base : undefined;
+  const seed = validBase
+    ? validBase.save
+    : currentSlot.revision === checkpoint.expectedSlotRevision
+      ? current.save
+      : null;
+  if (!seed)
+    return {
+      mutation: {
+        ok: false,
+        code: 'unavailable-storage',
+        reason: 'The journey baseline is unavailable.',
+      },
+      metadata,
+    };
+  const save: CloudSave = {
+    ...seed,
+    envelope: checkpoint.envelope,
+    discoveredSceneIds: [
+      ...new Set([
+        ...(prior?.save.discoveredSceneIds ?? seed.discoveredSceneIds),
+        checkpoint.envelope.activeSceneId,
+      ]),
+    ].slice(-4096),
+  };
+  const progress = cloudProgressKey(save);
+  const storedProgress = cloudProgressKey(current.save);
+  const baseProgress = prior?.baseProgress ?? cloudProgressKey(seed);
+  const baseRevision = validBase?.revision ?? checkpoint.expectedSlotRevision;
+  if (
+    !prior &&
+    (currentSlot.revision === baseRevision ||
+      storedProgress === baseProgress ||
+      storedProgress === progress)
+  ) {
+    if (currentSlot.payload === null)
+      return { mutation: { ok: false, code: 'empty-target' }, metadata };
+    const next = updatedCatalog(catalog, {
+      slots: {
+        ...catalog.slots,
+        [writer.slotId]: {
+          revision: currentSlot.revision + 1,
+          payload: checkpoint.envelope,
+        },
+      },
+    });
+    return {
+      mutation: { ok: true, catalog: next },
+      metadata: {
+        ...metadata,
+        slots: { ...metadata.slots, [writer.slotId]: { ...current, save } },
+      },
+    };
+  }
+  // Camera/timestamp-only activity cannot compete with another tab's actual moves.
+  if (!prior && progress === baseProgress)
+    return {
+      mutation: { ok: false, code: 'conflict', checkpointRetained: true },
+      metadata,
+      notify: true,
+    };
+  if (!prior && current.localCandidates.length >= MAX_LOCAL_SAVE_CANDIDATES)
+    return {
+      mutation: {
+        ok: false,
+        code: 'unavailable-storage',
+        reason:
+          'Choose between the existing journey versions before continuing in another tab.',
+      },
+      metadata,
+    };
+  if (prior && cloudProgressKey(prior.save) === progress) {
+    const updated = cloudViewKey(prior.save) !== cloudViewKey(save);
+    return {
+      mutation: { ok: false, code: 'conflict', checkpointRetained: true },
+      metadata: updated
+        ? {
+            ...metadata,
+            slots: {
+              ...metadata.slots,
+              [writer.slotId]: {
+                ...current,
+                localCandidates: current.localCandidates.map((candidate) =>
+                  candidate.candidateId === prior.candidateId
+                    ? { ...candidate, save }
+                    : candidate,
+                ),
+              },
+            },
+          }
+        : metadata,
+      notify: true,
+    };
+  }
+  const candidate = {
+    writerId: writer.writerId,
+    candidateId: crypto.randomUUID(),
+    save,
+    baseProgress,
+    baseSlotRevision:
+      prior?.baseSlotRevision ??
+      base?.revision ??
+      checkpoint.expectedSlotRevision,
+  };
+  return {
+    mutation: { ok: false, code: 'conflict', checkpointRetained: true },
+    metadata: {
+      ...metadata,
+      slots: {
+        ...metadata.slots,
+        [writer.slotId]: {
+          ...current,
+          localCandidates: [
+            ...current.localCandidates.filter(
+              (value) => value.writerId !== writer.writerId,
+            ),
+            candidate,
+          ],
+        },
+      },
+    },
+    notify: true,
+  };
+}
+
 async function runRawCatalogTransaction<T>(
   mode: IDBTransactionMode,
-  mutate: (
-    catalog: RawLivingSaveCatalog,
-  ) => CatalogMutation,
+  mutate: (catalog: RawLivingSaveCatalog) => CatalogMutation,
   select: (catalog: RawLivingSaveCatalog) => T,
+  source: 'played' | 'imported' | 'undo' = 'played',
+  writer?: WriterTransaction,
 ): Promise<LivingSaveResult<T>> {
+  const expectedIdentity = browserIdentityFence;
+  const base = writer
+    ? writerBases.get(writerKey(writer.writerId, writer.slotId))
+    : undefined;
   let database: IDBDatabase;
   try {
-    database = await openDatabase();
+    database = await openLivingSaveDatabase();
   } catch (error) {
     return {
       ok: false,
       code: 'unavailable-storage',
-      reason: error instanceof Error ? error.message : 'IndexedDB is unavailable',
+      reason:
+        error instanceof Error ? error.message : 'IndexedDB is unavailable',
     };
   }
-
   return new Promise((resolve) => {
     const transaction = database.transaction(LIVING_SAVE_STORE_NAME, mode);
     const store = transaction.objectStore(LIVING_SAVE_STORE_NAME);
     const request = store.get(LIVING_SAVE_CATALOG_KEY);
     let result: LivingSaveResult<T> | null = null;
-
+    let changed = false;
+    let installedBase: WriterBase | undefined;
     request.onsuccess = () => {
       const raw =
         request.result === undefined
@@ -214,29 +404,122 @@ async function runRawCatalogTransaction<T>(
         };
         return;
       }
-      const mutation = mutate(raw);
-      if (!mutation.ok) {
-        result = mutation;
+      const initialMutation = mutate(raw);
+      if (!initialMutation.ok) {
+        result = initialMutation;
         return;
       }
-      result = { ok: true, value: select(mutation.catalog) };
       if (
-        mode === 'readwrite' &&
-        (mutation.catalog !== raw || request.result === undefined)
+        mode !== 'readwrite' ||
+        (!writer &&
+          initialMutation.catalog === raw &&
+          request.result !== undefined)
       ) {
-        store.put(mutation.catalog, LIVING_SAVE_CATALOG_KEY);
+        result = { ok: true, value: select(initialMutation.catalog) };
+        return;
       }
-    };
-    request.onerror = () => {
-      result = {
-        ok: false,
-        code: 'unavailable-storage',
-        reason: request.error?.message ?? 'Unable to read living-save storage',
+      const metadataRequest = store.get(CLOUD_LOCAL_METADATA_KEY);
+      metadataRequest.onsuccess = () => {
+        try {
+          const parsed = cloudLocalMetadataSchema.safeParse(
+            metadataRequest.result,
+          );
+          if (metadataRequest.result !== undefined && !parsed.success)
+            throw new Error('The local save connection data is malformed.');
+          const existingMetadata = parsed.success
+            ? parsed.data
+            : createCloudLocalMetadata();
+          if (
+            expectedIdentity !== undefined &&
+            existingMetadata.identityKey !== expectedIdentity
+          ) {
+            result = {
+              ok: false,
+              code: 'conflict',
+              reason: 'The account on this device changed.',
+            };
+            return;
+          }
+          let metadata = updateCloudLocalMetadata(
+            existingMetadata,
+            raw,
+            raw,
+            'imported',
+          );
+          let mutation: CatalogMutation = initialMutation;
+          if (writer?.checkpoint) {
+            const prepared = prepareLocalCheckpoint(
+              raw,
+              metadata,
+              writer,
+              base,
+            );
+            metadata = prepared.metadata;
+            mutation = prepared.mutation;
+            changed = prepared.notify ?? false;
+          } else if (
+            writer &&
+            metadata.slots[writer.slotId].localCandidates.length > 0
+          ) {
+            result = {
+              ok: false,
+              code: 'conflict',
+              reason: 'Choose which journey version to keep.',
+            };
+            return;
+          } else {
+            metadata = updateCloudLocalMetadata(
+              metadata,
+              raw,
+              initialMutation.catalog,
+              source,
+            );
+          }
+          if (mutation.ok) {
+            result = { ok: true, value: select(mutation.catalog) };
+            if (mutation.catalog !== raw || request.result === undefined) {
+              store.put(mutation.catalog, LIVING_SAVE_CATALOG_KEY);
+              changed = true;
+            }
+            const save = writer ? metadata.slots[writer.slotId].save : null;
+            if (writer && save)
+              installedBase = {
+                identityKey: metadata.identityKey,
+                revision: mutation.catalog.slots[writer.slotId].revision,
+                save,
+              };
+          } else result = mutation;
+          if (
+            metadata !== existingMetadata ||
+            metadataRequest.result === undefined
+          ) {
+            store.put(metadata, CLOUD_LOCAL_METADATA_KEY);
+            changed = true;
+          }
+        } catch (error) {
+          result = {
+            ok: false,
+            code: 'unavailable-storage',
+            reason:
+              error instanceof Error
+                ? error.message
+                : 'Local save metadata is unavailable.',
+          };
+          transaction.abort();
+        }
       };
-      transaction.abort();
+      metadataRequest.onerror = () => transaction.abort();
     };
+    request.onerror = () => transaction.abort();
     transaction.oncomplete = () => {
       database.close();
+      if (writer && installedBase)
+        writerBases.set(
+          writerKey(writer.writerId, writer.slotId),
+          installedBase,
+        );
+      if (changed && typeof window !== 'undefined')
+        window.dispatchEvent(new Event(CLOUD_LOCAL_CHANGE_EVENT));
       resolve(
         result ?? {
           ok: false,
@@ -245,33 +528,35 @@ async function runRawCatalogTransaction<T>(
         },
       );
     };
-    transaction.onerror = () => {
+    transaction.onerror = transaction.onabort = () => {
       database.close();
-      resolve({
-        ok: false,
-        code: 'unavailable-storage',
-        reason:
-          transaction.error?.message ?? 'Living-save transaction failed.',
-      });
-    };
-    transaction.onabort = () => {
-      database.close();
-      resolve({
-        ok: false,
-        code: 'unavailable-storage',
-        reason:
-          transaction.error?.message ?? 'Living-save transaction was aborted.',
-      });
+      resolve(
+        result && !result.ok && result.code === 'unavailable-storage'
+          ? result
+          : {
+              ok: false,
+              code: 'unavailable-storage',
+              reason:
+                transaction.error?.message ??
+                'Living-save transaction was aborted.',
+            },
+      );
     };
   });
 }
 
 function runCatalogTransaction(
-  mutate: (
-    catalog: RawLivingSaveCatalog,
-  ) => CatalogMutation,
+  mutate: (catalog: RawLivingSaveCatalog) => CatalogMutation,
+  source: 'played' | 'imported' | 'undo' = 'played',
+  writer?: WriterTransaction,
 ): Promise<LivingSaveResult<LivingSaveCatalog>> {
-  return runRawCatalogTransaction('readwrite', mutate, classifyCatalog);
+  return runRawCatalogTransaction(
+    'readwrite',
+    mutate,
+    classifyCatalog,
+    source,
+    writer,
+  );
 }
 
 function conflict(): CatalogMutation {
@@ -317,70 +602,86 @@ export async function readLivingSaveRawPayload(
 
 export function createLivingSaveSlot(params: {
   slotId: LivingSaveSlotId;
+  writerId?: string;
   envelope: LivingSaveSessionEnvelope;
   expectedCatalogRevision: number;
   activate: boolean;
 }): Promise<LivingSaveResult<LivingSaveCatalog>> {
-  return runCatalogTransaction((catalog) => {
-    const revisionConflict = withCatalogRevision(
-      catalog,
-      params.expectedCatalogRevision,
-    );
-    if (revisionConflict) return revisionConflict;
-    const currentSlot = catalog.slots[params.slotId];
-    if (currentSlot.payload !== null) {
-      return { ok: false, code: 'occupied-target' };
-    }
-    const slots = {
-      ...catalog.slots,
-      [params.slotId]: {
-        revision: currentSlot.revision + 1,
-        payload: params.envelope,
-      },
-    };
-    return {
-      ok: true,
-      catalog: updatedCatalog(catalog, {
-        slots,
-        activeSlotId: params.activate
-          ? params.slotId
-          : catalog.activeSlotId,
-        tombstones: {
-          ...catalog.tombstones,
-          [params.slotId]: undefined,
+  return runCatalogTransaction(
+    (catalog) => {
+      const revisionConflict = withCatalogRevision(
+        catalog,
+        params.expectedCatalogRevision,
+      );
+      if (revisionConflict) return revisionConflict;
+      const currentSlot = catalog.slots[params.slotId];
+      if (currentSlot.payload !== null) {
+        return { ok: false, code: 'occupied-target' };
+      }
+      const slots = {
+        ...catalog.slots,
+        [params.slotId]: {
+          revision: currentSlot.revision + 1,
+          payload: params.envelope,
         },
-      }),
-    };
-  });
+      };
+      return {
+        ok: true,
+        catalog: updatedCatalog(catalog, {
+          slots,
+          activeSlotId: params.activate ? params.slotId : catalog.activeSlotId,
+          tombstones: {
+            ...catalog.tombstones,
+            [params.slotId]: undefined,
+          },
+        }),
+      };
+    },
+    'played',
+    params.activate
+      ? {
+          slotId: params.slotId,
+          writerId: params.writerId ?? getLivingSaveWriterId(),
+        }
+      : undefined,
+  );
 }
 
 export function activateLivingSaveSlot(params: {
   slotId: LivingSaveSlotId;
+  writerId?: string;
   expectedCatalogRevision: number;
   expectedSlotRevision: number;
 }): Promise<LivingSaveResult<LivingSaveCatalog>> {
-  return runCatalogTransaction((catalog) => {
-    const revisionConflict = withCatalogRevision(
-      catalog,
-      params.expectedCatalogRevision,
-    );
-    if (
-      revisionConflict ||
-      catalog.slots[params.slotId].revision !== params.expectedSlotRevision
-    ) {
-      return conflict();
-    }
-    if (catalog.slots[params.slotId].payload === null) {
-      return { ok: false, code: 'empty-target' };
-    }
-    if (catalog.activeSlotId === params.slotId) {
-      return { ok: true, catalog };
-    }
-    return {
-      ok: true,
-      catalog: updatedCatalog(catalog, { activeSlotId: params.slotId }),
-    };
-  });
+  return runCatalogTransaction(
+    (catalog) => {
+      const revisionConflict = withCatalogRevision(
+        catalog,
+        params.expectedCatalogRevision,
+      );
+      if (
+        revisionConflict ||
+        catalog.slots[params.slotId].revision !== params.expectedSlotRevision
+      ) {
+        return conflict();
+      }
+      if (catalog.slots[params.slotId].payload === null) {
+        return { ok: false, code: 'empty-target' };
+      }
+      if (catalog.activeSlotId === params.slotId) {
+        return { ok: true, catalog };
+      }
+      return {
+        ok: true,
+        catalog: updatedCatalog(catalog, { activeSlotId: params.slotId }),
+      };
+    },
+    'played',
+    {
+      slotId: params.slotId,
+      writerId: params.writerId ?? getLivingSaveWriterId(),
+    },
+  );
 }
 
 export function writeLivingSaveCheckpoint(params: {
@@ -388,35 +689,16 @@ export function writeLivingSaveCheckpoint(params: {
   envelope: LivingSaveSessionEnvelope;
   expectedCatalogRevision: number;
   expectedSlotRevision: number;
+  writerId?: string;
 }): Promise<LivingSaveResult<LivingSaveCatalog>> {
-  return runCatalogTransaction((catalog) => {
-    const slot = catalog.slots[params.slotId];
-    const revisionConflict = withCatalogRevision(
-      catalog,
-      params.expectedCatalogRevision,
-    );
-    if (
-      revisionConflict ||
-      slot.revision !== params.expectedSlotRevision ||
-      catalog.activeSlotId !== params.slotId
-    ) {
-      return conflict();
-    }
-    if (slot.payload === null) {
-      return { ok: false, code: 'empty-target' };
-    }
-    return {
-      ok: true,
-      catalog: updatedCatalog(catalog, {
-        slots: {
-          ...catalog.slots,
-          [params.slotId]: {
-            revision: slot.revision + 1,
-            payload: params.envelope,
-          },
-        },
-      }),
-    };
+  // The slot revision is the ownership check. Another slot's activity can rebase.
+  return runCatalogTransaction((catalog) => ({ ok: true, catalog }), 'played', {
+    slotId: params.slotId,
+    writerId: params.writerId ?? getLivingSaveWriterId(),
+    checkpoint: {
+      envelope: params.envelope,
+      expectedSlotRevision: params.expectedSlotRevision,
+    },
   });
 }
 
@@ -432,10 +714,7 @@ export function deleteLivingSaveSlot(params: {
       catalog,
       params.expectedCatalogRevision,
     );
-    if (
-      revisionConflict ||
-      slot.revision !== params.expectedSlotRevision
-    ) {
+    if (revisionConflict || slot.revision !== params.expectedSlotRevision) {
       return conflict();
     }
     if (slot.payload === null) {
@@ -452,9 +731,7 @@ export function deleteLivingSaveSlot(params: {
       ok: true,
       catalog: updatedCatalog(catalog, {
         activeSlotId:
-          catalog.activeSlotId === params.slotId
-            ? null
-            : catalog.activeSlotId,
+          catalog.activeSlotId === params.slotId ? null : catalog.activeSlotId,
         slots: {
           ...catalog.slots,
           [params.slotId]: {
@@ -483,10 +760,7 @@ export function undoLivingSaveDeletion(params: {
       catalog,
       params.expectedCatalogRevision,
     );
-    if (
-      revisionConflict ||
-      slot.revision !== params.expectedSlotRevision
-    ) {
+    if (revisionConflict || slot.revision !== params.expectedSlotRevision) {
       return conflict();
     }
     const tombstone = catalog.tombstones[params.slotId];
@@ -508,7 +782,7 @@ export function undoLivingSaveDeletion(params: {
           : catalog.activeSlotId,
         slots: {
           ...catalog.slots,
-          [params.slotId]: tombstone.slot,
+          [params.slotId]: { ...tombstone.slot, revision: slot.revision + 1 },
         },
         tombstones: {
           ...catalog.tombstones,
@@ -516,7 +790,7 @@ export function undoLivingSaveDeletion(params: {
         },
       }),
     };
-  });
+  }, 'undo');
 }
 
 export function importLivingSaveSlot(params: {
@@ -531,10 +805,7 @@ export function importLivingSaveSlot(params: {
       catalog,
       params.expectedCatalogRevision,
     );
-    if (
-      revisionConflict ||
-      slot.revision !== params.expectedSlotRevision
-    ) {
+    if (revisionConflict || slot.revision !== params.expectedSlotRevision) {
       return conflict();
     }
     if (slot.payload !== null) {
@@ -556,7 +827,7 @@ export function importLivingSaveSlot(params: {
         },
       }),
     };
-  });
+  }, 'imported');
 }
 
 export async function readLivingSaveEnvelope(
