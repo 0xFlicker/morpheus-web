@@ -141,6 +141,7 @@ describe('competing local tab checkpoints', () => {
     ).toMatchObject({ ok: false, code: 'conflict' });
     expect(
       await applyCloudDownload({
+        canApply: () => true,
         identityKey: 'anonymous',
         playerId,
         localRevision: reloaded.catalog.slots['slot-1'].revision,

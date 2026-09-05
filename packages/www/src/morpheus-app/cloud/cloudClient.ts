@@ -92,6 +92,7 @@ export function createCloudClient(options: {
   sessionId: string;
   isCurrent: () => boolean;
   isIdentityCurrent: () => boolean;
+  beforeReconcile: () => Promise<void>;
   canApply: (snapshot: CloudLocalSnapshot, resolvingLocal?: boolean) => boolean;
   onCatalog: (
     snapshot: CloudLocalSnapshot,
@@ -163,6 +164,9 @@ export function createCloudClient(options: {
     return false;
   };
   const reconcile = async () => {
+    // Flush a paused runtime before any snapshot can classify it as unchanged.
+    await options.beforeReconcile();
+    if (!current()) return;
     let snapshot = await readCloudLocalSnapshot();
     if (!current() || snapshot.metadata.identityKey !== options.identityKey)
       return;
@@ -264,6 +268,7 @@ export function createCloudClient(options: {
           playerId: player.playerId,
           localRevision: localSlot.revision,
           remote,
+          canApply: () => current() && options.canApply(snapshot),
         });
         if (downloaded && current()) await options.onCatalog(downloaded);
       } else {
@@ -351,6 +356,8 @@ export function createCloudClient(options: {
     if (running) await running;
     if (!identityCurrent()) return;
     const resolveVersion = async () => {
+      await options.beforeReconcile();
+      if (!identityCurrent()) return;
       const snapshot = await readCloudLocalSnapshot();
       if (
         !identityCurrent() ||
@@ -424,6 +431,7 @@ export function createCloudClient(options: {
           playerId,
           localRevision: conflict.localRevision,
           remote: latest,
+          canApply: () => current() && options.canApply(snapshot),
         });
         if (downloaded && current()) await options.onCatalog(downloaded);
       }

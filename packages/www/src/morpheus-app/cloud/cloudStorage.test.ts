@@ -152,6 +152,7 @@ describe('durable browser cloud storage', () => {
       }),
     );
     const applied = await applyCloudDownload({
+      canApply: () => true,
       identityKey: 'anonymous',
       playerId,
       localRevision: catalog.slots['slot-1'].revision,
@@ -180,6 +181,7 @@ describe('durable browser cloud storage', () => {
     };
     expect(
       await applyCloudDownload({
+        canApply: () => true,
         identityKey: 'anonymous',
         playerId,
         localRevision: catalog.slots['slot-1'].revision,
@@ -197,6 +199,22 @@ describe('durable browser cloud storage', () => {
     expect(restored.metadata.slots['slot-1'].save).toEqual(
       old.metadata.slots['slot-1'].save,
     );
+  });
+
+  it('rechecks the runtime boundary after IndexedDB opens and preserves its previous acknowledgment', async () => {
+    const catalog = await setup();
+    const before = await readCloudLocalSnapshot();
+    let current = true;
+    const download = applyCloudDownload({
+      identityKey: 'anonymous',
+      playerId,
+      localRevision: catalog.slots['slot-1'].revision,
+      remote: { slotId: 'slot-1', revision: 2, save: null, updatedAt: null },
+      canApply: () => current,
+    });
+    current = false;
+    expect(await download).toBeNull();
+    expect(await readCloudLocalSnapshot()).toEqual(before);
   });
 
   it('keeps deletion durable and Undo advances revisions while restoring the same run', async () => {

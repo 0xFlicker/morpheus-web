@@ -34,6 +34,7 @@ import {
   type CloudLocalSnapshot,
 } from './cloudStorage';
 import { CLOUD_LOCAL_CHANGE_EVENT } from './localMetadata';
+import { createCloudRuntimeBarrier } from './runtimeBarrier';
 import styles from './cloud-player.module.css';
 
 export type CloudContextValue = CloudClientState & {
@@ -208,7 +209,14 @@ export function CloudProvider({
     client.current?.stop();
     client.current = null;
     const isCurrent = () => !disposed && identityRef.current === identity;
+    const runtimeBarrier = createCloudRuntimeBarrier({
+      store,
+      checkpointCoordinator,
+      isCurrent,
+      isPaused: () => !playing.current || store.getState().gameMenu.open,
+    });
     const canApply = (snapshot: CloudLocalSnapshot, resolvingLocal = false) => {
+      if (!runtimeBarrier.isPrepared()) return false;
       const runtime = store.getState();
       return canApplyCloudSnapshot({
         snapshot,
@@ -317,6 +325,7 @@ export function CloudProvider({
         isIdentityCurrent: isCurrent,
         isCurrent: () =>
           identity !== null && isCurrent() && onlineEnabled.current,
+        beforeReconcile: runtimeBarrier.prepare,
         canApply,
         onCatalog,
         onState: (nextState) => {

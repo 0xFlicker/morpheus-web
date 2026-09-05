@@ -434,12 +434,14 @@ export function applyCloudDownload(params: {
   playerId: string;
   localRevision: number;
   remote: CloudSlot;
+  canApply: () => boolean;
 }): Promise<CloudLocalSnapshot | null> {
   return transaction((snapshot, store, finish) => {
     const { metadata, catalog } = snapshot;
     const slotId = params.remote.slotId;
     const slot = catalog.slots[slotId];
     if (
+      !params.canApply() ||
       metadata.identityKey !== params.identityKey ||
       metadata.playerId !== params.playerId ||
       slot.revision !== params.localRevision ||

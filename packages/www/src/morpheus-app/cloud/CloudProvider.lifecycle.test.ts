@@ -38,6 +38,9 @@ import {
   canApplyCloudSnapshot,
   prepareCloudLocalRuntime,
 } from './CloudProvider';
+import { createCloudRuntimeBarrier } from './runtimeBarrier';
+import { setRotation } from '@/morpheus-app/store/slices/rotationSlice';
+import { updateGamestate } from '@/morpheus-app/store/slices/gamestateSlice';
 
 const envelope: LivingSaveSessionEnvelope = {
   format: 'morpheus-living-save-session',
@@ -389,6 +392,77 @@ describe('CloudProvider local ownership setup', () => {
     );
     expect(writes).toBeGreaterThanOrEqual(2);
     expect(store.getState().livingSaves.runtimeSlotId).toBeNull();
+  });
+
+  it('reuses a completed pause drain until gameplay or camera content changes', async () => {
+    const store = await runtimeForIdentityChange();
+    const flush = vi.fn(async () => ({ ok: true as const, value: undefined }));
+    const barrier = createCloudRuntimeBarrier({
+      store,
+      checkpointCoordinator: { flush, requestCheckpoint: async () => {} },
+      isCurrent: () => true,
+      isPaused: () => true,
+    });
+    await barrier.prepare();
+    await barrier.prepare();
+    expect(flush).toHaveBeenCalledTimes(1);
+    expect(barrier.isPrepared()).toBe(true);
+    store.dispatch(setRotation({ yaw3600: 900, pitch: 0 }));
+    expect(barrier.isPrepared()).toBe(false);
+    await barrier.prepare();
+    expect(flush).toHaveBeenCalledTimes(2);
+    const state = Object.values(store.getState().gamestate.byId)[0];
+    store.dispatch(
+      updateGamestate({ stateId: state.stateId, value: state.value + 1 }),
+    );
+    expect(barrier.isPrepared()).toBe(false);
+  });
+
+  it.each(['runtime', 'identity', 'menu'] as const)(
+    'rejects a pause drain when %s changes while it waits',
+    async (change) => {
+      const store = await runtimeForIdentityChange();
+      let release = () => {};
+      const pending = new Promise<void>((resolve) => {
+        release = resolve;
+      });
+      let current = true;
+      let paused = true;
+      const barrier = createCloudRuntimeBarrier({
+        store,
+        checkpointCoordinator: {
+          requestCheckpoint: async () => {},
+          flush: async () => {
+            await pending;
+            return { ok: true, value: undefined };
+          },
+        },
+        isCurrent: () => current,
+        isPaused: () => paused,
+      });
+      const preparation = barrier.prepare();
+      if (change === 'runtime') store.dispatch(resetGame());
+      if (change === 'identity') current = false;
+      if (change === 'menu') paused = false;
+      release();
+      await preparation;
+      expect(barrier.isPrepared()).toBe(false);
+    },
+  );
+
+  it('does not permit a failed checkpoint to become a safe download boundary', async () => {
+    const store = await runtimeForIdentityChange();
+    const barrier = createCloudRuntimeBarrier({
+      store,
+      checkpointCoordinator: {
+        requestCheckpoint: async () => {},
+        flush: async () => ({ ok: false, code: 'unavailable-storage' }),
+      },
+      isCurrent: () => true,
+      isPaused: () => true,
+    });
+    await barrier.prepare();
+    expect(barrier.isPrepared()).toBe(false);
   });
 
   it('keeps the old runtime after failed drain and retries before changing identity', async () => {
