@@ -130,7 +130,15 @@ export const GameMenu = ({
           onPointerDown={(event) => event.stopPropagation()}
           onPointerUp={(event) => event.stopPropagation()}
         >
-          <CloudPlayerDetails />
+          <CloudPlayerDetails
+            onBeforeAccountOpen={() => {
+              // Clerk's portal cannot receive input beneath a modal dialog.
+              // Release the top layer before Clerk opens and owns focus.
+              wasOpenRef.current = false;
+              dialogRef.current?.close();
+              close();
+            }}
+          />
           {menu.screen === 'main' ? (
             <nav className={styles.mainActions} aria-label="Game menu">
               <button type="button" onClick={close}>

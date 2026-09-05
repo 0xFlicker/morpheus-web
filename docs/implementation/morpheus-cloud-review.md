@@ -17,6 +17,7 @@ Review scope: cloud identity and ownership, SQL save concurrency and deletion, p
 | Camera-only resume changes are never synchronized | Separate acknowledged view from gameplay progress; quiet local uploads and safe-boundary remote downloads, with no progress conflict or revision increment. |
 | Active guest credential expires despite ongoing play | Refresh the anonymous cookie and server activity expiry on functional activity. |
 | Unused comparison helper diverges from the production aggregate | Remove it; use the actual database cohort calculation and server tests. |
+| The game dialog obscures Clerk's account portals | Browser reproduction confirmed the top-layer dialog trapped input. Close it before opening Clerk and use explicit Account/Sign out controls in the game menu. The Account dialog is now accessible in the built app. |
 
 ## Verification
 
@@ -24,4 +25,6 @@ The complete web test suite passes **382/382 tests in 73 files**. Typecheck, cat
 
 Grok's report-test mismatch referred to an earlier source snapshot; current report tests pass. Its aggregation cost concern remains a performance measurement task: the query aggregates played saves, and the release runbook calls for measuring query latency and database load before adding a stored summary. There is no measured production scale claim.
 
-Authenticated browser continuity, real webhook delivery, production promotion, native Apple account parity, and physical-device playback remain separate release evidence. Initial achievements and saved discovery are observations; neither snapshot validation nor this review proves a legal playthrough from the authored blank state.
+Authenticated continuity was exercised between the in-app browser and Chrome with a labeled development account: the guest journey survived sign-in, appeared automatically in the second browser, and an ordinary move from scene 2000 to 2040 increased discovery in both browsers at the menu boundary. Neon recorded two distinct devices for the same owner. The authenticated report panel displayed its successful receipt.
+
+Offline divergent gameplay choices, real webhook delivery, production promotion, native Apple account parity, and physical-device playback remain separate release evidence. Initial achievements and saved discovery are observations; neither snapshot validation nor this review proves a legal playthrough from the authored blank state.

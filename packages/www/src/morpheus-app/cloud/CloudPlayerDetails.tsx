@@ -1,6 +1,6 @@
 'use client';
 
-import { SignInButton, UserButton, useAuth } from '@clerk/nextjs';
+import { SignInButton, UserButton, useAuth, useClerk } from '@clerk/nextjs';
 import { useEffect, useState } from 'react';
 import { z } from 'zod';
 import {
@@ -113,23 +113,32 @@ export function DiscoverySummary({ overlay = false }: { overlay?: boolean }) {
 
 export function CloudPlayerDetails({
   showNotice = false,
+  onBeforeAccountOpen,
 }: {
   showNotice?: boolean;
+  onBeforeAccountOpen?: () => void;
 }) {
   const cloud = useMorpheusCloud();
   return cloud ? (
-    <ConnectedCloudPlayerDetails cloud={cloud} showNotice={showNotice} />
+    <ConnectedCloudPlayerDetails
+      cloud={cloud}
+      showNotice={showNotice}
+      onBeforeAccountOpen={onBeforeAccountOpen}
+    />
   ) : null;
 }
 
 function ConnectedCloudPlayerDetails({
   cloud,
   showNotice,
+  onBeforeAccountOpen,
 }: {
   cloud: CloudContextValue;
   showNotice: boolean;
+  onBeforeAccountOpen?: () => void;
 }) {
   const { isLoaded, isSignedIn } = useAuth();
+  const clerk = useClerk();
   const [resolving, setResolving] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);
   const [erasing, setErasing] = useState(false);
@@ -144,14 +153,49 @@ function ConnectedCloudPlayerDetails({
         {isLoaded &&
           (isSignedIn ? (
             <>
-              <UserButton />
+              {onBeforeAccountOpen ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onBeforeAccountOpen();
+                      clerk.openUserProfile();
+                    }}
+                  >
+                    Account
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onBeforeAccountOpen();
+                      void clerk
+                        .signOut()
+                        .catch(() =>
+                          setFailure(
+                            'Sign out failed. Please try again when connected.',
+                          ),
+                        );
+                    }}
+                  >
+                    Sign out
+                  </button>
+                </>
+              ) : (
+                <UserButton />
+              )}
               <span>
                 {cloud.status === 'ready' ? 'Journeys connected' : 'Signed in'}
               </span>
             </>
           ) : (
             <SignInButton mode="modal">
-              <button type="button" onClick={cloud.acknowledgeNotice}>
+              <button
+                type="button"
+                onClick={() => {
+                  cloud.acknowledgeNotice();
+                  onBeforeAccountOpen?.();
+                }}
+              >
                 Sign in to continue on your other devices
               </button>
             </SignInButton>
