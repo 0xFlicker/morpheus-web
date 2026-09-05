@@ -31,7 +31,10 @@ export default function PrivacyPage() {
         devices can resume it. Clerk handles authentication, including
         information provided by your sign-in method. We use your verified
         account identifier to own saves; we do not require your real name or
-        public profile.
+        public profile. When available, we securely keep the Apple sign-in
+        credentials needed to revoke authorization when you delete your account.
+        We also keep a minimal record of an incomplete Apple authorization so
+        deletion status reflects any authorization we could not confirm.
       </p>
       <p>
         A report is sent only when you select Send. It includes your text, the
@@ -100,9 +103,28 @@ export default function PrivacyPage() {
         process connection information to operate and secure their services.
       </p>
       <p>
-        A hash of a deleted account identifier remains for up to 30 days to
-        prevent a retrying session from recreating deleted data. It contains no
-        profile or game progress.
+        An accepted account deletion may remain pending while our sign-in
+        provider completes it. We retain an encrypted account reference only
+        until deletion is confirmed. A hash prevents a retrying session from
+        recreating deleted data while deletion is pending and for 30 days after
+        completion. It contains no profile or game progress.
+      </p>
+      <p>
+        We keep a minimal deletion receipt indefinitely so a device that was
+        offline can finish cleanup later. The completed receipt contains a
+        random reference, a protected recovery-token hash, status and dates,
+        with no account identifier, game, or report data.
+      </p>
+      <p>
+        Apple revocation credentials may remain encrypted for up to 30 days
+        while we retry revocation. During that time, the revocation job is
+        linked only to the random deletion receipt so its status can be updated.
+        We remove the credentials when revocation succeeds or that period ends.
+        A failed revocation does not prevent account deletion. You can also{' '}
+        <a href="https://support.apple.com/en-us/102571">
+          revoke Apple access in your Apple Account settings
+        </a>
+        .
       </p>
       <h2>Why we process it</h2>
       <p>

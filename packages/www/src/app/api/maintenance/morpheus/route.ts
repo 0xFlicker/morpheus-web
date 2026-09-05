@@ -1,6 +1,7 @@
 import { timingSafeEqual } from 'node:crypto';
 import { cloudJson, cloudRoute, CloudHttpError } from '@/lib/cloud/http';
 import { maintainCloudData } from '@/lib/cloud/retention';
+import { maintainAppleAccounts } from '@/lib/cloud/appleAccount';
 
 export const runtime = 'nodejs';
 export const maxDuration = 300;
@@ -17,6 +18,7 @@ export async function GET(request: Request) {
     ) {
       throw new CloudHttpError(401, 'Unauthorized.');
     }
-    return cloudJson(await maintainCloudData());
+    const apple = await maintainAppleAccounts();
+    return cloudJson({ ...(await maintainCloudData()), apple });
   });
 }

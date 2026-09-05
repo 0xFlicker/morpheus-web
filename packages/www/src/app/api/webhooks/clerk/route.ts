@@ -6,7 +6,7 @@ import {
   CloudHttpError,
   readCloudBody,
 } from '@/lib/cloud/http';
-import { eraseClerkAccount } from '@/lib/cloud/retention';
+import { handleAppleClerkDeletion } from '@/lib/cloud/appleAccount';
 
 export const runtime = 'nodejs';
 
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     if (event.type === 'user.deleted') {
       if (!event.data.id)
         throw new CloudHttpError(400, 'Missing deleted account.');
-      await eraseClerkAccount(event.data.id);
+      await handleAppleClerkDeletion(event.data.id);
     }
     return cloudJson({ received: true });
   });

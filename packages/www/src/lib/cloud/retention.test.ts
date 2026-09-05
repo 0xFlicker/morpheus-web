@@ -10,7 +10,6 @@ vi.mock('./database', () => ({ cloudDatabase: () => mocks.sql }));
 vi.mock('@vercel/blob', () => ({ list: mocks.list, del: mocks.del }));
 import {
   eraseCloudPlayer,
-  eraseClerkAccount,
   maintainCloudData,
 } from './retention';
 
@@ -31,15 +30,6 @@ describe('cloud erasure and retention', () => {
       'associated_player_id',
     );
     expect(mocks.list).not.toHaveBeenCalled();
-  });
-  it('records a deletion fence and erases account plus linked guest data under one lock', async () => {
-    await eraseClerkAccount('user_deleted');
-    expect(mocks.sql.transaction).toHaveBeenCalledTimes(1);
-    expect(mocks.sql.mock.calls[0][0].join('')).toContain(
-      'pg_advisory_xact_lock',
-    );
-    expect(mocks.sql.mock.calls[1][1]).toMatch(/^[a-f0-9]{64}$/);
-    expect(mocks.sql.mock.calls[2]).toContain('user_deleted');
   });
   it('removes expired reports and old orphan attachments, preserving linked and recent uploads across pages', async () => {
     mocks.sql.transaction.mockResolvedValue([

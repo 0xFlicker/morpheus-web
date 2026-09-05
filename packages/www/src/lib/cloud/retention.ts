@@ -3,7 +3,6 @@ import 'server-only';
 import { del, list } from '@vercel/blob';
 import { z } from 'zod';
 import { cloudDatabase } from './database';
-import { digest } from './saveRepository';
 
 function reportStorageToken() {
   const token = process.env.MORPHEUS_REPORTS_READ_WRITE_TOKEN;
@@ -15,18 +14,6 @@ function reportStorageToken() {
 export async function eraseCloudPlayer(playerId: string) {
   const sql = cloudDatabase();
   await sql`DELETE FROM morpheus_players WHERE id = ${playerId} OR associated_player_id = ${playerId}`;
-}
-
-export async function eraseClerkAccount(userId: string) {
-  const sql = cloudDatabase();
-  const userHash = digest(userId);
-  await sql.transaction([
-    sql`SELECT pg_advisory_xact_lock(hashtextextended(${userHash}, 0))`,
-    sql`INSERT INTO morpheus_deleted_accounts(clerk_user_hash) VALUES (${userHash})
-      ON CONFLICT (clerk_user_hash) DO NOTHING`,
-    sql`DELETE FROM morpheus_players WHERE clerk_user_id = ${userId}
-      OR associated_player_id IN (SELECT id FROM morpheus_players WHERE clerk_user_id = ${userId})`,
-  ]);
 }
 
 export async function maintainCloudData() {

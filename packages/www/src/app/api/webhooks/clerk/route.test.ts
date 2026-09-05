@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 const mocks = vi.hoisted(() => ({
   verifyWebhook: vi.fn(),
-  eraseClerkAccount: vi.fn(),
+  handleAppleClerkDeletion: vi.fn(),
 }));
 vi.mock('@clerk/nextjs/webhooks', () => mocks);
-vi.mock('@/lib/cloud/retention', () => mocks);
+vi.mock('@/lib/cloud/appleAccount', () => mocks);
 import { POST } from './route';
 beforeEach(() => {
   vi.resetAllMocks();
@@ -23,20 +23,20 @@ describe('Clerk account deletion webhook', () => {
       return { type: 'user.deleted', data: { id: 'user_deleted' } };
     });
     expect((await POST(request())).status).toBe(200);
-    expect(mocks.eraseClerkAccount).toHaveBeenCalledWith('user_deleted');
+    expect(mocks.handleAppleClerkDeletion).toHaveBeenCalledWith('user_deleted');
   });
   it('rejects forged and oversized payloads without erasing accounts', async () => {
     mocks.verifyWebhook.mockRejectedValue(new Error('Bad signature'));
     expect((await POST(request())).status).toBe(400);
     expect((await POST(request('x'.repeat(256 * 1024 + 1)))).status).toBe(413);
-    expect(mocks.eraseClerkAccount).not.toHaveBeenCalled();
+    expect(mocks.handleAppleClerkDeletion).not.toHaveBeenCalled();
   });
   it('returns a retryable failure when deletion fails and acknowledges unrelated verified events', async () => {
     mocks.verifyWebhook.mockResolvedValue({
       type: 'user.deleted',
       data: { id: 'user_deleted' },
     });
-    mocks.eraseClerkAccount.mockRejectedValue(
+    mocks.handleAppleClerkDeletion.mockRejectedValue(
       new Error('Database unavailable'),
     );
     expect((await POST(request())).status).toBe(503);
@@ -45,6 +45,6 @@ describe('Clerk account deletion webhook', () => {
       data: { id: 'user_updated' },
     });
     expect((await POST(request())).status).toBe(200);
-    expect(mocks.eraseClerkAccount).toHaveBeenCalledTimes(1);
+    expect(mocks.handleAppleClerkDeletion).toHaveBeenCalledTimes(1);
   });
 });

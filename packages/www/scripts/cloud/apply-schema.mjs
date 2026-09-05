@@ -5,9 +5,11 @@ import WebSocket from 'ws';
 if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL is required');
 neonConfig.webSocketConstructor = WebSocket;
 const pool = new Pool({ connectionString: process.env.DATABASE_URL, max: 1 });
-const schema = await readFile(new URL('./schema.sql', import.meta.url), 'utf8');
 try {
-  await pool.query(schema);
+  for (const filename of ['schema.sql', 'apple-schema.sql']) {
+    const schema = await readFile(new URL(filename, import.meta.url), 'utf8');
+    await pool.query(schema);
+  }
 } finally {
   await pool.end();
 }
