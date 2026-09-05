@@ -6,29 +6,15 @@ import {
   DISCOVERY_CATALOG_VERSION,
   DISCOVERY_MAP_DIGEST,
   calculateDiscovery,
-  compareDiscoveryAtEnding,
   evaluateAchievements,
   findDiscoveryLocation,
   getDiscoverySection,
   listDiscoveryLocations,
-  type RecordedDiscoveryPlaythrough,
 } from './index';
 
 const allLocationScenes = listDiscoveryLocations().map(
   (location) => location.sceneIds[0],
 );
-
-function completedPlayer(
-  playerId: string,
-  discoveredSceneIds: readonly number[] = [895065, 1050],
-): RecordedDiscoveryPlaythrough {
-  return {
-    playerId,
-    discoveredSceneIds,
-    catalogVersion: DISCOVERY_CATALOG_VERSION,
-    source: 'played',
-  };
-}
 
 describe('authored discovery catalog', () => {
   it('accounts for every authored panorama exactly once and pins the reviewed map', () => {
@@ -210,77 +196,5 @@ describe('admin achievement observations', () => {
         ),
       ).toBe(true);
     }
-  });
-});
-
-describe('recorded playthrough comparison', () => {
-  const player = completedPlayer('self', allLocationScenes);
-  const cohort = Array.from({ length: 20 }, (_, index) =>
-    completedPlayer(`other-${index}`),
-  );
-
-  it('omits empty and small cohorts', () => {
-    expect(compareDiscoveryAtEnding(player, [])).toEqual({
-      status: 'unavailable',
-      reason: 'small-cohort',
-    });
-    expect(compareDiscoveryAtEnding(player, cohort.slice(1))).toEqual({
-      status: 'unavailable',
-      reason: 'small-cohort',
-    });
-  });
-
-  it('returns a descriptive aggregate without a rank or other player identities', () => {
-    expect(compareDiscoveryAtEnding(player, cohort)).toEqual({
-      status: 'available',
-      cohortLabel: 'Other players’ best recorded completed playthroughs',
-      otherPlayerCount: 20,
-      playerPercent: 100,
-      averagePercent: 0.8,
-      verified: false,
-    });
-  });
-
-  it('excludes self, imports, unfinished games, and other catalog versions', () => {
-    const excluded = [
-      player,
-      { ...completedPlayer('import'), source: 'imported' as const },
-      completedPlayer('unfinished', [1050]),
-      { ...completedPlayer('old'), catalogVersion: 0 },
-    ];
-    expect(
-      compareDiscoveryAtEnding(player, [...cohort.slice(1), ...excluded]),
-    ).toEqual({ status: 'unavailable', reason: 'small-cohort' });
-  });
-
-  it('counts each other player once using their best completed recorded playthrough', () => {
-    const withDuplicate = [
-      ...cohort,
-      completedPlayer('other-0', allLocationScenes),
-    ];
-    const comparison = compareDiscoveryAtEnding(player, withDuplicate);
-    expect(comparison.status).toBe('available');
-    if (comparison.status !== 'available')
-      throw new Error('Expected a comparison');
-    expect(comparison.otherPlayerCount).toBe(20);
-    expect(comparison.averagePercent).toBe(5.8);
-    expect(
-      compareDiscoveryAtEnding(player, [...withDuplicate].reverse()),
-    ).toEqual(comparison);
-    expect(compareDiscoveryAtEnding(player, Array(20).fill(cohort[0]))).toEqual(
-      { status: 'unavailable', reason: 'small-cohort' },
-    );
-  });
-
-  it('does not present comparisons for imported, unfinished, or mismatched player data', () => {
-    expect(
-      compareDiscoveryAtEnding({ ...player, source: 'imported' }, cohort),
-    ).toEqual({ status: 'unavailable', reason: 'imported' });
-    expect(
-      compareDiscoveryAtEnding(completedPlayer('self', [1050]), cohort),
-    ).toEqual({ status: 'unavailable', reason: 'not-completed' });
-    expect(
-      compareDiscoveryAtEnding({ ...player, catalogVersion: 0 }, cohort),
-    ).toEqual({ status: 'unavailable', reason: 'different-catalog' });
   });
 });

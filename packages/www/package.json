@@ -14,6 +14,10 @@
     "preview:generate": "yarn run catalog:check && node scripts/generate-scene-previews.mjs",
     "preview:verify": "yarn run catalog:check && node scripts/verify-scene-preview-release.mjs",
     "verify:public-site": "node scripts/verify-public-site.mjs",
+    "cloud:db:apply": "node scripts/cloud/apply-schema.mjs",
+    "cloud:verify:database": "node scripts/cloud/verify-database.mjs",
+    "cloud:verify:api": "node scripts/cloud/verify-api.mjs",
+    "cloud:verify:maintenance": "node scripts/cloud/verify-maintenance.mjs",
     "vercel-build": "cd ../.. && yarn vercel-build",
     "build": "yarn run catalog:check && yarn run build:types && next build --webpack",
     "build:types": "node ../../node_modules/typescript/bin/tsc -b ../../tsconfig.build.json",
@@ -25,6 +29,7 @@
   "dependencies": {
     "@clerk/nextjs": "^7.7.8",
     "@modelcontextprotocol/sdk": "^1.25.2",
+    "@neondatabase/serverless": "^1.0.2",
     "@react-three/fiber": "^9.4.2",
     "@reduxjs/toolkit": "^2.11.2",
     "@rooks/use-raf": "^4.11.2",
