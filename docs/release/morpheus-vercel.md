@@ -44,6 +44,25 @@ project access or the deployment trust boundary changes.
 The map is protected as a repository/build input, not as client secrecy: the
 browser bundle currently imports scene data.
 
+## Clerk authentication
+
+The `/admin` route requires a matched Clerk key pair from the same instance:
+
+| Purpose                | Access      | Vercel variable                     |
+| ---------------------- | ----------- | ----------------------------------- |
+| Clerk browser SDK      | public      | `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` |
+| Clerk server and proxy | server-only | `CLERK_SECRET_KEY`                  |
+| Admin owner prefilter  | server-only | `CLERK_ADMIN_USER_ID`               |
+
+Use development keys only in ignored local `.env.local` files. Provision
+Preview and Production with their corresponding Clerk instances before
+deploying; never expose `CLERK_SECRET_KEY` through a `NEXT_PUBLIC_` variable.
+The production instance must contain `me@0xflick.xyz` as a verified primary
+email before the admin route is considered usable. Set `CLERK_ADMIN_USER_ID` to
+that account's immutable Clerk user ID. Local development can omit the user ID
+while the first account is created; Preview and Production fail closed without
+it so rejected accounts cannot consume a Clerk user-profile lookup.
+
 ## Import the media once
 
 From a workstation with the converted source available, run the importer with
@@ -106,6 +125,10 @@ operator can write concurrently, pause the update or serialize ownership.
 6. Only then promote and repeat the network/media checks on the final hostname.
    Create/resume a save and switch slots there; IndexedDB saves do not migrate
    between localhost, preview, and production origins.
+7. In a fresh browser, open `/admin` and confirm Clerk renders for a signed-out
+   visitor. Verify that another signed-in account sees the rejection state and
+   that the verified `me@0xflick.xyz` account alone reaches the empty bug-report
+   shell. Missing or mismatched Clerk keys block promotion.
 
 Record preview/production URL, commit, Blob origin, map object identifier/ETag,
 test scene IDs, browser/device, timestamp, and evidence capture.

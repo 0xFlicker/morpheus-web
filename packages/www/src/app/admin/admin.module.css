@@ -1,0 +1,93 @@
+.centeredPage,
+.adminPage {
+  min-height: 100svh;
+  background: #f4f4f1;
+  color: #171714;
+}
+
+.centeredPage {
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+}
+
+.rejectedPanel {
+  position: relative;
+  width: min(100%, 28rem);
+  padding: 2.5rem;
+  border: 1px solid #d6d6cf;
+  border-radius: 0.75rem;
+  background: #ffffff;
+}
+
+.rejectedPanel h1,
+.rejectedPanel p,
+.header h1 {
+  margin: 0;
+}
+
+.rejectedPanel h1 {
+  margin-top: 0.5rem;
+  font-size: clamp(2rem, 8vw, 3rem);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+
+.rejectedPanel p:last-child {
+  max-width: 22rem;
+  margin-top: 1rem;
+  color: #5e5e58;
+  line-height: 1.5;
+}
+
+.eyebrow {
+  color: #6f6f68;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.userControl {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+}
+
+.adminPage {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: clamp(1.25rem, 4vw, 3rem);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.header h1 {
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+
+.emptyState {
+  flex: 1;
+  min-height: 24rem;
+  border: 1px solid #d6d6cf;
+  border-radius: 0.75rem;
+  background: #ffffff;
+}
+
+@media (max-width: 32rem) {
+  .centeredPage {
+    padding: 1rem;
+  }
+
+  .rejectedPanel {
+    padding: 4.5rem 1.5rem 2rem;
+  }
+}
