@@ -3,9 +3,16 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type {
   Hotspot,
+  MovieCast,
   Scene,
 } from '@soapbubble/morpheus-client/morpheus/casts/types';
 import { fetch as fetchScene } from '@soapbubble/morpheus-client/service/scene';
+import { isCastActive } from '@soapbubble/morpheus-client';
+import { isVisualSpecialCast } from 'morpheus/casts/matchers';
+import {
+  resolveDiscoveryObservation,
+  DISCOVERY_ENDING_SCENE_IDS,
+} from '@/lib/discovery';
 import { isNavigableSceneTarget } from 'morpheus/scene/transitionTarget';
 
 import InteractiveStage, {
@@ -71,6 +78,7 @@ type PendingTransition = {
 
 type PresentingTransition = ScenePresentationRequest & {
   dissolve: boolean;
+  runtimeGeneration: number;
 };
 
 const DISSOLVE_DURATION_MS = 600;
@@ -204,6 +212,145 @@ export const GameStageShell = ({
   const dissolveOverlayRef = useRef<HTMLCanvasElement>(null);
   const dissolveFrameRef = useRef<number | null>(null);
   const dissolveCleanupRef = useRef<number | null>(null);
+  const [visiblePresentation, setVisiblePresentation] = useState<{
+    sceneId: number;
+    generation: number;
+    token: number;
+    assets: string[];
+  } | null>(null);
+  const presentationKeyRef = useRef('');
+  const visibleAssets = useMemo(
+    () =>
+      activeScene && gamestates
+        ? activeScene.casts
+            .filter(
+              (cast): cast is MovieCast =>
+                cast.__t === 'PanoCast' || isVisualSpecialCast(cast),
+            )
+            .filter((cast) => isCastActive({ cast, gamestates }))
+            .map((cast) => cast.fileName)
+            .filter(Boolean)
+        : [],
+    [activeScene, gamestates],
+  );
+  const presentationKey = JSON.stringify([
+    activeSceneId,
+    livingSaves.runtimeGeneration,
+    visibleAssets,
+  ]);
+  // A resumed scene (and a changed conditional cast) needs fresh compositor evidence too.
+  useEffect(() => {
+    if (
+      !activeSceneId ||
+      pendingTransition ||
+      presentingTransition ||
+      transitionActive ||
+      presentationKeyRef.current === presentationKey
+    )
+      return;
+    presentationKeyRef.current = presentationKey;
+    const request = {
+      sceneId: activeSceneId,
+      token: ++transitionTokenRef.current,
+      dissolve: false,
+      runtimeGeneration: livingSaves.runtimeGeneration,
+    };
+    presentingTransitionRef.current = request;
+    setPresentingTransition(request);
+  }, [
+    activeSceneId,
+    livingSaves.runtimeGeneration,
+    pendingTransition,
+    presentingTransition,
+    presentationKey,
+    transitionActive,
+  ]);
+
+  useEffect(() => {
+    let frame: number | null = null;
+    let secondFrame: number | null = null;
+    let cancelled = false;
+    const isGameExposed = () => {
+      const stage = stageCaptureSourceRef.current;
+      if (!stage) return false;
+      const bounds = stage.getBoundingClientRect();
+      const foreground = document.elementFromPoint(
+        bounds.left + bounds.width / 2,
+        bounds.top + bounds.height / 2,
+      );
+      return foreground !== null && stage.contains(foreground);
+    };
+    const observe = () => {
+      if (
+        policy.persistence !== 'living-save' ||
+        document.visibilityState !== 'visible' ||
+        gameMenu.open ||
+        transitionActive ||
+        pendingTransition ||
+        presentingTransition ||
+        !visiblePresentation ||
+        visiblePresentation.sceneId !== activeSceneId ||
+        visiblePresentation.generation !== livingSaves.runtimeGeneration ||
+        visiblePresentation.token !== transitionTokenRef.current ||
+        !livingSaves.runtimeSlotId
+      )
+        return;
+      // Wait for uncovered gameplay to reach the compositor, including menu dismissal.
+      frame = requestAnimationFrame(() => {
+        secondFrame = requestAnimationFrame(() => {
+          if (
+            cancelled ||
+            visiblePresentation.token !== transitionTokenRef.current ||
+            document.visibilityState !== 'visible' ||
+            !isGameExposed() ||
+            visiblePresentation.assets.length === 0
+          )
+            return;
+          const unitIds = resolveDiscoveryObservation(
+            visiblePresentation.sceneId,
+            visiblePresentation.assets,
+          );
+          if (
+            unitIds.length === 0 &&
+            !DISCOVERY_ENDING_SCENE_IDS.some(
+              (id) => id === visiblePresentation.sceneId,
+            )
+          )
+            return;
+          void checkpointCoordinator?.requestCheckpoint(
+            visiblePresentation.generation,
+            {
+              sceneId: visiblePresentation.sceneId,
+              unitIds,
+            },
+          );
+        });
+      });
+    };
+    observe();
+    document.addEventListener('visibilitychange', observe);
+    document.addEventListener('focusin', observe);
+    window.addEventListener('focus', observe);
+    return () => {
+      cancelled = true;
+      document.removeEventListener('visibilitychange', observe);
+      document.removeEventListener('focusin', observe);
+      window.removeEventListener('focus', observe);
+      if (frame !== null) cancelAnimationFrame(frame);
+      if (secondFrame !== null) cancelAnimationFrame(secondFrame);
+    };
+  }, [
+    activeSceneId,
+    checkpointCoordinator,
+    gameMenu.open,
+    livingSaves.runtimeGeneration,
+    livingSaves.runtimeSlotId,
+    pendingTransition,
+    presentingTransition,
+    transitionActive,
+    visiblePresentation,
+    policy.persistence,
+  ]);
 
   useEffect(
     () => () => {
@@ -432,6 +579,7 @@ export const GameStageShell = ({
         sceneId: transition.sceneId,
         token: transition.token,
         dissolve: transition.dissolve,
+        runtimeGeneration: transition.runtimeGeneration,
       };
       presentingTransitionRef.current = presentation;
       setPresentingTransition(presentation);
@@ -465,6 +613,13 @@ export const GameStageShell = ({
         return;
       }
 
+      // This exact renderer callback already proves the active scene/assets;
+      // avoid starting a second resume-style presentation after its cover clears.
+      presentationKeyRef.current = JSON.stringify([
+        presentation.sceneId,
+        presentingTransition.runtimeGeneration,
+        visibleAssets,
+      ]);
       presentingTransitionRef.current = null;
       setPresentingTransition(null);
       const overlay = dissolveOverlayRef.current;
@@ -473,6 +628,13 @@ export const GameStageShell = ({
       ).matches;
       const shouldDissolve = presentingTransition.dissolve && !reduceMotion;
       const releaseTransition = () => {
+        if (presentation.token !== transitionTokenRef.current) return;
+        setVisiblePresentation({
+          sceneId: presentation.sceneId,
+          token: presentation.token,
+          generation: presentingTransition.runtimeGeneration,
+          assets: visibleAssets,
+        });
         transitionInProgressRef.current = false;
         setTransitionActive(false);
       };
@@ -493,17 +655,18 @@ export const GameStageShell = ({
             overlay.style.pointerEvents = 'none';
             overlay.style.transition = 'none';
             dissolveCleanupRef.current = null;
+            releaseTransition();
           }, DISSOLVE_DURATION_MS);
         } else {
           overlay.dataset.transitionState = 'idle';
           overlay.style.opacity = '0';
           overlay.style.pointerEvents = 'none';
           overlay.style.transition = 'none';
+          releaseTransition();
         }
-        releaseTransition();
       });
     },
-    [presentingTransition],
+    [presentingTransition, visibleAssets],
   );
 
   // Fallback: don't block forever if a cast never reaches "ready"

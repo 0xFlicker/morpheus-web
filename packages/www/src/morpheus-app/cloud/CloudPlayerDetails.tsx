@@ -44,7 +44,9 @@ export function DiscoverySummary({
   const save = activeSlotId
     ? cloud?.snapshot?.metadata.slots[activeSlotId].save
     : null;
-  const progress = save ? calculateDiscovery(save.discoveredSceneIds) : null;
+  const progress = save
+    ? calculateDiscovery(save.discoveredSceneIds, save.observedDiscoveryIds)
+    : null;
   const section = progress?.sections.find(
     (candidate) =>
       candidate.id ===

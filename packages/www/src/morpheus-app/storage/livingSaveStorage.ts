@@ -65,6 +65,7 @@ type WriterTransaction = {
   checkpoint?: {
     envelope: LivingSaveSessionEnvelope;
     expectedSlotRevision: number;
+    discovery?: { sceneIds: number[]; unitIds: string[] };
   };
 };
 
@@ -258,9 +259,17 @@ function prepareLocalCheckpoint(
     discoveredSceneIds: [
       ...new Set([
         ...(prior?.save.discoveredSceneIds ?? seed.discoveredSceneIds),
-        checkpoint.envelope.activeSceneId,
+        ...(checkpoint.discovery?.sceneIds ?? []),
       ]),
     ].slice(-4096),
+    observedDiscoveryIds: [
+      ...new Set([
+        ...(prior?.save.observedDiscoveryIds ??
+          seed.observedDiscoveryIds ??
+          []),
+        ...(checkpoint.discovery?.unitIds ?? []),
+      ]),
+    ],
   };
   const progress = cloudProgressKey(save);
   const storedProgress = cloudProgressKey(current.save);
@@ -690,6 +699,7 @@ export function writeLivingSaveCheckpoint(params: {
   expectedCatalogRevision: number;
   expectedSlotRevision: number;
   writerId?: string;
+  discovery?: { sceneIds: number[]; unitIds: string[] };
 }): Promise<LivingSaveResult<LivingSaveCatalog>> {
   // The slot revision is the ownership check. Another slot's activity can rebase.
   return runCatalogTransaction((catalog) => ({ ok: true, catalog }), 'played', {
@@ -697,6 +707,7 @@ export function writeLivingSaveCheckpoint(params: {
     writerId: params.writerId ?? getLivingSaveWriterId(),
     checkpoint: {
       envelope: params.envelope,
+      discovery: params.discovery,
       expectedSlotRevision: params.expectedSlotRevision,
     },
   });

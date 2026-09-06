@@ -3,8 +3,8 @@ import 'server-only';
 import { z } from 'zod';
 import {
   calculateDiscovery,
+  DISCOVERY_ENDING_SCENE_IDS,
   evaluateAchievements,
-  findDiscoveryLocation,
   listDiscoveryLocations,
   MINIMUM_DISCOVERY_COMPARISON_PLAYERS,
 } from '@/lib/discovery';
@@ -21,8 +21,13 @@ export async function discoverySummary(
   save: CloudSave | null,
 ) {
   const visits = save?.discoveredSceneIds ?? [];
-  const discovery = calculateDiscovery(visits);
-  const achievements = evaluateAchievements(visits, save?.source ?? 'played');
+  const observed = save?.observedDiscoveryIds ?? [];
+  const discovery = calculateDiscovery(visits, observed);
+  const achievements = evaluateAchievements(
+    visits,
+    save?.source ?? 'played',
+    observed,
+  );
   if (!discovery.completed || !save || save.source === 'imported') {
     return {
       discovery,
@@ -38,11 +43,7 @@ export async function discoverySummary(
       location.sceneIds.map((sceneId) => [String(sceneId), location.id]),
     ),
   );
-  const endingLocation = findDiscoveryLocation(895065);
-  if (!endingLocation)
-    throw new Error(
-      'The authored ending is missing from the discovery catalog',
-    );
+  const unitIds = listDiscoveryLocations().map((location) => location.id);
   const sql = cloudDatabase();
   // Aggregate in Postgres: no other player's identity, envelope or visit list
   // leaves the database. Linked guests count as the same player as their account.
@@ -51,16 +52,20 @@ export async function discoverySummary(
   ), current_identity AS (
     SELECT coalesce(associated_player_id, id) AS id FROM morpheus_players WHERE id = ${playerId}
   ), progress AS (
-    SELECT coalesce(p.associated_player_id, p.id) AS player_id, s.slot_id,
-      count(DISTINCT l.location_id) AS discovered,
-      bool_or(l.location_id = ${endingLocation.id}) AS completed
+    SELECT coalesce(p.associated_player_id, p.id) AS player_id,
+      (SELECT count(DISTINCT evidence.location_id) FROM (
+        SELECT l.location_id FROM jsonb_array_elements_text(s.payload->'discoveredSceneIds') AS v(scene_id)
+          JOIN locations l ON l.scene_id = v.scene_id
+        UNION
+        SELECT observed.location_id FROM jsonb_array_elements_text(coalesce(s.payload->'observedDiscoveryIds', '[]'::jsonb)) AS observed(location_id)
+          WHERE observed.location_id IN (SELECT jsonb_array_elements_text(${JSON.stringify(unitIds)}::jsonb))
+      ) evidence) AS discovered,
+      EXISTS (SELECT 1 FROM jsonb_array_elements_text(s.payload->'discoveredSceneIds') AS ending(scene_id)
+        WHERE ending.scene_id IN (SELECT jsonb_array_elements_text(${JSON.stringify(DISCOVERY_ENDING_SCENE_IDS)}::jsonb))) AS completed
     FROM morpheus_saves s JOIN morpheus_players p ON p.id = s.player_id
-    CROSS JOIN LATERAL jsonb_array_elements_text(s.payload->'discoveredSceneIds') AS v(scene_id)
-    JOIN locations l ON l.scene_id = v.scene_id
     WHERE s.payload->>'source' = 'played'
       AND (p.expires_at IS NULL OR p.expires_at > now())
       AND coalesce(p.associated_player_id, p.id) <> (SELECT id FROM current_identity)
-    GROUP BY coalesce(p.associated_player_id, p.id), s.player_id, s.slot_id
   ), best AS (
     SELECT player_id, max(discovered) AS discovered FROM progress WHERE completed GROUP BY player_id
   ) SELECT count(*) AS players, avg(discovered) AS average FROM best`;

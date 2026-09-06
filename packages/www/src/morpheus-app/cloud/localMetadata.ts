@@ -131,12 +131,8 @@ export function updateCloudLocalMetadata(
       save: {
         runId: previousSave?.runId ?? crypto.randomUUID(),
         envelope: parsed.data,
-        discoveredSceneIds: [
-          ...new Set([
-            ...(previousSave?.discoveredSceneIds ?? []),
-            parsed.data.activeSceneId,
-          ]),
-        ].slice(-4096),
+        discoveredSceneIds: previousSave?.discoveredSceneIds ?? [],
+        observedDiscoveryIds: previousSave?.observedDiscoveryIds ?? [],
         source:
           previousSave?.source ??
           (source === 'imported' ? 'imported' : 'played'),

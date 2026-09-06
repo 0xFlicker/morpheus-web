@@ -1,49 +1,38 @@
 # Morpheus discovery and achievement rules
 
-Discovery catalog version **1** measures **227 locations** across the ship, four dream worlds, and the ending. It measures places reached, not hours played, puzzle correctness, dialogue watched, or progress toward winning. Player copy should say “locations discovered”; reaching the ending and reaching 100% discovery are separate results.
+Catalog version **2** measures **518 reviewed content units**: panorama/location families, distinct 2D views, closeups, documents, puzzle screens, and selected full-screen authored movies. It measures recorded content seen during one journey, not time played, puzzle correctness, every animation frame, or progress toward winning. Reaching the ending remains separate from discovering everything.
 
 ## Authored evidence and counting choices
 
-The reviewed source is `packages/morpheus/client/js/service/morpheus.map.json`, SHA-256 `8504cc0dc7f18afe3f77c1b13c553a3bd040993158aef92fe4f848dfb54cc094`, also recorded by `packages/www/src/generated/sceneCatalog.json`. The original `MorpheusWin/CommonSources/Headers/MorpheusSupport/CScene.h` identifies scene type 1 as panorama, 5 as help/menu, 6 as credits, and 7 as final credits. Its `CScene.cpp` stores volatile visited flags; these are not proof of a legal playthrough and are not a substitute for durable per-run discovery records.
+The approved audit is [discovery-2d-audit/README.md](discovery-2d-audit/README.md); [proposed-units.md](discovery-2d-audit/proposed-units.md) lists every reviewed unit, and the scene inventory accounts for all 1,844 authored records including scene 0. The authored map SHA-256 is `8504cc0dc7f18afe3f77c1b13c553a3bd040993158aef92fe4f848dfb54cc094`. Actual original-media dimensions, authored placement, frame range, asset identity, linked interactions, and explicit user review ground membership and grouping. Converter output dimensions are not reliable inclusion evidence.
 
-The new catalog covers all **295 authored panorama scenes**, grouping scenes that represent one place in different lighting, puzzle, or elevator states. The catalog stores explicit scene membership, with the authored panorama asset beside each group as an audit aid. It does not infer content from a numeric scene-ID range at runtime.
+| Section | Panorama/location families | Added 2D content | Total |
+| --- | ---: | ---: | ---: |
+| Ship | 142 | 192 | 334 |
+| Island dream | 7 | 15 | 22 |
+| Palace dream | 23 | 9 | 32 |
+| Waterfront dream | 33 | 56 | 89 |
+| Carnival dream | 10 | 24 | 34 |
+| Ending | 3 | 4 | 7 |
+| **Overall** | **218** | **300** | **518** |
 
-| Section ID | Player label | Locations | Authored membership |
-| --- | --- | ---: | --- |
-| `ship` | Ship | 144 | Deck1, Deck2, Deck2Bth, CargoH, Deck3Aft, Deck3For, Deck4, Deck5, Elevator, sanitory, neuro panorama casts |
-| `voodoo` | Island dream | 13 | Voodoo panorama casts |
-| `harem` | Palace dream | 23 | Harem panorama casts |
-| `waterfront` | Waterfront dream | 33 | h2oFront panorama casts |
-| `carnival` | Carnival dream | 10 | carnival panorama casts |
-| `ending` | Ending | 4 | iceNchat's three panorama locations, plus one ending-completed milestone |
+Independent views remain distinct even in the same room. Explicit approved families count once: each container, book/diary/map item, Carnival exhibit, the bird cage, the Island platform network, each of nine grave bases, and the five gondola route areas. Billy's portrait is included. Monkey placements, missed flares, unopened cargo variants, lightning configurations, feather stages, and gondola control combinations add no requirements. The frozen explorer and expedition journal remain separate content. Intro, titles, ordinary menus, credits, transitions, and incidental animation frames add no units.
 
-The four dream sections follow the authored neuro-pod destinations: scenes `532011`, `532012`, `532013`, and `532014` use `2carnivlSPC`, `2haremSPC`, `2h2ofrntSPC`, and `2voodooSPC`, respectively. The sanitarium and Neurographicon remain ship facilities. Cabin names do not create extra dream sections.
+Scene `710050` conditionally presents one of three shack interiors. Its raw scene ID earns no unit: the actually visible `shack1STL`, `shack2STL`, or `shack3STL` selects the corresponding unit. No game-state inference awards all three. All recording requires the relevant catalog asset to be among the actually presented scene's assets.
 
-The grouping decisions are:
+Narrative credits `895051–895058`, `895065`, and `895066` establish observed story completion independently of the denominator. The preceding ending movie `895050` is discoverable content but entering it alone does not establish completion. Menu credits `100200–100207` never complete the story. These are accounting rules; they do not change authored transitions, scripts, or hotspot eligibility.
 
-- Ship panoramas with different viewpoints remain separate places, even within one room. Known light/dark counterparts are one place: `2230/2231`, `2240/2241`, `2250/2251`, `2260/2261`, `2280/2281`, `2290/2291`, `2320/2321`, `2330/2331`, `2370/2371`, `3710/3711`, `3810/3811`, `4210/4215`, and `4212/4216`.
-- The same sanitarium viewpoints before and after the authored state change are grouped as `4310/4311`, `4320/4321`, and `4340/4341/4345`.
-- The elevator interior is one place across `6001/6002/6003/6004/6013/6014`. Visiting another floor does not rediscover the elevator.
-- Voodoo C1 (`7130–7139`), C2 (`7030–7039`), A (`7040–7049`), B (`7050–7059`), and C (`7060–7069`, `7169`, `7269`) each count once. Their authored motion/lift states are not additional places. D and E, the beach, bridge, grotto, crossroads, obelisk, and ceremony remain distinct places. The exact lists are in `catalog.ts`; these ranges are documentation shorthand only.
-- Transitions, closeups, controlled-movie puzzle frames, menu screens, ordinary credits, and intro scenes do not add locations. Changing rotation, animation frame, a control value, or repeatedly visiting a scene cannot increase discovery.
-- Scene `895050` plays `GameDB/iceNchat/endseqSPC`, whose next scene is `895051`. Narrative-credit scenes `895051–895058` and final-credit scenes `895065/895066` therefore alias one “ending completed” location. Merely entering the finale movie does not mean it finished. Menu-accessible credits `100200–100207` never count as completing the story. A visit is still an unverified client observation, even at the ending.
+## Evidence, persistence, and display
 
-These are content-accounting rules only. They do not modify authored transitions, hotspot eligibility, game state, or native runtime behavior. A full authored playthrough is still required to establish practical reachability of every catalog location; catalog coverage tests alone do not prove it.
+`CloudSave.runId` identifies one journey. `discoveredSceneIds` preserves historical raw observations. `observedDiscoveryIds` stores canonical content identities from new visible presentations, including conditional content. Calculators union both forms by unit identity and ignore repeat visits. Missing optional content evidence is empty; it never reconstructs historical visits from a save's current scene or game-state values. New games start empty. Local saves, cloud writes, retries, downloads, conflict choices, and resume carry the chosen journey's evidence. Discarded conflict branches are not merged into the retained journey.
 
-## Pure functions and integration
+Checkpointing, importing, prefetching, and asset downloading do not award visits. Recording is tied to actual renderer presentation, with current scene/journey identity, a visible foreground game, and no covering menu or modal. Web transition covers must finish before observation. Tooling/explorer runtimes cannot record game discovery. Resume can record the currently shown scene once it is actually visible; it cannot invent earlier visits. A stopped, replaced, or stale presentation cannot award evidence to another journey.
 
-Import from `packages/www/src/lib/discovery/index.ts`:
+Version 1 measured 227 units. Version 2 consolidates some panorama variants and removes the credits milestone, then adds 300 2D units. Existing raw visits are retained and reinterpreted against the new catalog; old percentages usually decrease as the denominator grows. Previously stored 2D IDs can contribute where membership is unambiguous, but old checkpoint-based evidence cannot retroactively prove the content was visible. There is no automatic historical backfill. Both old and new evidence remain unverified client observations.
 
-- `calculateDiscovery(discoveredSceneIds)` returns `catalogVersion`, `overall`, `sections`, `discoveredLocationIds`, and `completed`. Each count contains `discovered`, `total`, and `percent`. IDs are deduplicated by location; unknown IDs are ignored. Arrays return in catalog order. Percentages truncate to one decimal and cannot display 100 until every location is present.
-- `findDiscoveryLocation(sceneId)` returns the immutable location, section, and scene aliases. `getDiscoverySection(sceneId)` returns its section or `undefined` for scenes that are not counted. During a transition/closeup, the UI may keep the last counted location's section; it must not guess the section from scene-number prefixes.
-- `listDiscoveryLocations()` exposes the complete immutable catalog. Catalog IDs are scoped to the catalog version. The current content identity uses the first scene in the reviewed group, not a client-provided label or total.
-- `evaluateAchievements(discoveredSceneIds, source)` returns matches for admin testing. `source` is `played` or `imported`; it is diagnostic metadata, not an authentication or integrity claim. Every result has `visibility: 'admin'` and `verified: false`.
+Percentages truncate to one decimal so incomplete discovery never displays 100%. The optional in-game display remains in the existing **left side black bar**, hidden when the gutter cannot fit it. No game resizing or space below the game is added. Overall and current-section percentages remain available in the menu. Sections follow authored content membership, not numeric scene-ID guesses; the last known section can remain displayed through uncounted transitions.
 
-The server's `src/lib/cloud/discoverySummary.ts` owns endgame comparisons. It aggregates current saves inside Postgres, coalesces linked guest/account identities, and returns no individual record. There is no separate test-only cohort implementation.
-
-The cloud service calculates results from its saved visit records and the server's catalog. `CloudSave.runId` scopes a playthrough; retain the same run's cumulative observed visits alongside its living-save snapshot across local persistence, retries, and sync. A new game starts an empty visit set. Do not aggregate discovery across unrelated slots/runs, recover historical visits from numeric game-state values, or union discarded conflict branches into the chosen run. Those choices would claim places the retained playthrough may never have reached. Imports retain only visits actually supplied or subsequently observed and remain marked as imported; an old snapshot cannot reconstruct its missing visit history.
-
-When the scene becomes the committed active scene, record its ID against the active run. Background/prefetched scenes and direct explorer/tooling sessions must not create game discovery. The UI can calculate immediate local display using the same rules, but local display is not server evidence. Both clients should show the last server-confirmed comparison only when it still belongs to the same run and catalog version.
+The canonical source is `packages/www/src/lib/discovery/catalog.json`. The Swift catalog is generated from it with `scripts/discovery/generate-swift.mjs`; `--check` detects drift. Web `calculateDiscovery(rawIds, observedIds)` and Swift `MorpheusDiscovery.count` compute equivalent results. `resolveDiscoveryObservation` / `observedIDs` resolve an actual scene presentation and its visible asset paths. Catalog changes require authored review and a version increment, not silently changing the denominator or grouping by shared filename alone.
 
 ## Initial admin achievements
 
@@ -55,7 +44,7 @@ Imported saves can show admin matches labeled `source: 'imported'`. They cannot 
 
 The descriptive comparison uses each **other player's best currently saved completed playthrough**, interpreted with the current authored catalog, with at least **one other server-owned player identity**, displaying the sample size. It excludes the current player's records, imports, incomplete runs, and expired guests. Multiple slots or linked guest/account records cannot multiply that player's weight. Anonymous identities can still represent multiple installations of the same human.
 
-The result contains only the other-player count, the player's discovery percentage, the cohort mean, a cohort label, and `verified: false`. It returns no percentile, rank, individual identity, or leaderboard. Suggested text: “You discovered 72.2% of locations. Other players’ best recorded completed games average 64.8%.” This describes recorded data; it does not assert cheating was ruled out. Omit the comparison when unavailable. Never call this “all players” when only completed recorded games are included. The 20-player minimum is a product noise/privacy threshold, not a statistical or legal guarantee.
+The result contains only the other-player count, the player's discovery percentage, the cohort mean, a cohort label, and `verified: false`. It returns no percentile, rank, individual identity, or leaderboard. Suggested text: “You discovered 72.2% of locations. Other players’ best recorded completed games average 64.8%.” This describes recorded data; it does not assert cheating was ruled out. Omit the comparison when unavailable. Never call this “all players” when only completed recorded games are included.
 
 The `played` label is client-reported. Excluding known imports reduces obvious noise but does not make this cohort resistant to manufactured players or fabricated visits. Do not use the aggregate for rewards, scarce benefits, or competitive placement.
 
@@ -81,6 +70,6 @@ From the web repository root, after selecting Node with `nvm use`:
 yarn workspace morpheus-next test run src/lib/discovery/discovery.test.ts
 ```
 
-Tests cover complete generated-catalog membership, alias uniqueness, section boundaries, duplicate and unknown visits, transitions/menu exclusion, narrative completion, partial/full percentages, and imported/unverified achievement observations. Server summary tests cover response gating; `scripts/cloud/verify-api.mjs` exercises actual Postgres cohort exclusion, linked-identity deduplication, and the nonempty-cohort threshold. The catalog test pins the map digest so authored changes require reviewing membership and explicitly revising the discovery catalog/version where counting semantics change. It must not be fixed by blindly updating only the digest.
+Tests cover authored inventory membership, aliases, approved grouping, conditional visible assets, section boundaries, repeats, retained historical evidence, narrative completion, and unverified achievements. `scripts/discovery/check-swift-parity.mjs` compiles and exercises the actual Swift calculator against all catalog units. Server summary tests cover response gating; `scripts/cloud/verify-api.mjs` exercises actual Postgres cohort exclusion, linked-identity deduplication, and the nonempty-cohort threshold. The catalog test pins the map digest so authored changes require reviewing membership and explicitly revising the discovery catalog/version where counting semantics change. It must not be fixed by blindly updating only the digest.
 
 These tests prove deterministic accounting over authored data. They do not prove browser/native visit capture, real cloud persistence, hardware playback, end-to-end game reachability, or a legal playthrough. Those are separate integration/release checks owned by the cloud and client implementation units.

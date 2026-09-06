@@ -200,7 +200,11 @@ try {
     mutationId: randomUUID(),
   });
   assert.equal(stale.status, 409);
-  const completed = { ...save, discoveredSceneIds: [1050, 895065] };
+  const completed = {
+    ...save,
+    discoveredSceneIds: [1050, 895065],
+    observedDiscoveryIds: ['view-1050', 'swan-scrapbook', 'content-708010'],
+  };
   const completion = await call(first, '/api/cloud/saves', 'PUT', {
     ...write,
     expectedRevision: 2,
@@ -208,6 +212,14 @@ try {
     save: completed,
   });
   assert.equal(completion.status, 200);
+  const restored = (await call(first, '/api/cloud/saves')).body.slots.find(
+    (slot) => slot.slotId === 'slot-1',
+  ).save;
+  assert.equal(restored.runId, completed.runId);
+  assert.deepEqual(
+    restored.observedDiscoveryIds,
+    [...completed.observedDiscoveryIds].sort(),
+  );
   const summary = () => call(first, '/api/cloud/discovery?slotId=slot-1');
   assert.equal(
     (await summary()).body.comparison.reason,
@@ -251,7 +263,9 @@ try {
   const comparison = (await summary()).body.comparison;
   assert.equal(comparison.status, 'available');
   assert.equal(comparison.otherPlayerCount, 2);
-  assert.equal(comparison.averagePercent, 0.8);
+  assert.equal(comparison.averagePercent, 0.5);
+  assert.equal(comparison.playerPercent, 0.5);
+  assert.equal((await summary()).body.discovery.overall.total, 518);
   assert.equal(comparison.verified, false);
   assert.ok(!JSON.stringify(comparison).includes(cohort[0]));
   assert.equal((await call(first, '/api/cloud/erase', 'DELETE')).status, 200);

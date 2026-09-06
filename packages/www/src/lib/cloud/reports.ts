@@ -394,10 +394,14 @@ export async function listCloudSaveDiagnostics(
         runId: save.runId,
         sceneId: save.envelope.activeSceneId,
         source: save.source,
-        discovery: calculateDiscovery(save.discoveredSceneIds),
+        discovery: calculateDiscovery(
+          save.discoveredSceneIds,
+          save.observedDiscoveryIds,
+        ),
         achievements: evaluateAchievements(
           save.discoveredSceneIds,
           save.source,
+          save.observedDiscoveryIds,
         ),
       };
     }),

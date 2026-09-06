@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { fetchInitial } from '@soapbubble/morpheus-client/service/gameState';
 
 import {
+  cloudSaveSchema,
+  isUnplayedCloudSave,
   cloudProgressKey,
   cloudWriteSchema,
   reconcileCloudSlot,
@@ -233,6 +235,55 @@ describe('cloud wire validation', () => {
         ...request,
         save: { ...save, envelope: {} },
       }).success,
+    ).toBe(false);
+  });
+});
+
+describe('discovery evidence persistence', () => {
+  it('preserves old raw evidence without inventing visibility observations', () => {
+    const parsed = cloudSaveSchema.parse(save);
+    expect(parsed.discoveredSceneIds).toEqual([2000]);
+    expect(parsed.observedDiscoveryIds).toBeUndefined();
+    expect(cloudProgressKey(parsed)).toBe(
+      cloudProgressKey({ ...parsed, observedDiscoveryIds: [] }),
+    );
+    // Existing acknowledged progress keys must not change merely by installing the new catalog.
+    expect(JSON.parse(cloudProgressKey(parsed))).not.toHaveProperty(
+      'observedDiscoveryIds',
+    );
+  });
+  it('round trips and normalizes observations while keeping journey identity and raw evidence', () => {
+    const parsed = cloudSaveSchema.parse({
+      ...save,
+      observedDiscoveryIds: ['view-8000', 'view-2000', 'view-8000'],
+    });
+    expect(parsed.observedDiscoveryIds).toEqual(['view-2000', 'view-8000']);
+    expect(cloudSaveSchema.parse(JSON.parse(JSON.stringify(parsed)))).toEqual(
+      parsed,
+    );
+    expect(parsed.runId).toBe(save.runId);
+    expect(parsed.discoveredSceneIds).toEqual(save.discoveredSceneIds);
+    expect(cloudProgressKey(parsed)).not.toBe(cloudProgressKey(save));
+    expect(
+      cloudSaveSchema.safeParse({ ...save, observedDiscoveryIds: ['invented'] })
+        .success,
+    ).toBe(false);
+  });
+  it('does not treat a journey with additional discovered content as an unplayed slot', () => {
+    const blank = {
+      ...save,
+      envelope: {
+        ...save.envelope,
+        gamestateValues: Object.fromEntries(
+          fetchInitial().map((state) => [state.stateId, state.value]),
+        ),
+      },
+    };
+    expect(
+      isUnplayedCloudSave({ ...blank, observedDiscoveryIds: ['view-2000'] }),
+    ).toBe(true);
+    expect(
+      isUnplayedCloudSave({ ...blank, observedDiscoveryIds: ['view-8000'] }),
     ).toBe(false);
   });
 });

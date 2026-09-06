@@ -1,6 +1,6 @@
 import {
   DISCOVERY_CATALOG_VERSION,
-  DISCOVERY_LOCATION_SCENES,
+  DISCOVERY_UNITS,
   DISCOVERY_SECTION_IDS,
   DISCOVERY_SECTION_LABELS,
   type DiscoverySectionId,
@@ -39,19 +39,39 @@ export type DiscoveryProgress = {
 };
 
 const locations: readonly DiscoveryLocation[] = Object.freeze(
-  DISCOVERY_SECTION_IDS.flatMap((sectionId) =>
-    DISCOVERY_LOCATION_SCENES[sectionId].map((sceneIds) => {
-      if (sceneIds.length === 0) {
-        throw new Error(`Empty discovery location in ${sectionId}`);
-      }
-      return Object.freeze({
-        id: `location-${sceneIds[0]}`,
-        sectionId,
-        sceneIds: Object.freeze([...sceneIds]),
-      });
+  DISCOVERY_UNITS.map((unit) =>
+    Object.freeze({
+      id: unit.id,
+      sectionId: unit.section as DiscoverySectionId,
+      sceneIds: Object.freeze([...unit.sceneIds]),
     }),
   ),
 );
+const locationIds = new Set(locations.map((location) => location.id));
+export function isDiscoveryUnitId(id: string): boolean {
+  return locationIds.has(id);
+}
+
+/** Called only after presentation; conditional content requires the visible cast. */
+export function resolveDiscoveryObservation(
+  sceneId: number,
+  visibleAssetPaths: readonly string[] = [],
+): readonly string[] {
+  const ordinary = findDiscoveryLocation(sceneId);
+  if (ordinary) {
+    const unit = DISCOVERY_UNITS.find((unit) => unit.id === ordinary.id)!;
+    return visibleAssetPaths.some((asset) => unit.assets.includes(asset))
+      ? [ordinary.id]
+      : [];
+  }
+  return DISCOVERY_UNITS.filter((unit) =>
+    unit.conditionalObservations?.some(
+      (observation) =>
+        observation.sceneId === sceneId &&
+        visibleAssetPaths.includes(observation.visibleAsset),
+    ),
+  ).map((unit) => unit.id);
+}
 
 const locationsByScene = new Map<number, DiscoveryLocation>();
 for (const location of locations) {
@@ -66,7 +86,11 @@ for (const location of locations) {
   }
 }
 
-const endingLocationId = 'location-895051';
+export const DISCOVERY_ENDING_SCENE_IDS = [
+  895051, 895052, 895053, 895054, 895055, 895056, 895057, 895058, 895065,
+  895066,
+] as const;
+const endingScenes: ReadonlySet<number> = new Set(DISCOVERY_ENDING_SCENE_IDS);
 
 export function listDiscoveryLocations(): readonly DiscoveryLocation[] {
   return locations;
@@ -78,11 +102,18 @@ export function findDiscoveryLocation(
   return locationsByScene.get(sceneId);
 }
 
-/** Transitions/closeups have no location; the UI may keep the last known section. */
+/** Excluded transitions keep the last known section; authored 2D units have their own attribution. */
 export function getDiscoverySection(
   sceneId: number,
 ): DiscoverySectionId | undefined {
-  return findDiscoveryLocation(sceneId)?.sectionId;
+  return (
+    findDiscoveryLocation(sceneId)?.sectionId ??
+    (DISCOVERY_UNITS.find((unit) =>
+      unit.conditionalObservations?.some(
+        (observation) => observation.sceneId === sceneId,
+      ),
+    )?.section as DiscoverySectionId | undefined)
+  );
 }
 
 function count(discovered: number, total: number): DiscoveryCount {
@@ -97,8 +128,9 @@ function count(discovered: number, total: number): DiscoveryCount {
 /** Calculate on the server from recorded visits; never take client counts/totals. */
 export function calculateDiscovery(
   visitedSceneIds: readonly number[],
+  observedDiscoveryIds: readonly string[] = [],
 ): DiscoveryProgress {
-  const discovered = new Set<string>();
+  const discovered = new Set(observedDiscoveryIds.filter(isDiscoveryUnitId));
   for (const sceneId of visitedSceneIds) {
     const location = findDiscoveryLocation(sceneId);
     if (location) discovered.add(location.id);
@@ -123,7 +155,7 @@ export function calculateDiscovery(
     discoveredLocationIds: locations
       .filter((location) => discovered.has(location.id))
       .map((location) => location.id),
-    completed: discovered.has(endingLocationId),
+    completed: visitedSceneIds.some((id) => endingScenes.has(id)),
   };
 }
 
@@ -143,8 +175,9 @@ export type ObservedAchievement = {
 export function evaluateAchievements(
   visitedSceneIds: readonly number[],
   source: DiscoveryEvidenceSource = 'played',
+  observedDiscoveryIds: readonly string[] = [],
 ): readonly ObservedAchievement[] {
-  const progress = calculateDiscovery(visitedSceneIds);
+  const progress = calculateDiscovery(visitedSceneIds, observedDiscoveryIds);
   const matches: { id: string; title: string }[] = [];
   if (progress.overall.discovered > 0) {
     matches.push({ id: 'first-location', title: 'First discovery' });

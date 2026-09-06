@@ -127,7 +127,7 @@ describe('competing local tab checkpoints', () => {
         writerId: second,
         save: {
           envelope: { activeSceneId: 3010 },
-          discoveredSceneIds: [1010, 3010],
+          discoveredSceneIds: [],
         },
       },
     ]);

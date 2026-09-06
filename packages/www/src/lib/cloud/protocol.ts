@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { isDiscoveryUnitId, findDiscoveryLocation } from '../discovery';
 import { fetchInitial } from '@soapbubble/morpheus-client/service/gameState';
 
 import { parseLivingSaveSessionEnvelope } from '@/morpheus-app/storage/livingSaveSchema';
@@ -32,6 +33,11 @@ export const cloudSaveSchema = z
       .array(z.number().int().positive().safe())
       .max(4096)
       .transform((ids) => [...new Set(ids)].sort((a, b) => a - b)),
+    observedDiscoveryIds: z
+      .array(z.string().refine(isDiscoveryUnitId, 'Unknown discovery unit'))
+      .max(518)
+      .transform((ids) => [...new Set(ids)].sort())
+      .optional(),
     source: z.enum(['played', 'imported']),
   })
   .strict();
@@ -100,6 +106,9 @@ export function cloudProgressKey(save: CloudSave | null): string {
     discoveredSceneIds: [...new Set(save.discoveredSceneIds)].sort(
       (a, b) => a - b,
     ),
+    ...((save.observedDiscoveryIds?.length ?? 0) > 0
+      ? { observedDiscoveryIds: [...new Set(save.observedDiscoveryIds)].sort() }
+      : {}),
     source: save.source,
   });
 }
@@ -117,6 +126,9 @@ export function isUnplayedCloudSave(save: CloudSave): boolean {
     save.envelope.activeSceneId !== MORPHEUS_INITIAL_SCENE_ID ||
     save.envelope.returnSceneId !== null ||
     save.envelope.gameDataVersion !== LIVING_SAVE_GAME_DATA_VERSION ||
+    (save.observedDiscoveryIds ?? []).some(
+      (id) => id !== findDiscoveryLocation(MORPHEUS_INITIAL_SCENE_ID)?.id,
+    ) ||
     save.discoveredSceneIds.some((id) => id !== MORPHEUS_INITIAL_SCENE_ID)
   )
     return false;

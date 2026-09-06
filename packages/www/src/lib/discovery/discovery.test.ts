@@ -1,200 +1,155 @@
 import { describe, expect, it } from 'vitest';
-
 import sceneCatalog from '@/generated/sceneCatalog.json';
-
+import catalog from './catalog.json';
 import {
-  DISCOVERY_CATALOG_VERSION,
   DISCOVERY_MAP_DIGEST,
   calculateDiscovery,
   evaluateAchievements,
   findDiscoveryLocation,
   getDiscoverySection,
   listDiscoveryLocations,
+  resolveDiscoveryObservation,
 } from './index';
 
-const allLocationScenes = listDiscoveryLocations().map(
-  (location) => location.sceneIds[0],
-);
+const locations = listDiscoveryLocations();
+const allScenes = locations.map((location) => location.sceneIds[0]);
 
-describe('authored discovery catalog', () => {
-  it('accounts for every authored panorama exactly once and pins the reviewed map', () => {
+describe('approved authored discovery catalog', () => {
+  it('accounts for every authored scene, with unique units and ordinary aliases', () => {
     expect(DISCOVERY_MAP_DIGEST).toBe(sceneCatalog.sourceDigest);
-    const authoredPanoramas = sceneCatalog.scenes
-      .filter((scene) => scene.sceneType === 1)
-      .map((scene) => scene.sceneId);
-    const scenes = listDiscoveryLocations().flatMap(
-      (location) => location.sceneIds,
+    expect(locations).toHaveLength(518);
+    expect(new Set(locations.map((unit) => unit.id)).size).toBe(518);
+    const ordinary = locations.flatMap((unit) => unit.sceneIds);
+    expect(new Set(ordinary).size).toBe(ordinary.length);
+    const accounted = [
+      ...ordinary,
+      ...catalog.otherScenes.map((scene) => scene.sceneId),
+    ];
+    expect(new Set(accounted).size).toBe(1844);
+    expect(new Set(accounted)).toEqual(
+      new Set([0, ...sceneCatalog.scenes.map((scene) => scene.sceneId)]),
     );
-    expect(new Set(scenes).size).toBe(scenes.length);
-    expect(
-      new Set(listDiscoveryLocations().map((location) => location.id)).size,
-    ).toBe(227);
-    expect(authoredPanoramas).toHaveLength(295);
-    expect(
-      scenes
-        .filter((sceneId) => authoredPanoramas.includes(sceneId))
-        .sort((a, b) => a - b),
-    ).toEqual(authoredPanoramas);
-    expect(
-      scenes.filter((sceneId) => !authoredPanoramas.includes(sceneId)),
-    ).toEqual([
-      895051, 895052, 895053, 895054, 895055, 895056, 895057, 895058, 895065,
-      895066,
-    ]);
-    for (const sceneId of scenes) {
-      expect(
-        sceneCatalog.scenes.some((scene) => scene.sceneId === sceneId),
-      ).toBe(true);
+    for (const scene of sceneCatalog.scenes.filter(
+      (scene) => scene.sceneType === 1,
+    )) {
+      expect(findDiscoveryLocation(scene.sceneId)).toBeDefined();
     }
+    expect(
+      calculateDiscovery([]).sections.map(({ id, total }) => [id, total]),
+    ).toEqual([
+      ['ship', 334],
+      ['voodoo', 22],
+      ['harem', 32],
+      ['waterfront', 89],
+      ['carnival', 34],
+      ['ending', 7],
+    ]);
   });
 
-  it('counts stable locations across lighting, elevator, and moving-platform states', () => {
-    for (const group of [
-      [2230, 2231],
-      [6001, 6002, 6014],
-      [7030, 7039],
-      [7130, 7139],
-      [7060, 7169, 7269],
-    ]) {
-      const progress = calculateDiscovery(group);
-      expect(progress.overall.discovered).toBe(1);
-      expect(progress.discoveredLocationIds).toHaveLength(1);
-    }
-    expect(findDiscoveryLocation(7030)?.id).not.toBe(
-      findDiscoveryLocation(7130)?.id,
+  it('groups only the approved repeat content and puzzle states', () => {
+    for (const aliases of [
+      [7030, 7130, 7060, 7169, 7269],
+      [700011, 700031],
+      [760050, 790010, 790035],
+      [331030, 331031, 331040],
+      [890071, 890079],
+      [890050, 890060],
+    ])
+      expect(calculateDiscovery(aliases).overall.discovered).toBe(1);
+    expect(
+      calculateDiscovery(
+        Array.from({ length: 9 }, (_, index) => 700011 + index),
+      ).overall.discovered,
+    ).toBe(9);
+    expect(findDiscoveryLocation(890050)?.id).not.toBe(
+      findDiscoveryLocation(890071)?.id,
     );
+    expect(findDiscoveryLocation(807071)).toBeDefined();
   });
 
-  it('separates ship facilities, the four dream worlds, and the ending', () => {
-    const examples = [1050, 4310, 5210, 7000, 7600, 8500, 8000, 8900];
-    expect(examples.map(getDiscoverySection)).toEqual([
-      'ship',
-      'ship',
-      'ship',
-      'voodoo',
-      'harem',
-      'waterfront',
-      'carnival',
-      'ending',
-    ]);
-    expect(
-      calculateDiscovery([]).sections.map((section) => [
-        section.id,
-        section.total,
-      ]),
-    ).toEqual([
-      ['ship', 144],
-      ['voodoo', 13],
-      ['harem', 23],
-      ['waterfront', 33],
-      ['carnival', 10],
-      ['ending', 4],
-    ]);
+  it('resolves only visibly presented approved assets, including conditional shack interiors', () => {
+    expect(resolveDiscoveryObservation(710050)).toEqual([]);
+    expect(calculateDiscovery([710050]).overall.discovered).toBe(0);
+    expect(getDiscoverySection(710050)).toBe('voodoo');
+    for (const unit of catalog.units) {
+      const scene = unit.sceneIds[0];
+      expect(resolveDiscoveryObservation(scene, ['unrelated-overlay'])).toEqual(
+        [],
+      );
+      expect(resolveDiscoveryObservation(scene, unit.assets)).toEqual([
+        unit.id,
+      ]);
+      for (const conditional of unit.conditionalObservations ?? []) {
+        expect(
+          resolveDiscoveryObservation(conditional.sceneId, [
+            conditional.visibleAsset,
+          ]),
+        ).toEqual([unit.id]);
+      }
+    }
   });
 });
 
-describe('discovery calculations', () => {
-  it('does not infer historical visits from a blank or resumed snapshot', () => {
-    const empty = calculateDiscovery([]);
-    expect(empty.overall).toEqual({ discovered: 0, total: 227, percent: 0 });
-    expect(empty.completed).toBe(false);
+describe('journey discovery evidence', () => {
+  it('preserves historical evidence without inferring unrecorded content', () => {
+    expect(calculateDiscovery([]).overall).toEqual({
+      discovered: 0,
+      total: 518,
+      percent: 0,
+    });
     expect(calculateDiscovery([1050]).overall).toEqual({
       discovered: 1,
-      total: 227,
-      percent: 0.4,
+      total: 518,
+      percent: 0.1,
     });
+    const unit = locations[0];
+    expect(
+      calculateDiscovery([unit.sceneIds[0]], [unit.id, unit.id, 'invented'])
+        .overall.discovered,
+    ).toBe(1);
+    expect(calculateDiscovery([], [unit.id]).overall.discovered).toBe(1);
   });
-
-  it('ignores duplicate visits, unknown scenes, transitions, puzzle frames, and menu credits', () => {
-    const progress = calculateDiscovery([
-      1050,
-      1050,
-      101004,
-      700010,
-      100000,
-      100100,
-      100201,
-      -1,
-      0,
-      NaN,
-      Infinity,
-      1050.1,
-      999999,
-    ]);
-    expect(progress.overall.discovered).toBe(1);
-    expect(progress.completed).toBe(false);
-    expect(getDiscoverySection(101004)).toBeUndefined();
-    expect(findDiscoveryLocation(999999)).toBeUndefined();
-  });
-
-  it('produces the same result for any ordering of visits', () => {
-    const visits = [1050, 7000, 895065, 2231, 2230];
-    expect(calculateDiscovery(visits)).toEqual(
-      calculateDiscovery([...visits].reverse()),
+  it('deduplicates repeats and yields identical results regardless of evidence order', () => {
+    const scenes = [1050, 7000, 2231, 2230, 1050];
+    const ids = locations.slice(0, 5).map((unit) => unit.id);
+    expect(calculateDiscovery(scenes, ids)).toEqual(
+      calculateDiscovery([...scenes].reverse(), [...ids].reverse()),
     );
   });
-
-  it('marks story completion only when the ending sequence has reached narrative credits', () => {
-    expect(
-      calculateDiscovery([8900, 8910, 8950, 895050, 100201]).completed,
-    ).toBe(false);
-    expect(calculateDiscovery([895051]).completed).toBe(true);
-    expect(calculateDiscovery([895065, 895066]).overall.discovered).toBe(1);
-  });
-
-  it('distinguishes story completion from discovering all locations', () => {
-    expect(calculateDiscovery([895065]).overall.percent).toBeLessThan(100);
-    const complete = calculateDiscovery(allLocationScenes);
-    expect(complete.overall).toEqual({
-      discovered: 227,
-      total: 227,
-      percent: 100,
+  it('keeps narrative completion independent from the denominator and menu credits', () => {
+    expect(calculateDiscovery([895050, 100201]).completed).toBe(false);
+    expect(calculateDiscovery([895065, 895066])).toMatchObject({
+      completed: true,
+      overall: { discovered: 0 },
     });
-    expect(complete.sections.every((section) => section.percent === 100)).toBe(
-      true,
+    const all = calculateDiscovery(allScenes);
+    expect(all.overall).toEqual({ discovered: 518, total: 518, percent: 100 });
+    expect(all.completed).toBe(false);
+    expect(calculateDiscovery([...allScenes, 895051]).completed).toBe(true);
+    expect(calculateDiscovery(allScenes.slice(1)).overall.percent).toBeLessThan(
+      100,
     );
-    expect(complete.completed).toBe(true);
-    expect(
-      calculateDiscovery(allLocationScenes.slice(1)).overall.percent,
-    ).toBeLessThan(100);
   });
-});
-
-describe('admin achievement observations', () => {
-  it('matches only observed location milestones and leaves blank saves empty', () => {
+  it('keeps achievements as unverified admin observations', () => {
     expect(evaluateAchievements([])).toEqual([]);
-    const achievements = evaluateAchievements([7000, 7600, 8500, 8000]);
-    expect(achievements.map((achievement) => achievement.id)).toEqual([
-      'first-location',
-      'enter-voodoo',
-      'enter-harem',
-      'enter-waterfront',
-      'enter-carnival',
-      'all-dreams',
-    ]);
+    const achievements = evaluateAchievements(
+      [895051],
+      'imported',
+      locations.map((unit) => unit.id),
+    );
+    expect(achievements.map((achievement) => achievement.id)).toContain(
+      'all-locations',
+    );
+    expect(achievements.map((achievement) => achievement.id)).toContain(
+      'reach-ending',
+    );
     expect(
       achievements.every(
         (achievement) =>
-          achievement.visibility === 'admin' && !achievement.verified,
+          !achievement.verified &&
+          achievement.visibility === 'admin' &&
+          achievement.source === 'imported',
       ),
     ).toBe(true);
-  });
-
-  it('cannot promote uploaded or imported evidence into verified achievements', () => {
-    for (const source of ['played', 'imported'] as const) {
-      const achievements = evaluateAchievements(allLocationScenes, source);
-      expect(
-        achievements.some((achievement) => achievement.id === 'all-locations'),
-      ).toBe(true);
-      expect(
-        achievements.some((achievement) => achievement.id === 'reach-ending'),
-      ).toBe(true);
-      expect(
-        achievements.every(
-          (achievement) =>
-            achievement.verified === false && achievement.source === source,
-        ),
-      ).toBe(true);
-    }
   });
 });

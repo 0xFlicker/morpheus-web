@@ -1,5 +1,6 @@
 import 'fake-indexeddb/auto';
 import { beforeEach, afterEach, describe, expect, it } from 'vitest';
+import { findDiscoveryLocation } from '@/lib/discovery';
 import { cloudProgressKey, type CloudSlot } from '@/lib/cloud/protocol';
 import {
   createLivingSaveSlot,
@@ -103,6 +104,10 @@ describe('durable browser cloud storage', () => {
       await writeLivingSaveCheckpoint({
         slotId: 'slot-1',
         envelope: envelope(2010),
+        discovery: {
+          sceneIds: [2010],
+          unitIds: [findDiscoveryLocation(2010)!.id],
+        },
         expectedCatalogRevision: catalog.revision,
         expectedSlotRevision: catalog.slots['slot-1'].revision,
       }),
@@ -120,7 +125,7 @@ describe('durable browser cloud storage', () => {
       before.metadata.slots['slot-1'].save?.runId,
     );
     expect(latest.metadata.slots['slot-1'].save?.discoveredSceneIds).toEqual([
-      1010, 2010,
+      2010,
     ]);
     if (!pending) throw new Error('Missing mutation');
     await acknowledgeCloudSlot({
@@ -139,6 +144,50 @@ describe('durable browser cloud storage', () => {
     expect(acked.metadata.slots['slot-1'].acknowledgedProgress).not.toBe(
       cloudProgressKey(acked.metadata.slots['slot-1'].save),
     );
+  });
+
+  it('does not invent visits on creation or checkpoints, and retains repeated visible evidence through resume and cloud upload', async () => {
+    let catalog = await setup();
+    const original = (await readCloudLocalSnapshot()).metadata.slots['slot-1']
+      .save!;
+    expect(original.discoveredSceneIds).toEqual([]);
+    expect(original.observedDiscoveryIds).toEqual([]);
+    const unitId = findDiscoveryLocation(331030)!.id;
+    for (const observation of [
+      undefined,
+      { sceneIds: [331030], unitIds: [unitId] },
+      { sceneIds: [331030], unitIds: [unitId] },
+      undefined,
+    ]) {
+      catalog = value(
+        await writeLivingSaveCheckpoint({
+          slotId: 'slot-1',
+          envelope: envelope(331030),
+          expectedCatalogRevision: catalog.revision,
+          expectedSlotRevision: catalog.slots['slot-1'].revision,
+          discovery: observation,
+        }),
+      );
+      if (!observation && catalog.slots['slot-1'].revision === 2) {
+        expect(
+          (await readCloudLocalSnapshot()).metadata.slots['slot-1'].save
+            ?.discoveredSceneIds,
+        ).toEqual([]);
+      }
+    }
+    const resumed = (await readCloudLocalSnapshot()).metadata.slots['slot-1']
+      .save!;
+    expect(resumed.runId).toBe(original.runId);
+    expect(resumed.discoveredSceneIds).toEqual([331030]);
+    expect(resumed.observedDiscoveryIds).toEqual([unitId]);
+    const upload = await prepareCloudWrite({
+      identityKey: 'anonymous',
+      playerId,
+      slotId: 'slot-1',
+      localRevision: catalog.slots['slot-1'].revision,
+      expectedRevision: 0,
+    });
+    expect(upload?.save).toEqual(resumed);
   });
 
   it('rejects a download if local progress changed while the request was running', async () => {

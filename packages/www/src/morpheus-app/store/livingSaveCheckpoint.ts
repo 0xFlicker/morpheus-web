@@ -31,7 +31,13 @@ import {
 } from './slices/livingSavesSlice';
 import type { AppDispatch, AppStore, RootState } from './store';
 
+export type DiscoveryObservation = {
+  sceneId: number;
+  unitIds: readonly string[];
+};
+
 type WriteCheckpointParams = {
+  discovery?: { sceneIds: number[]; unitIds: string[] };
   slotId: LivingSaveSlotId;
   envelope: LivingSaveSessionEnvelope;
   expectedCatalogRevision: number;
@@ -49,7 +55,10 @@ export type LivingSaveCheckpointDependencies = {
 };
 
 export type LivingSaveCheckpointCoordinator = {
-  requestCheckpoint: (runtimeGeneration: number) => Promise<void>;
+  requestCheckpoint: (
+    runtimeGeneration: number,
+    observation?: DiscoveryObservation,
+  ) => Promise<void>;
   flush: () => Promise<LivingSaveResult<void>>;
 };
 
@@ -66,6 +75,9 @@ export function createLivingSaveCheckpointCoordinator(
     params: WriteCheckpointParams;
   };
   let queued: CapturedCheckpoint | null = null;
+  let observationGeneration = -1;
+  const sceneIds = new Set<number>();
+  const unitIds = new Set<string>();
   let lastResult: LivingSaveResult<void> = { ok: true, value: undefined };
 
   const capture = (runtimeGeneration: number): CapturedCheckpoint | null => {
@@ -147,10 +159,37 @@ export function createLivingSaveCheckpointCoordinator(
     );
   };
 
-  const requestCheckpoint = (runtimeGeneration: number): Promise<void> => {
+  const requestCheckpoint = (
+    runtimeGeneration: number,
+    observation?: DiscoveryObservation,
+  ): Promise<void> => {
     // Capture immediately: an account switch may unmount the game before this write runs.
     const captured = capture(runtimeGeneration);
     if (!captured) return inFlight ?? Promise.resolve();
+    if (observationGeneration !== runtimeGeneration) {
+      observationGeneration = runtimeGeneration;
+      sceneIds.clear();
+      unitIds.clear();
+    }
+    if (
+      observation &&
+      observation.sceneId === captured.params.envelope.activeSceneId
+    ) {
+      // Repeated focus/presentation callbacks carry no new progress. An in-flight
+      // write already contains this evidence; a failed write must remain retryable.
+      if (
+        sceneIds.has(observation.sceneId) &&
+        observation.unitIds.every((id) => unitIds.has(id)) &&
+        (inFlight !== null || lastResult.ok)
+      )
+        return inFlight ?? Promise.resolve();
+      sceneIds.add(observation.sceneId);
+      observation.unitIds.forEach((id) => unitIds.add(id));
+    }
+    captured.params.discovery = {
+      sceneIds: [...sceneIds],
+      unitIds: [...unitIds],
+    };
     queued = captured;
     if (inFlight) return inFlight;
     inFlight = (async () => {

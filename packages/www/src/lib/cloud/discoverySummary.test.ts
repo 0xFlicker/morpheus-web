@@ -32,6 +32,23 @@ describe('production discovery summary', () => {
     ).toMatchObject({ reason: 'imported' });
     expect(sql).not.toHaveBeenCalled();
   });
+  it('combines saved content observations with historical visits without double counting', async () => {
+    sql.mockResolvedValueOnce([{ players: '1', average: '3' }]);
+    const result = await discoverySummary('self', {
+      ...save,
+      observedDiscoveryIds: ['view-1050', 'swan-scrapbook', 'content-708010'],
+    });
+    expect(result.discovery.overall).toEqual({
+      discovered: 3,
+      total: 518,
+      percent: 0.5,
+    });
+    expect(result.discovery.completed).toBe(true);
+    expect(result.comparison).toMatchObject({
+      playerPercent: 0.5,
+      averagePercent: 0.5,
+    });
+  });
   it('compares from the first other completed player and omits empty cohorts', async () => {
     sql.mockResolvedValueOnce([{ players: '0', average: null }]);
     expect((await discoverySummary('self', save)).comparison).toEqual({
@@ -43,8 +60,8 @@ describe('production discovery summary', () => {
       status: 'available',
       cohortLabel: 'Other players’ best currently saved completed playthroughs',
       otherPlayerCount: 1,
-      playerPercent: 0.8,
-      averagePercent: 0.8,
+      playerPercent: 0.1,
+      averagePercent: 0.3,
       verified: false,
     });
   });
