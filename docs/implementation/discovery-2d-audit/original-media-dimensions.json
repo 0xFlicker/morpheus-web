@@ -1,0 +1,7932 @@
+{
+  "GameDB/All/Piranha.mov": {
+    "width": 320,
+    "height": 240,
+    "nb_frames": "164"
+  },
+  "GameDB/All/abtboxAni": {
+    "width": 264,
+    "height": 84,
+    "nb_frames": "365"
+  },
+  "GameDB/All/abtboxSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/All/bottomSTL": {
+    "width": 640,
+    "height": 40,
+    "nb_frames": "1"
+  },
+  "GameDB/All/crTrans1Spc": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "24"
+  },
+  "GameDB/All/crTrans2Spc": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "24"
+  },
+  "GameDB/All/crTrans3Spc": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "24"
+  },
+  "GameDB/All/crTransSpc": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "35"
+  },
+  "GameDB/All/credit1SPC": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/All/credit2SPC": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/All/credit3SPC": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/All/credit4SPC": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/All/hiresbutANI": {
+    "width": 72,
+    "height": 48,
+    "nb_frames": "2"
+  },
+  "GameDB/All/legalStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/All/menuSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/All/onbutANI": {
+    "width": 36,
+    "height": 36,
+    "nb_frames": "1"
+  },
+  "GameDB/All/topSTL": {
+    "width": 640,
+    "height": 40,
+    "nb_frames": "2"
+  },
+  "GameDB/All/transbutANI": {
+    "width": 72,
+    "height": 56,
+    "nb_frames": "2"
+  },
+  "GameDB/All/volbutANI": {
+    "width": 92,
+    "height": 56,
+    "nb_frames": "4"
+  },
+  "GameDB/All/winsizeANI": {
+    "width": 84,
+    "height": 56,
+    "nb_frames": "2"
+  },
+  "GameDB/CargoH/airdoorANI": {
+    "width": 80,
+    "height": 136,
+    "nb_frames": "1"
+  },
+  "GameDB/CargoH/airdoorSPC": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/CargoH/airengANI": {
+    "width": 60,
+    "height": 88,
+    "nb_frames": "16"
+  },
+  "GameDB/CargoH/airhndlANI": {
+    "width": 192,
+    "height": 160,
+    "nb_frames": "11"
+  },
+  "GameDB/CargoH/airoutATRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/CargoH/airoutBTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "98"
+  },
+  "GameDB/CargoH/airoutCTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "39"
+  },
+  "GameDB/CargoH/ctrlI1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "7"
+  },
+  "GameDB/CargoH/ctrlI2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "6"
+  },
+  "GameDB/CargoH/ctrlII1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "7"
+  },
+  "GameDB/CargoH/ctrlII2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "6"
+  },
+  "GameDB/CargoH/ctrlIII1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "7"
+  },
+  "GameDB/CargoH/ctrlIII2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "6"
+  },
+  "GameDB/CargoH/ctrlIIISPC": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/CargoH/ctrlIISPC": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/CargoH/ctrlISPC": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/CargoH/doorwhlANI": {
+    "width": 164,
+    "height": 72,
+    "nb_frames": "13"
+  },
+  "GameDB/CargoH/dwnlevIANI": {
+    "width": 80,
+    "height": 208,
+    "nb_frames": "11"
+  },
+  "GameDB/CargoH/dwnlevIIANI": {
+    "width": 84,
+    "height": 204,
+    "nb_frames": "11"
+  },
+  "GameDB/CargoH/flowerNAR": {
+    "audioOnly": true
+  },
+  "GameDB/CargoH/hldIIN2bTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/CargoH/holdI1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/CargoH/holdI3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/CargoH/holdI4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/CargoH/holdIE3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/CargoH/holdII1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/CargoH/holdII2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/CargoH/holdII3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/CargoH/holdII4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/CargoH/holdII7TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/CargoH/holdIIE3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/CargoH/holdIII2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/CargoH/holdIII3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/CargoH/holdIII4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/CargoH/holdIIIE3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/CargoH/holdIIIN1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/CargoH/holdIIIW4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/CargoH/holdIIN1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/CargoH/holdIIN2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "25"
+  },
+  "GameDB/CargoH/holdIIN7TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/CargoH/holdIIS2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/CargoH/holdIIS7TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/CargoH/holdIIw4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/CargoH/holdIS2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "24"
+  },
+  "GameDB/CargoH/holdIS2bTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "24"
+  },
+  "GameDB/CargoH/holdIW4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/CargoH/itshimNAR": {
+    "audioOnly": true
+  },
+  "GameDB/CargoH/lookmalSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/CargoH/malnoteSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "15"
+  },
+  "GameDB/CargoH/malnoteTOM": {
+    "audioOnly": true
+  },
+  "GameDB/CargoH/malsuicSPC": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/CargoH/openuboxSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/CargoH/pelev12TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "41"
+  },
+  "GameDB/CargoH/pelev2-1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "42"
+  },
+  "GameDB/CargoH/pelev2-3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "45"
+  },
+  "GameDB/CargoH/pelev3-2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "46"
+  },
+  "GameDB/CargoH/radioactNAR": {
+    "audioOnly": true
+  },
+  "GameDB/CargoH/slipdeckNAR": {
+    "audioOnly": true
+  },
+  "GameDB/CargoH/squeakTOM": {
+    "audioOnly": true
+  },
+  "GameDB/CargoH/suicide2SPC": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/CargoH/suicide3SPC": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/CargoH/suicideSPC": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/CargoH/ubilletsSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/CargoH/uplevIANI": {
+    "width": 80,
+    "height": 208,
+    "nb_frames": "11"
+  },
+  "GameDB/CargoH/uplevIIANI": {
+    "width": 80,
+    "height": 212,
+    "nb_frames": "11"
+  },
+  "GameDB/CargoH/uplevIIIANI": {
+    "width": 84,
+    "height": 224,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck1/3cardmntVID": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "300"
+  },
+  "GameDB/Deck1/BMcrd1dsSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck1/GTpeeksVID": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "194"
+  },
+  "GameDB/Deck1/GTpinchVID": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "337"
+  },
+  "GameDB/Deck1/GTsmokesVID": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "466"
+  },
+  "GameDB/Deck1/LGdanceVID": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "150"
+  },
+  "GameDB/Deck1/NEfrdck1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck1/NEfrdck2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck1/balcNE1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck1/balcNE3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "44"
+  },
+  "GameDB/Deck1/balcNW1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck1/balcNW4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "44"
+  },
+  "GameDB/Deck1/balcSE2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck1/balcSW2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck1/brgEstr1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck1/brgEstr2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck1/brgEstr4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck1/brgWstr1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "36"
+  },
+  "GameDB/Deck1/brgWstr2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "22"
+  },
+  "GameDB/Deck1/brgWstr3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck1/bridgeE1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck1/bridgeE3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "36"
+  },
+  "GameDB/Deck1/bridgeW1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck1/bridgeW4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "36"
+  },
+  "GameDB/Deck1/canisterSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "125"
+  },
+  "GameDB/Deck1/cannonSPC": {
+    "width": 176,
+    "height": 196,
+    "nb_frames": "64"
+  },
+  "GameDB/Deck1/cargcrakSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "60"
+  },
+  "GameDB/Deck1/carglev2ANI": {
+    "width": 136,
+    "height": 152,
+    "nb_frames": "9"
+  },
+  "GameDB/Deck1/carglverSPC": {
+    "width": 136,
+    "height": 152,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck1/cig1STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck1/cig1dslvSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "15"
+  },
+  "GameDB/Deck1/cig2STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck1/cig2dslvSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "22"
+  },
+  "GameDB/Deck1/cig3STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck1/cig3dslvSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "15"
+  },
+  "GameDB/Deck1/cig4STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck1/cig4dslvSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "15"
+  },
+  "GameDB/Deck1/cig5STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck1/cig5dslvSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "15"
+  },
+  "GameDB/Deck1/cig6STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck1/cig6dslvSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "15"
+  },
+  "GameDB/Deck1/cig7STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck1/cig7dslvSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "15"
+  },
+  "GameDB/Deck1/cig8STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck1/cig8dslvSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "15"
+  },
+  "GameDB/Deck1/cigboxSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck1/cigslidSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck1/cigslideANI": {
+    "width": 144,
+    "height": 100,
+    "nb_frames": "17"
+  },
+  "GameDB/Deck1/cmd1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "23"
+  },
+  "GameDB/Deck1/cmd3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "109"
+  },
+  "GameDB/Deck1/cmd4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "51"
+  },
+  "GameDB/Deck1/corrido1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "75"
+  },
+  "GameDB/Deck1/corrido2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "23"
+  },
+  "GameDB/Deck1/corridorSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck1/corrlockANI": {
+    "width": 124,
+    "height": 208,
+    "nb_frames": "14"
+  },
+  "GameDB/Deck1/corrunlkANI": {
+    "width": 128,
+    "height": 212,
+    "nb_frames": "14"
+  },
+  "GameDB/Deck1/crabSPC": {
+    "width": 240,
+    "height": 192,
+    "nb_frames": "73"
+  },
+  "GameDB/Deck1/crabSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck1/craneSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck1/cubathigVID": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "122"
+  },
+  "GameDB/Deck1/dineNE2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck1/dineNE3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck1/dineNE5TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "64"
+  },
+  "GameDB/Deck1/dineNE5alTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "60"
+  },
+  "GameDB/Deck1/dineNW1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck1/dineNW2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "64"
+  },
+  "GameDB/Deck1/dineNW2alTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "60"
+  },
+  "GameDB/Deck1/dineNW3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "27"
+  },
+  "GameDB/Deck1/dineS4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck1/dinermS1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "47"
+  },
+  "GameDB/Deck1/dinermS5TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck1/fbtempsSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck1/flarNB45SPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "37"
+  },
+  "GameDB/Deck1/flarNB60SPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "36"
+  },
+  "GameDB/Deck1/flarNB90SPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "38"
+  },
+  "GameDB/Deck1/flare110SPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "36"
+  },
+  "GameDB/Deck1/flare45SPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "37"
+  },
+  "GameDB/Deck1/flare60SPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "36"
+  },
+  "GameDB/Deck1/flare90SPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "36"
+  },
+  "GameDB/Deck1/flipDRcdAni": {
+    "width": 444,
+    "height": 248,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck1/flrNB110SPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "36"
+  },
+  "GameDB/Deck1/flybrg2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Deck1/frozenNAR": {
+    "audioOnly": true
+  },
+  "GameDB/Deck1/insideNAR": {
+    "audioOnly": true
+  },
+  "GameDB/Deck1/introMOV": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "3072"
+  },
+  "GameDB/Deck1/launcherSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck1/lngcigStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck1/lngelev1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "30"
+  },
+  "GameDB/Deck1/lngelev2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "56"
+  },
+  "GameDB/Deck1/lngelev3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck1/lngmnty4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck1/log1TOM": {
+    "audioOnly": true
+  },
+  "GameDB/Deck1/log2TOM": {
+    "audioOnly": true
+  },
+  "GameDB/Deck1/log3TOM": {
+    "audioOnly": true
+  },
+  "GameDB/Deck1/log4TOM": {
+    "audioOnly": true
+  },
+  "GameDB/Deck1/log5TOM": {
+    "audioOnly": true
+  },
+  "GameDB/Deck1/log6TOM": {
+    "audioOnly": true
+  },
+  "GameDB/Deck1/logANI": {
+    "width": 32,
+    "height": 84,
+    "nb_frames": "742"
+  },
+  "GameDB/Deck1/logrecLtANI": {
+    "width": 60,
+    "height": 60,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck1/logrecSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck1/maskballVID": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "120"
+  },
+  "GameDB/Deck1/matchesSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "15"
+  },
+  "GameDB/Deck1/matchesSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck1/mexcard1STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck1/montdslvSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "10"
+  },
+  "GameDB/Deck1/montySTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck1/ohfb2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Deck1/passengNar": {
+    "audioOnly": true
+  },
+  "GameDB/Deck1/pharswhlANI": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "122"
+  },
+  "GameDB/Deck1/plaquardSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck1/radarANI": {
+    "width": 168,
+    "height": 148,
+    "nb_frames": "20"
+  },
+  "GameDB/Deck1/radarSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck1/radioSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck1/rangeNBSPC": {
+    "width": 184,
+    "height": 168,
+    "nb_frames": "65"
+  },
+  "GameDB/Deck1/rangeSPC": {
+    "width": 172,
+    "height": 156,
+    "nb_frames": "65"
+  },
+  "GameDB/Deck1/rcktlev2ANI": {
+    "width": 128,
+    "height": 140,
+    "nb_frames": "13"
+  },
+  "GameDB/Deck1/rcktlverSPC": {
+    "width": 128,
+    "height": 136,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck1/storytooNAR": {
+    "audioOnly": true
+  },
+  "GameDB/Deck1/strangeNar": {
+    "audioOnly": true
+  },
+  "GameDB/Deck1/telegrafSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck1/uprEmdk1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "28"
+  },
+  "GameDB/Deck1/uprEmdk2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck1/uprWmdk1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "28"
+  },
+  "GameDB/Deck1/uprWmdk2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "36"
+  },
+  "GameDB/Deck1/weatherSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck1/wheelANI": {
+    "width": 320,
+    "height": 320,
+    "nb_frames": "7"
+  },
+  "GameDB/Deck1/windmillANI": {
+    "width": 128,
+    "height": 52,
+    "nb_frames": "4"
+  },
+  "GameDB/Deck2/BScancelVID": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "395"
+  },
+  "GameDB/Deck2/GymE3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/GymW2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/GymW4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/Gymdoor1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "26"
+  },
+  "GameDB/Deck2/Gymdoor2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/Gymdoor3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/Gymdoor4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/MBtubeANI": {
+    "width": 36,
+    "height": 48,
+    "nb_frames": "10"
+  },
+  "GameDB/Deck2/amphibSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2/bb1STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2/bb2STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2/bb3STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2/bellepstSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2/billyjngVID": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "104"
+  },
+  "GameDB/Deck2/bitnmuttVID": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "116"
+  },
+  "GameDB/Deck2/blackorcSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2/bloodorcSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2/boxingNAR": {
+    "audioOnly": true
+  },
+  "GameDB/Deck2/canopyorSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2/clairsi2ANI": {
+    "width": 92,
+    "height": 132,
+    "nb_frames": "166"
+  },
+  "GameDB/Deck2/clairsi2STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2/clairsitANI": {
+    "width": 96,
+    "height": 140,
+    "nb_frames": "150"
+  },
+  "GameDB/Deck2/clairsitSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2/danceVID": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "1287"
+  },
+  "GameDB/Deck2/dapplorcSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2/decoEupTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2/decoSdr1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/decoSdr2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Deck2/decoSdr3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Deck2/decoWupTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2/decodownTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "49"
+  },
+  "GameDB/Deck2/dkEdownTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2/dkEedn1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/dkEedn2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/dkNEedn1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/dkNEedn2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/dkNWedn1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/dkNWedn2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/dkSEedn1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/dkSEedn2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/dkSWedn1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/dkSWedn2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/dkWdownTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2/dkWedn1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/dkWedn2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/dkdcoEupTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2/dkdcoWupTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2/dkdownTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "41"
+  },
+  "GameDB/Deck2/dklanE4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/dklanW3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/ednEgh1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "20"
+  },
+  "GameDB/Deck2/ednEgh2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Deck2/ednEgh3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/ednMSC1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Deck2/ednMSC2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Deck2/ednMSC3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/ednNEdr1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/ednNEdr2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "39"
+  },
+  "GameDB/Deck2/ednNEdr4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/ednNWdr1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/ednNWdr2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "39"
+  },
+  "GameDB/Deck2/ednNdc2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "22"
+  },
+  "GameDB/Deck2/ednNdc3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Deck2/ednNdc4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Deck2/ednNdc6TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "44"
+  },
+  "GameDB/Deck2/ednNdc8TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "45"
+  },
+  "GameDB/Deck2/ednSEdr1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "42"
+  },
+  "GameDB/Deck2/ednSEdr2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/ednSWdr1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "40"
+  },
+  "GameDB/Deck2/ednSWdr2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/ednSWdr3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/ednWct4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/ednWctr1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/ednWctr2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Deck2/ednWgh1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/ednWgh2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Deck2/ednWgh4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/fitbuffNAR": {
+    "audioOnly": true
+  },
+  "GameDB/Deck2/gh1st1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2/gh1st3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2/gh1st4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2/gh3rd2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2/gh3rd3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2/gh3rd4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2/ghE2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2/ghE3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2/ghE4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2/ghEdoor2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/ghEdoor3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2/ghS1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2/ghS2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2/ghW1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2/ghW3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2/ghW4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2/ghWdoor2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "27"
+  },
+  "GameDB/Deck2/ghWdor3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2/ghfrog1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2/ghfrog2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2/ghfrog4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2/ghmid1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2/ghmid2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2/ghmid3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2/ghmid4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/gymE2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/gymdoorSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2/gymuranANI": {
+    "width": 196,
+    "height": 196,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck2/hall1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "27"
+  },
+  "GameDB/Deck2/hall2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "17"
+  },
+  "GameDB/Deck2/hall3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "42"
+  },
+  "GameDB/Deck2/hall4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "43"
+  },
+  "GameDB/Deck2/hallN1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2/hallN2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/holddropTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "173"
+  },
+  "GameDB/Deck2/inairTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "93"
+  },
+  "GameDB/Deck2/jandescANI": {
+    "width": 196,
+    "height": 224,
+    "nb_frames": "61"
+  },
+  "GameDB/Deck2/jandescSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2/janstormVID": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "1214"
+  },
+  "GameDB/Deck2/jitterSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "24"
+  },
+  "GameDB/Deck2/ladytrorSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2/lanE1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Deck2/lanE2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "41"
+  },
+  "GameDB/Deck2/lanE3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2/lanE4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/lanW1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Deck2/lanW2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "38"
+  },
+  "GameDB/Deck2/lanW3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/lanW4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "15"
+  },
+  "GameDB/Deck2/leodrownVID": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "391"
+  },
+  "GameDB/Deck2/leodumbbVID": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "440"
+  },
+  "GameDB/Deck2/leopostrVID": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "311"
+  },
+  "GameDB/Deck2/leosarseVID": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "686"
+  },
+  "GameDB/Deck2/malnetsVID": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "223"
+  },
+  "GameDB/Deck2/mbSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2/mbdisksANI": {
+    "width": 196,
+    "height": 108,
+    "nb_frames": "25"
+  },
+  "GameDB/Deck2/mbinst1ANI": {
+    "width": 88,
+    "height": 72,
+    "nb_frames": "4"
+  },
+  "GameDB/Deck2/mbinst2ANI": {
+    "width": 88,
+    "height": 72,
+    "nb_frames": "4"
+  },
+  "GameDB/Deck2/mbinst3ANI": {
+    "width": 72,
+    "height": 68,
+    "nb_frames": "4"
+  },
+  "GameDB/Deck2/mbplayANI": {
+    "width": 176,
+    "height": 88,
+    "nb_frames": "2"
+  },
+  "GameDB/Deck2/mbsongsANI": {
+    "width": 180,
+    "height": 56,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2/mbtubeupANI": {
+    "width": 40,
+    "height": 48,
+    "nb_frames": "22"
+  },
+  "GameDB/Deck2/middkE3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/middkE5TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/middkW4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/middkW5TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/midkEdr5TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/midkWdr1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Deck2/midkWdr5TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/ohEdor2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Deck2/ohWdor2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Deck2/plantdecNAR": {
+    "audioOnly": true
+  },
+  "GameDB/Deck2/pool1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/pool3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/pool5TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/pstflandSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2/pstfrankSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2/pstjeffSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2/pstleoSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2/pstpaddySTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2/pstprofSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2/rowSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2/runpumpANI": {
+    "width": 176,
+    "height": 76,
+    "nb_frames": "14"
+  },
+  "GameDB/Deck2/runpumpTOM": {
+    "audioOnly": true
+  },
+  "GameDB/Deck2/scaleSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2/scarabSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2/shedSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2/shedchrtSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2/sleeporcSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2/spidrorcSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2/survivalNAR": {
+    "audioOnly": true
+  },
+  "GameDB/Deck2/tormentVID": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "384"
+  },
+  "GameDB/Deck2/vallyorcSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2Bth/balloonSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "70"
+  },
+  "GameDB/Deck2Bth/birdnestSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2Bth/cableSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2Bth/canclseSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "61"
+  },
+  "GameDB/Deck2Bth/caniSNDTOM": {
+    "audioOnly": true
+  },
+  "GameDB/Deck2Bth/caniSTLSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2Bth/canloopANI": {
+    "width": 180,
+    "height": 100,
+    "nb_frames": "23"
+  },
+  "GameDB/Deck2Bth/canopenSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "62"
+  },
+  "GameDB/Deck2Bth/cargoE1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2Bth/cargoE2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "40"
+  },
+  "GameDB/Deck2Bth/cargoE3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2Bth/cargoE5TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2Bth/cargoW1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2Bth/cargoW2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "40"
+  },
+  "GameDB/Deck2Bth/cargoW4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2Bth/cargoW5TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2Bth/dckEdor1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "40"
+  },
+  "GameDB/Deck2Bth/dckEfb1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Deck2Bth/dckEfb2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2Bth/dckEfb3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2Bth/dckEfb5TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2Bth/dckWdor1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "40"
+  },
+  "GameDB/Deck2Bth/dckWfb1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2Bth/dckWfb2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2Bth/dckWfb4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2Bth/dckair1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2Bth/dckair2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2Bth/disglassSPC": {
+    "width": 232,
+    "height": 156,
+    "nb_frames": "48"
+  },
+  "GameDB/Deck2Bth/distressSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2Bth/fordckE2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "36"
+  },
+  "GameDB/Deck2Bth/fordckE3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2Bth/fordckN1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "36"
+  },
+  "GameDB/Deck2Bth/fordckN5TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "36"
+  },
+  "GameDB/Deck2Bth/fordckW2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "36"
+  },
+  "GameDB/Deck2Bth/fordckW4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2Bth/gang1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck2Bth/gang3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2Bth/gang4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2Bth/herclifeSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2Bth/herculanNAR": {
+    "audioOnly": true
+  },
+  "GameDB/Deck2Bth/hold2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck2Bth/holmballNAR": {
+    "audioOnly": true
+  },
+  "GameDB/Deck2Bth/lockbuttSPC": {
+    "width": 220,
+    "height": 148,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck2Bth/lockliteANI": {
+    "width": 60,
+    "height": 136,
+    "nb_frames": "111"
+  },
+  "GameDB/Deck2Bth/lookholdSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2Bth/lpbaloonSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2Bth/malhang2STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2Bth/malhangSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2Bth/malhungANI": {
+    "width": 128,
+    "height": 184,
+    "nb_frames": "300"
+  },
+  "GameDB/Deck2Bth/middkE1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2Bth/middkE2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "28"
+  },
+  "GameDB/Deck2Bth/middkW1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2Bth/middkW2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "28"
+  },
+  "GameDB/Deck2Bth/midkEdr1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Deck2Bth/midkEdr2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2Bth/midkWdr2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2Bth/ohEdor1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "40"
+  },
+  "GameDB/Deck2Bth/ohEdor5TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2Bth/ohWdor1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "40"
+  },
+  "GameDB/Deck2Bth/ohWdor5TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2Bth/ohair4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck2Bth/ohcargE3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2Bth/ohcargE5TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2Bth/ohcargW4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2Bth/ohcargW5TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck2Bth/suncastANI": {
+    "width": 240,
+    "height": 224,
+    "nb_frames": "64"
+  },
+  "GameDB/Deck2Bth/suncastNar": {
+    "audioOnly": true
+  },
+  "GameDB/Deck2Bth/suncastSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck2Bth/sunshdwANI": {
+    "width": 212,
+    "height": 84,
+    "nb_frames": "65"
+  },
+  "GameDB/Deck3Aft/BMboxopSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck3Aft/BMdrawopSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "26"
+  },
+  "GameDB/Deck3Aft/BMpresctSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/BMserumANI": {
+    "width": 88,
+    "height": 106,
+    "nb_frames": "2"
+  },
+  "GameDB/Deck3Aft/BMserumcSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/BMserumoSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/BMtrashSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "29"
+  },
+  "GameDB/Deck3Aft/BSpage10STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/BSpage1STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/BSpage2STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/BSpage3STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/BSpage4STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/BSpage5STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/BSpage6STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/BSpage7STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/BSpage8STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/BSpage9STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/BSpresctSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/BSscrapCSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/BSscrapOSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck3Aft/BSscrpClSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "9"
+  },
+  "GameDB/Deck3Aft/BSserumANI": {
+    "width": 60,
+    "height": 84,
+    "nb_frames": "2"
+  },
+  "GameDB/Deck3Aft/BSserumcSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/BSserumoSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/CMdiary1STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/CMdiary1TOM": {
+    "audioOnly": true
+  },
+  "GameDB/Deck3Aft/CMdiary2STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/CMdiary2TOM": {
+    "audioOnly": true
+  },
+  "GameDB/Deck3Aft/CMdiary3STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/CMdiary3TOM": {
+    "audioOnly": true
+  },
+  "GameDB/Deck3Aft/CMdiaryOSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Deck3Aft/CMdiarySTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/CMdiryO1SPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Deck3Aft/CMghostSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "135"
+  },
+  "GameDB/Deck3Aft/CMlttrSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/CMlttrUpSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "35"
+  },
+  "GameDB/Deck3Aft/CMturn2SPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "14"
+  },
+  "GameDB/Deck3Aft/CMturn3SPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "8"
+  },
+  "GameDB/Deck3Aft/CMturn4SPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck3Aft/GTanitaVID": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "257"
+  },
+  "GameDB/Deck3Aft/GTpresctSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/GTserumANI": {
+    "width": 88,
+    "height": 124,
+    "nb_frames": "2"
+  },
+  "GameDB/Deck3Aft/GTserumcSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/GTserumoSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/GTsweatsVID": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "300"
+  },
+  "GameDB/Deck3Aft/IFneedleANI": {
+    "width": 172,
+    "height": 60,
+    "nb_frames": "4"
+  },
+  "GameDB/Deck3Aft/IFsolveSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/JMprescSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/JMserumCSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/JMserumOSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/LGpresctSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/LGserumANI": {
+    "width": 88,
+    "height": 88,
+    "nb_frames": "2"
+  },
+  "GameDB/Deck3Aft/LGserumcSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/LGserumoSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/MBcrankBANI": {
+    "width": 88,
+    "height": 84,
+    "nb_frames": "24"
+  },
+  "GameDB/Deck3Aft/MBcrankFANI": {
+    "width": 96,
+    "height": 80,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck3Aft/MBturnANI": {
+    "width": 116,
+    "height": 260,
+    "nb_frames": "24"
+  },
+  "GameDB/Deck3Aft/SwansongVID": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "495"
+  },
+  "GameDB/Deck3Aft/arium2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck3Aft/ariumdr1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "26"
+  },
+  "GameDB/Deck3Aft/ariumdr3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck3Aft/ariumdr4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck3Aft/atomspryANI": {
+    "width": 76,
+    "height": 84,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck3Aft/balerinaSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/balerinaTom": {
+    "audioOnly": true
+  },
+  "GameDB/Deck3Aft/bellbillVID": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "592"
+  },
+  "GameDB/Deck3Aft/bible2SPC": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/bibleSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "38"
+  },
+  "GameDB/Deck3Aft/bibleTOM": {
+    "audioOnly": true
+  },
+  "GameDB/Deck3Aft/bidetkeySTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/bilbidetVID": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "553"
+  },
+  "GameDB/Deck3Aft/billscamVID": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "877"
+  },
+  "GameDB/Deck3Aft/bscrddlvSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "25"
+  },
+  "GameDB/Deck3Aft/bsncardsSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/carnstkrSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/carodslvSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "84"
+  },
+  "GameDB/Deck3Aft/cigarboxSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/cigdslvSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "28"
+  },
+  "GameDB/Deck3Aft/crnstkdsSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "20"
+  },
+  "GameDB/Deck3Aft/dicedslvSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "39"
+  },
+  "GameDB/Deck3Aft/drugbillVID": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "405"
+  },
+  "GameDB/Deck3Aft/flipTBcdAni": {
+    "width": 368,
+    "height": 280,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck3Aft/flshcard1STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/flshcard2STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/flshcardSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "10"
+  },
+  "GameDB/Deck3Aft/fntbutcANI": {
+    "width": 60,
+    "height": 140,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/fntbutlANI": {
+    "width": 48,
+    "height": 136,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/fntbutrANI": {
+    "width": 52,
+    "height": 132,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/fntwaterANI": {
+    "width": 300,
+    "height": 136,
+    "nb_frames": "9"
+  },
+  "GameDB/Deck3Aft/fountSPC": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/fountcANI": {
+    "width": 60,
+    "height": 136,
+    "nb_frames": "9"
+  },
+  "GameDB/Deck3Aft/fountlrANI": {
+    "width": 300,
+    "height": 140,
+    "nb_frames": "9"
+  },
+  "GameDB/Deck3Aft/frigidN1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck3Aft/frigidN2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "20"
+  },
+  "GameDB/Deck3Aft/frigidS2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck3Aft/frogsNAR": {
+    "audioOnly": true
+  },
+  "GameDB/Deck3Aft/glwSRbutANI": {
+    "width": 68,
+    "height": 68,
+    "nb_frames": "14"
+  },
+  "GameDB/Deck3Aft/gracbed4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck3Aft/gracdor3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck3Aft/gracdor4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "23"
+  },
+  "GameDB/Deck3Aft/gttowelSPC": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/hatOPboxSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/hatboxCSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "18"
+  },
+  "GameDB/Deck3Aft/hatboxOSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "20"
+  },
+  "GameDB/Deck3Aft/herbbutTOM": {
+    "audioOnly": true
+  },
+  "GameDB/Deck3Aft/herblANI": {
+    "width": 32,
+    "height": 28,
+    "nb_frames": "2"
+  },
+  "GameDB/Deck3Aft/herbrANI": {
+    "width": 32,
+    "height": 32,
+    "nb_frames": "2"
+  },
+  "GameDB/Deck3Aft/hercmodlNAR": {
+    "audioOnly": true
+  },
+  "GameDB/Deck3Aft/honsdslvSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "20"
+  },
+  "GameDB/Deck3Aft/honusSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/influx#1ANI": {
+    "width": 60,
+    "height": 60,
+    "nb_frames": "9"
+  },
+  "GameDB/Deck3Aft/influx#2ANI": {
+    "width": 60,
+    "height": 60,
+    "nb_frames": "9"
+  },
+  "GameDB/Deck3Aft/influx#3ANI": {
+    "width": 60,
+    "height": 60,
+    "nb_frames": "9"
+  },
+  "GameDB/Deck3Aft/influx1ANI": {
+    "width": 276,
+    "height": 252,
+    "nb_frames": "62"
+  },
+  "GameDB/Deck3Aft/influx2ANI": {
+    "width": 272,
+    "height": 252,
+    "nb_frames": "44"
+  },
+  "GameDB/Deck3Aft/influx3ANI": {
+    "width": 272,
+    "height": 252,
+    "nb_frames": "36"
+  },
+  "GameDB/Deck3Aft/influxorSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/invitedsSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "20"
+  },
+  "GameDB/Deck3Aft/janlttrNar": {
+    "audioOnly": true
+  },
+  "GameDB/Deck3Aft/journalSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "20"
+  },
+  "GameDB/Deck3Aft/journrvSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "20"
+  },
+  "GameDB/Deck3Aft/jp0closeSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/jp1closeSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "2"
+  },
+  "GameDB/Deck3Aft/jp1dislvSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "10"
+  },
+  "GameDB/Deck3Aft/jp2closeSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/jp2dislvSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "20"
+  },
+  "GameDB/Deck3Aft/jp3closeSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/jp3dislvSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "10"
+  },
+  "GameDB/Deck3Aft/jp4closeSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/jp4dislvSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "10"
+  },
+  "GameDB/Deck3Aft/jp5closeSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/jp5dislvSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "10"
+  },
+  "GameDB/Deck3Aft/labchar2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "20"
+  },
+  "GameDB/Deck3Aft/labdoor1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck3Aft/labdoor4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck3Aft/lcktdslvSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck3Aft/leobed3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck3Aft/leodoor3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "22"
+  },
+  "GameDB/Deck3Aft/leodoor4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck3Aft/leopostSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "26"
+  },
+  "GameDB/Deck3Aft/leopostSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/lockopenSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "14"
+  },
+  "GameDB/Deck3Aft/lockpostSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/malbed1STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/malbed1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "27"
+  },
+  "GameDB/Deck3Aft/malbed4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck3Aft/maldeskSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/maldor3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck3Aft/maldor4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck3Aft/malneedlVID": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "503"
+  },
+  "GameDB/Deck3Aft/malnote2TOM": {
+    "audioOnly": true
+  },
+  "GameDB/Deck3Aft/malnote3TOM": {
+    "audioOnly": true
+  },
+  "GameDB/Deck3Aft/malnote4TOM": {
+    "audioOnly": true
+  },
+  "GameDB/Deck3Aft/malnote5TOM": {
+    "audioOnly": true
+  },
+  "GameDB/Deck3Aft/masherSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "30"
+  },
+  "GameDB/Deck3Aft/mexbed1STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/mexbed1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "27"
+  },
+  "GameDB/Deck3Aft/mexbed3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "15"
+  },
+  "GameDB/Deck3Aft/mexdeskSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/mexdoor3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "22"
+  },
+  "GameDB/Deck3Aft/mexdoor4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "15"
+  },
+  "GameDB/Deck3Aft/moonbed2STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/moonbed2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "27"
+  },
+  "GameDB/Deck3Aft/moonbed3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck3Aft/moondor3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "34"
+  },
+  "GameDB/Deck3Aft/moondor4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck3Aft/mrkdcardSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/mrkddslvSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "20"
+  },
+  "GameDB/Deck3Aft/mudbath3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "19"
+  },
+  "GameDB/Deck3Aft/muddoor3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck3Aft/muddoor4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck3Aft/mudtubSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/openskchSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/opsketchSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck3Aft/psalm244SPC": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/rattleTom": {
+    "audioOnly": true
+  },
+  "GameDB/Deck3Aft/scrbBMANI": {
+    "width": 160,
+    "height": 60,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/scrbBSANI": {
+    "width": 160,
+    "height": 60,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/scrbCMANI": {
+    "width": 160,
+    "height": 60,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/scrbGTANI": {
+    "width": 160,
+    "height": 60,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/scrbJMANI": {
+    "width": 160,
+    "height": 60,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/scrbLGSTL": {
+    "width": 640,
+    "height": 400,
+    "originalSource": "GameDB/Deck3Aft/scrbLGSPC",
+    "evidence": "scripts/canonical-map-migrations.cjs and recover-missing-stills.cjs"
+  },
+  "GameDB/Deck3Aft/scrbclseSTL": {
+    "width": 640,
+    "height": 400,
+    "originalSource": "GameDB/Deck3Aft/scrbclseSPC",
+    "evidence": "scripts/canonical-map-migrations.cjs and recover-missing-stills.cjs"
+  },
+  "GameDB/Deck3Aft/scrbopenANI": {
+    "width": 172,
+    "height": 60,
+    "nb_frames": "5"
+  },
+  "GameDB/Deck3Aft/scrbshtrANI": {
+    "width": 56,
+    "height": 56,
+    "nb_frames": "109"
+  },
+  "GameDB/Deck3Aft/shpmodE1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck3Aft/shpmodE2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck3Aft/shpmodE4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "30"
+  },
+  "GameDB/Deck3Aft/shpmodN2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "26"
+  },
+  "GameDB/Deck3Aft/shpmodN3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "25"
+  },
+  "GameDB/Deck3Aft/shpmodN4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "26"
+  },
+  "GameDB/Deck3Aft/shpmodN5TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "24"
+  },
+  "GameDB/Deck3Aft/shpmodN6TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck3Aft/shpmodS1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "36"
+  },
+  "GameDB/Deck3Aft/shpmodS3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "27"
+  },
+  "GameDB/Deck3Aft/shpmodS4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "28"
+  },
+  "GameDB/Deck3Aft/shpmodS5TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck3Aft/shpmodS6TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck3Aft/shpmodW1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck3Aft/shpmodW2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck3Aft/shpmodW3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "28"
+  },
+  "GameDB/Deck3Aft/stampSTL": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/stmpcardSTL": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "4"
+  },
+  "GameDB/Deck3Aft/stmpdslvSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "20"
+  },
+  "GameDB/Deck3Aft/stmphndlSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "52"
+  },
+  "GameDB/Deck3Aft/swanbed2STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/swanbed2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "27"
+  },
+  "GameDB/Deck3Aft/swanbed4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck3Aft/swandor3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck3Aft/swandor4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "23"
+  },
+  "GameDB/Deck3Aft/tadaMSC": {
+    "audioOnly": true
+  },
+  "GameDB/Deck3Aft/tempclseSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/tempgageSPC": {
+    "width": 474,
+    "height": 124,
+    "nb_frames": "15"
+  },
+  "GameDB/Deck3Aft/tempopenSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/tempopenTom": {
+    "audioOnly": true
+  },
+  "GameDB/Deck3Aft/tepidN1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck3Aft/tepidN2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "20"
+  },
+  "GameDB/Deck3Aft/tepidS2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck3Aft/toiletSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "69"
+  },
+  "GameDB/Deck3Aft/trashSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/trnkhookANI": {
+    "width": 120,
+    "height": 116,
+    "nb_frames": "6"
+  },
+  "GameDB/Deck3Aft/trnkopenSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "18"
+  },
+  "GameDB/Deck3Aft/trnkopstSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/trnkstilSPC": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/turkdor1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck3Aft/turkdor2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "26"
+  },
+  "GameDB/Deck3Aft/turkdor3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Deck3Aft/turkdor4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Deck3Aft/uranindANI": {
+    "width": 200,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck3Aft/uranindSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3Aft/vapdor1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "26"
+  },
+  "GameDB/Deck3Aft/vapdor2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "20"
+  },
+  "GameDB/Deck3Aft/vapstm1SPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "26"
+  },
+  "GameDB/Deck3Aft/vapstm2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "26"
+  },
+  "GameDB/Deck3Aft/vapstm3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "26"
+  },
+  "GameDB/Deck3Aft/warmdoorNAR": {
+    "audioOnly": true
+  },
+  "GameDB/Deck3Aft/waxfrogSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3For/DrmDeadSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "1746"
+  },
+  "GameDB/Deck3For/JCPpodSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "198"
+  },
+  "GameDB/Deck3For/JCscarabSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3For/JCwalks2ANI": {
+    "width": 144,
+    "height": 148,
+    "nb_frames": "36"
+  },
+  "GameDB/Deck3For/JCwalks2Stl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3For/JCwalksANI": {
+    "width": 144,
+    "height": 148,
+    "nb_frames": "53"
+  },
+  "GameDB/Deck3For/JCwalksStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3For/JPscarabSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3For/NeuroNarSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "1073"
+  },
+  "GameDB/Deck3For/bellstrtANI": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "93"
+  },
+  "GameDB/Deck3For/charactrVID": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "1645"
+  },
+  "GameDB/Deck3For/dimlightSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "24"
+  },
+  "GameDB/Deck3For/dimthetrSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3For/dkupmainTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "41"
+  },
+  "GameDB/Deck3For/doornonoTOM": {
+    "audioOnly": true
+  },
+  "GameDB/Deck3For/ecki1aSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck3For/ecki2aSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "10"
+  },
+  "GameDB/Deck3For/eckiTOM": {
+    "audioOnly": true
+  },
+  "GameDB/Deck3For/eckinoteSPC": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3For/eckiobvsSPC": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3For/herculanSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "658"
+  },
+  "GameDB/Deck3For/iriscntlSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3For/janbed4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck3For/jandoor3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck3For/jandoor4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "23"
+  },
+  "GameDB/Deck3For/jandor3bTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck3For/jcdoor1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck3For/jcdoor3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "23"
+  },
+  "GameDB/Deck3For/kineNESWSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3For/kineNWSESTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3For/kinepl1aANI": {
+    "width": 84,
+    "height": 144,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck3For/kinepl1bANI": {
+    "width": 84,
+    "height": 144,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck3For/kinepl2aANI": {
+    "width": 84,
+    "height": 140,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck3For/kinepl2bANI": {
+    "width": 84,
+    "height": 140,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck3For/litthetrSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "20"
+  },
+  "GameDB/Deck3For/lobbyN1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck3For/lobbyN2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck3For/lobele3bTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "23"
+  },
+  "GameDB/Deck3For/lobelev1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "27"
+  },
+  "GameDB/Deck3For/lobelev2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck3For/lobelev3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "23"
+  },
+  "GameDB/Deck3For/lobelev4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "23"
+  },
+  "GameDB/Deck3For/lobelev5TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "20"
+  },
+  "GameDB/Deck3For/lobelev6TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "20"
+  },
+  "GameDB/Deck3For/mirrbrkSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3For/mirrjanVID": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "1267"
+  },
+  "GameDB/Deck3For/newel1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "32"
+  },
+  "GameDB/Deck3For/newel2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "35"
+  },
+  "GameDB/Deck3For/newel4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "35"
+  },
+  "GameDB/Deck3For/newelSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "94"
+  },
+  "GameDB/Deck3For/nwlstillSPC": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3For/pharbutTOM": {
+    "audioOnly": true
+  },
+  "GameDB/Deck3For/phardiagANI": {
+    "width": 44,
+    "height": 44,
+    "nb_frames": "6"
+  },
+  "GameDB/Deck3For/projrunSPC": {
+    "width": 340,
+    "height": 108,
+    "nb_frames": "14"
+  },
+  "GameDB/Deck3For/projstilSPC": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck3For/puzzleNAR": {
+    "audioOnly": true
+  },
+  "GameDB/Deck3For/solarNAR": {
+    "audioOnly": true
+  },
+  "GameDB/Deck3For/srvIIIE1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "51"
+  },
+  "GameDB/Deck3For/srvIIIE3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck3For/srvIIIW1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "51"
+  },
+  "GameDB/Deck3For/srvIIIW4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck3For/stairNE1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "35"
+  },
+  "GameDB/Deck3For/stairNE2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "20"
+  },
+  "GameDB/Deck3For/stairNE4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "18"
+  },
+  "GameDB/Deck3For/stairNW1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "35"
+  },
+  "GameDB/Deck3For/stairNW2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "20"
+  },
+  "GameDB/Deck3For/stairNW3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "19"
+  },
+  "GameDB/Deck3For/theatreTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "17"
+  },
+  "GameDB/Deck3For/thrcineANI": {
+    "width": 260,
+    "height": 160,
+    "nb_frames": "721"
+  },
+  "GameDB/Deck3For/upmainTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "41"
+  },
+  "GameDB/Deck4/AliteANI": {
+    "width": 60,
+    "height": 60,
+    "nb_frames": "2"
+  },
+  "GameDB/Deck4/IliteANI": {
+    "width": 60,
+    "height": 60,
+    "nb_frames": "2"
+  },
+  "GameDB/Deck4/InjectD1ANI": {
+    "width": 216,
+    "height": 160,
+    "nb_frames": "13"
+  },
+  "GameDB/Deck4/InjectD2ANI": {
+    "width": 216,
+    "height": 100,
+    "nb_frames": "14"
+  },
+  "GameDB/Deck4/LbuttonUANI": {
+    "width": 60,
+    "height": 60,
+    "nb_frames": "2"
+  },
+  "GameDB/Deck4/NladdwnTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "71"
+  },
+  "GameDB/Deck4/RbuttonDANI": {
+    "width": 60,
+    "height": 60,
+    "nb_frames": "2"
+  },
+  "GameDB/Deck4/SRliteBMANI": {
+    "width": 36,
+    "height": 40,
+    "nb_frames": "2"
+  },
+  "GameDB/Deck4/SRliteBSANI": {
+    "width": 32,
+    "height": 48,
+    "nb_frames": "2"
+  },
+  "GameDB/Deck4/SRliteCMANI": {
+    "width": 36,
+    "height": 36,
+    "nb_frames": "2"
+  },
+  "GameDB/Deck4/SRliteGTANI": {
+    "width": 36,
+    "height": 48,
+    "nb_frames": "2"
+  },
+  "GameDB/Deck4/SRliteJMANI": {
+    "width": 36,
+    "height": 48,
+    "nb_frames": "2"
+  },
+  "GameDB/Deck4/SRliteLGANI": {
+    "width": 32,
+    "height": 40,
+    "nb_frames": "2"
+  },
+  "GameDB/Deck4/SRliteSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck4/SRswitchANI": {
+    "width": 136,
+    "height": 216,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck4/ScallbutANI": {
+    "width": 60,
+    "height": 60,
+    "nb_frames": "13"
+  },
+  "GameDB/Deck4/SguageANI": {
+    "width": 132,
+    "height": 124,
+    "nb_frames": "39"
+  },
+  "GameDB/Deck4/SguageofANI": {
+    "width": 132,
+    "height": 124,
+    "nb_frames": "42"
+  },
+  "GameDB/Deck4/StoggleANI": {
+    "width": 112,
+    "height": 96,
+    "nb_frames": "9"
+  },
+  "GameDB/Deck4/UcallbutANI": {
+    "width": 60,
+    "height": 64,
+    "nb_frames": "19"
+  },
+  "GameDB/Deck4/UtoggleANI": {
+    "width": 124,
+    "height": 96,
+    "nb_frames": "9"
+  },
+  "GameDB/Deck4/VliteANI": {
+    "width": 60,
+    "height": 60,
+    "nb_frames": "2"
+  },
+  "GameDB/Deck4/aoffANI": {
+    "width": 64,
+    "height": 64,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck4/atrium1TRN": {
+    "width": 572,
+    "height": 148,
+    "nb_frames": "34"
+  },
+  "GameDB/Deck4/atrium2TRN": {
+    "width": 572,
+    "height": 148,
+    "nb_frames": "48"
+  },
+  "GameDB/Deck4/atriumSPC": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck4/baclevANI": {
+    "width": 136,
+    "height": 176,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck4/callgondSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "56"
+  },
+  "GameDB/Deck4/cargct1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck4/cargct1bTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck4/cargctr2STL": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck4/cargctr2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck4/cntl2rtnSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "12"
+  },
+  "GameDB/Deck4/cntrl1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck4/cntrl2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck4/dkStogglANI": {
+    "width": 108,
+    "height": 124,
+    "nb_frames": "9"
+  },
+  "GameDB/Deck4/dksolarSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck4/eng2TRN": {
+    "width": 576,
+    "height": 148,
+    "nb_frames": "308"
+  },
+  "GameDB/Deck4/engSPC": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck4/forlevANI": {
+    "width": 124,
+    "height": 184,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck4/gond1TRN": {
+    "width": 576,
+    "height": 148,
+    "nb_frames": "42"
+  },
+  "GameDB/Deck4/gondladdANI": {
+    "width": 280,
+    "height": 232,
+    "nb_frames": "50"
+  },
+  "GameDB/Deck4/gondolaSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck4/gondrtrnTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "12"
+  },
+  "GameDB/Deck4/inject1SPC": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck4/inject1TRN": {
+    "width": 568,
+    "height": 148,
+    "nb_frames": "41"
+  },
+  "GameDB/Deck4/inject2SPC": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck4/inject2TRN": {
+    "width": 572,
+    "height": 148,
+    "nb_frames": "36"
+  },
+  "GameDB/Deck4/injectU1ANI": {
+    "width": 216,
+    "height": 160,
+    "nb_frames": "12"
+  },
+  "GameDB/Deck4/injectU2ANI": {
+    "width": 216,
+    "height": 100,
+    "nb_frames": "13"
+  },
+  "GameDB/Deck4/injturn1TRN": {
+    "width": 576,
+    "height": 148,
+    "nb_frames": "37"
+  },
+  "GameDB/Deck4/injturn2TRN": {
+    "width": 572,
+    "height": 148,
+    "nb_frames": "36"
+  },
+  "GameDB/Deck4/ioffANI": {
+    "width": 68,
+    "height": 60,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck4/janpharrVID": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "824"
+  },
+  "GameDB/Deck4/levsndTOM": {
+    "audioOnly": true
+  },
+  "GameDB/Deck4/lghtflipTOM": {
+    "audioOnly": true
+  },
+  "GameDB/Deck4/openfurnSPC": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck4/phar&sonNAR": {
+    "audioOnly": true
+  },
+  "GameDB/Deck4/powerincNAR": {
+    "audioOnly": true
+  },
+  "GameDB/Deck4/pushgondSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "50"
+  },
+  "GameDB/Deck4/rodsDANI": {
+    "width": 216,
+    "height": 160,
+    "nb_frames": "10"
+  },
+  "GameDB/Deck4/rodsUANI": {
+    "width": 216,
+    "height": 160,
+    "nb_frames": "13"
+  },
+  "GameDB/Deck4/scramlitANI": {
+    "width": 60,
+    "height": 60,
+    "nb_frames": "2"
+  },
+  "GameDB/Deck4/sequencrSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck4/solarSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck4/srvIVE1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "45"
+  },
+  "GameDB/Deck4/srvIVE3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck4/srvIVW1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "45"
+  },
+  "GameDB/Deck4/srvIVW3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck4/stageE1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck4/stageE4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck4/stageN1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck4/stageN3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck4/stageN4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck4/stageW3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Deck4/stageW4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Deck4/ufripplANI": {
+    "width": 404,
+    "height": 156,
+    "nb_frames": "20"
+  },
+  "GameDB/Deck4/urangageANI": {
+    "width": 160,
+    "height": 152,
+    "nb_frames": "40"
+  },
+  "GameDB/Deck4/valveDANI": {
+    "width": 164,
+    "height": 188,
+    "nb_frames": "13"
+  },
+  "GameDB/Deck4/valveUANI": {
+    "width": 164,
+    "height": 188,
+    "nb_frames": "13"
+  },
+  "GameDB/Deck4/valvetrnANI": {
+    "width": 240,
+    "height": 188,
+    "nb_frames": "16"
+  },
+  "GameDB/Deck4/vent1TRN": {
+    "width": 572,
+    "height": 148,
+    "nb_frames": "73"
+  },
+  "GameDB/Deck4/vent2TRN": {
+    "width": 568,
+    "height": 148,
+    "nb_frames": "35"
+  },
+  "GameDB/Deck4/ventSPC": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck4/voffANI": {
+    "width": 68,
+    "height": 60,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck5/alcoveS3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Deck5/alcoveS4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Deck5/clipbordSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Deck5/ladN3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Deck5/ladN4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "38"
+  },
+  "GameDB/Deck5/uranE1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Deck5/uranE2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Deck5/uranW1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Deck5/uranW2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "30"
+  },
+  "GameDB/Elevator/eldw12TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "39"
+  },
+  "GameDB/Elevator/eldw23TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "37"
+  },
+  "GameDB/Elevator/eldw34TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "38"
+  },
+  "GameDB/Elevator/elev43TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Elevator/elevindSPC": {
+    "width": 192,
+    "height": 188,
+    "nb_frames": "11"
+  },
+  "GameDB/Elevator/elevindSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Elevator/elup21TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "37"
+  },
+  "GameDB/Elevator/elup32TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "37"
+  },
+  "GameDB/Elevator/outdck1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Elevator/outdck2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "30"
+  },
+  "GameDB/Elevator/outdck3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Elevator/outdck4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "32"
+  },
+  "GameDB/Elevator/outdck4bTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "32"
+  },
+  "GameDB/Harem/banqB1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "15"
+  },
+  "GameDB/Harem/banqB4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Harem/banqB5aTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/banqB5bTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/banqB6aTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/banqB6bTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/banqB8aTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/banqB8bTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/banqT1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "15"
+  },
+  "GameDB/Harem/banqT3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Harem/banqT5aTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/banqT5bTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/banqT6aTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/banqT6bTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/banqT7aTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/banqT7bTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/banqT8aTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/banqT8bTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/bazardr3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Harem/bazardr4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "26"
+  },
+  "GameDB/Harem/bazinst3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "26"
+  },
+  "GameDB/Harem/bazinst4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "26"
+  },
+  "GameDB/Harem/bazsnak3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "26"
+  },
+  "GameDB/Harem/bellrtrnSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "206"
+  },
+  "GameDB/Harem/bird1SPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "73"
+  },
+  "GameDB/Harem/bird1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "17"
+  },
+  "GameDB/Harem/bird1dslSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "10"
+  },
+  "GameDB/Harem/bird2SPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "163"
+  },
+  "GameDB/Harem/bird2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Harem/bird2dslSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "10"
+  },
+  "GameDB/Harem/bird3SPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "288"
+  },
+  "GameDB/Harem/birdcageSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Harem/birdliveSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Harem/birdmechSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Harem/colB1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "12"
+  },
+  "GameDB/Harem/colB2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "12"
+  },
+  "GameDB/Harem/colB4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/colB7TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "20"
+  },
+  "GameDB/Harem/colB8TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "20"
+  },
+  "GameDB/Harem/colT1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/colT2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/colT3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/colT4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/crtyrd3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/crtyrd4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "27"
+  },
+  "GameDB/Harem/hooka1STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "2"
+  },
+  "GameDB/Harem/hooka2STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Harem/hooka3STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Harem/hooka4STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Harem/hookaB2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "15"
+  },
+  "GameDB/Harem/hookaB4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Harem/hookaB5aTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/hookaB5bTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/hookaB6aTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/hookaB6bTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/hookaB7aTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/hookaB7bTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/hookaT2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "15"
+  },
+  "GameDB/Harem/hookaT3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Harem/hookaT5aTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/hookaT5bTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/hookaT6aTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/hookaT6bTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/hookaT7aTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/hookaT7bTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/hookaT8aTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/hookaT8bTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/instrSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Harem/lionL5TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "20"
+  },
+  "GameDB/Harem/lionL6TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/lionL7TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "25"
+  },
+  "GameDB/Harem/lionR5TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/lionR6TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "20"
+  },
+  "GameDB/Harem/lionR8TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "25"
+  },
+  "GameDB/Harem/minaretSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Harem/poolL4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "41"
+  },
+  "GameDB/Harem/poolL5TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "26"
+  },
+  "GameDB/Harem/poolL7TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/poolR5TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "42"
+  },
+  "GameDB/Harem/poolR6TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "26"
+  },
+  "GameDB/Harem/poolR8TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/Harem/pyramidSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Harem/pyramidaANI": {
+    "width": 240,
+    "height": 320,
+    "nb_frames": "16"
+  },
+  "GameDB/Harem/snakchrmSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "169"
+  },
+  "GameDB/Harem/snakdslvSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "1"
+  },
+  "GameDB/Harem/snakeSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "86"
+  },
+  "GameDB/Harem/symbol1ANI": {
+    "width": 132,
+    "height": 204,
+    "nb_frames": "29"
+  },
+  "GameDB/Harem/symbol2ANI": {
+    "width": 184,
+    "height": 192,
+    "nb_frames": "29"
+  },
+  "GameDB/Harem/symbol3ANI": {
+    "width": 168,
+    "height": 196,
+    "nb_frames": "29"
+  },
+  "GameDB/Harem/symbol4ANI": {
+    "width": 164,
+    "height": 200,
+    "nb_frames": "29"
+  },
+  "GameDB/Harem/symbol5ANI": {
+    "width": 168,
+    "height": 196,
+    "nb_frames": "29"
+  },
+  "GameDB/Harem/tapdoor3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/Harem/tapdoor5TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "20"
+  },
+  "GameDB/Harem/tapdoor6TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "25"
+  },
+  "GameDB/Harem/tapestrSPC": {
+    "width": 118,
+    "height": 162,
+    "nb_frames": "12"
+  },
+  "GameDB/Harem/tapwonSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "360"
+  },
+  "GameDB/Harem/topstrL3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "13"
+  },
+  "GameDB/Harem/topstrL4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "44"
+  },
+  "GameDB/Harem/topstrR3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "13"
+  },
+  "GameDB/Harem/topstrR4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "44"
+  },
+  "GameDB/Harem/upcrtL1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "18"
+  },
+  "GameDB/Harem/upcrtL6TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "13"
+  },
+  "GameDB/Harem/upcrtR2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "12"
+  },
+  "GameDB/Harem/upcrtR5TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "14"
+  },
+  "GameDB/Harem/uppassL3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "13"
+  },
+  "GameDB/Harem/uppassL4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "15"
+  },
+  "GameDB/Harem/uppassR3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "14"
+  },
+  "GameDB/Harem/uppassR4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "13"
+  },
+  "GameDB/OAsounds/MBbadTOM": {
+    "audioOnly": true
+  },
+  "GameDB/OAsounds/PharSRMSC": {
+    "audioOnly": true
+  },
+  "GameDB/OAsounds/drumsTOM": {
+    "audioOnly": true
+  },
+  "GameDB/OAsounds/elevclseTOM": {
+    "audioOnly": true
+  },
+  "GameDB/OAsounds/ghostsNAR": {
+    "audioOnly": true
+  },
+  "GameDB/OAsounds/hanthallNAR": {
+    "audioOnly": true
+  },
+  "GameDB/OAsounds/hfweeetTom": {
+    "audioOnly": true
+  },
+  "GameDB/OAsounds/inneuroNAR": {
+    "audioOnly": true
+  },
+  "GameDB/OAsounds/janaliveNAR": {
+    "audioOnly": true
+  },
+  "GameDB/OAsounds/misslifeNAR": {
+    "audioOnly": true
+  },
+  "GameDB/OAsounds/outroTOM": {
+    "audioOnly": true
+  },
+  "GameDB/OAsounds/uranindTOM": {
+    "audioOnly": true
+  },
+  "GameDB/Voodoo/ALfPDwAni": {
+    "width": 196,
+    "height": 222,
+    "nb_frames": "25"
+  },
+  "GameDB/Voodoo/ALoPDwAni": {
+    "width": 200,
+    "height": 224,
+    "nb_frames": "25"
+  },
+  "GameDB/Voodoo/AMfLfADsTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/AMfLfADwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/AMfLfAStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/AMfLfAUpTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/AMfLfBDsTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/AMfLfBDwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/AMfLfBStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/AMfLfBUpTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/AMfLfCDsTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/AMfLfCDwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/AMfLfCStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/AMfLfCUpTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/AMfLoADsTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/AMfLoADwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/AMfLoAStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/AMfLoAUpTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/AMfLoBDsTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/AMfLoBDwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/AMfLoBStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/AMfLoBUpTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/AMfLoCDsTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/AMfLoCDwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/AMfLoCStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/AMfLoCUpTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/AMoLfADsTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/AMoLfADwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/AMoLfAStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/AMoLfAUpTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/AMoLfBDsTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/AMoLfBDwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/AMoLfBStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/AMoLfBUpTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/AMoLfCDsTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/AMoLfCDwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/AMoLfCStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/AMoLfCUpTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/AMoLoADsTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/AMoLoADwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/AMoLoAStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/AMoLoAUpTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/AMoLoBDsTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/AMoLoBDwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/AMoLoBStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/AMoLoBUpTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/AMoLoCDsTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/AMoLoCDwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/AMoLoCStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/AMoLoCUpTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/AUp3Trn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/BLfPDwAni": {
+    "width": 184,
+    "height": 224,
+    "nb_frames": "25"
+  },
+  "GameDB/Voodoo/BLoPDwAni": {
+    "width": 206,
+    "height": 216,
+    "nb_frames": "30"
+  },
+  "GameDB/Voodoo/BMfLfADsTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "61"
+  },
+  "GameDB/Voodoo/BMfLfADwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/BMfLfAStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/BMfLfAUpTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/BMfLfBDsTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "61"
+  },
+  "GameDB/Voodoo/BMfLfBDwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/BMfLfBStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/BMfLfBUpTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/BMfLfCDsTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "61"
+  },
+  "GameDB/Voodoo/BMfLfCDwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/BMfLfCStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/BMfLfCUpTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/BMfLoADsTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "61"
+  },
+  "GameDB/Voodoo/BMfLoADwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/BMfLoAStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/BMfLoAUpTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/BMfLoBDsTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "61"
+  },
+  "GameDB/Voodoo/BMfLoBDwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/BMfLoBStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/BMfLoBUpTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/BMfLoCDsTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "61"
+  },
+  "GameDB/Voodoo/BMfLoCDwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/BMfLoCStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/BMfLoCUpTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/BMoLfADsTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "61"
+  },
+  "GameDB/Voodoo/BMoLfADwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/BMoLfAStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/BMoLfAUpTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/BMoLfBDsTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/BMoLfBDwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/BMoLfBStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/BMoLfBUpTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/BMoLfCDsTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/BMoLfCDwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/BMoLfCStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/BMoLfCUpTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/BMoLoADsTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "61"
+  },
+  "GameDB/Voodoo/BMoLoADwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/BMoLoAStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/BMoLoAUpTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/BMoLoBDsTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "61"
+  },
+  "GameDB/Voodoo/BMoLoBDwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/BMoLoBStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/BMoLoBUpTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/BMoLoCDsTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "61"
+  },
+  "GameDB/Voodoo/BMoLoCDwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/BMoLoCStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/BMoLoCUpTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/C1MfLfAtrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "51"
+  },
+  "GameDB/Voodoo/C1MfLfBtrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "51"
+  },
+  "GameDB/Voodoo/C1MfLfCtrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "51"
+  },
+  "GameDB/Voodoo/C1MfLoAtrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "51"
+  },
+  "GameDB/Voodoo/C1MfLoBtrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "51"
+  },
+  "GameDB/Voodoo/C1MfLoCtrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "51"
+  },
+  "GameDB/Voodoo/C1MoLfATrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "51"
+  },
+  "GameDB/Voodoo/C1MoLfBTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "51"
+  },
+  "GameDB/Voodoo/C1MoLfCtrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "51"
+  },
+  "GameDB/Voodoo/C1MoLoATrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "51"
+  },
+  "GameDB/Voodoo/C1MoLoBTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "51"
+  },
+  "GameDB/Voodoo/C1MoLoCTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "51"
+  },
+  "GameDB/Voodoo/C1OutTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "47"
+  },
+  "GameDB/Voodoo/C2AMfLfATrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/C2AMfLfBTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/C2AMfLfCTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/C2AMfLoATrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/C2AMfLoBTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/C2AMfLoCTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/C2AMoLfATrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/C2AMoLfBTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/C2AMoLfCTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/C2AMoLoATrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/C2AMoLoBTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/C2AMoLoCTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/C2BMfLfATrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "61"
+  },
+  "GameDB/Voodoo/C2BMfLfBTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "61"
+  },
+  "GameDB/Voodoo/C2BMfLfCTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "61"
+  },
+  "GameDB/Voodoo/C2BMfLoATrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "61"
+  },
+  "GameDB/Voodoo/C2BMfLoBTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "61"
+  },
+  "GameDB/Voodoo/C2BMfLoCTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "61"
+  },
+  "GameDB/Voodoo/C2BMoLfATrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "61"
+  },
+  "GameDB/Voodoo/C2BMoLfBTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "61"
+  },
+  "GameDB/Voodoo/C2BMoLfCTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "61"
+  },
+  "GameDB/Voodoo/C2BMoLoATrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "61"
+  },
+  "GameDB/Voodoo/C2BMoLoBTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "61"
+  },
+  "GameDB/Voodoo/C2BMoLoCTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "61"
+  },
+  "GameDB/Voodoo/C2CMfLfATrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/C2CMfLfBTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/C2CMfLfCTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/C2CMfLoATrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/C2CMfLoBTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/C2CMfLoCTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/C2CMoLfATrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/C2CMoLfBTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/C2CMoLfCTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/C2CMoLoATrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/C2CMoLoBTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/C2CMoLoCTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/C2outTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "41"
+  },
+  "GameDB/Voodoo/CLfPDwAni": {
+    "width": 168,
+    "height": 204,
+    "nb_frames": "19"
+  },
+  "GameDB/Voodoo/CLoPDwAni": {
+    "width": 208,
+    "height": 200,
+    "nb_frames": "19"
+  },
+  "GameDB/Voodoo/CMfLfADsTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/CMfLfAStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/CMfLfAUpTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/CMfLfAdwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/CMfLfBDsTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/CMfLfBDwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/CMfLfBStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/CMfLfBUpTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/CMfLfCDsTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/CMfLfCStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/CMfLfCUpTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/CMfLfCdwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/CMfLoADsTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "41"
+  },
+  "GameDB/Voodoo/CMfLoADwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/CMfLoAStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/CMfLoAUpTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/CMfLoBDsTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/CMfLoBDwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/CMfLoBStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/CMfLoBUpTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/CMfLoCDsTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/CMfLoCDwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/CMfLoCStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/CMfLoCUpTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/CMoLfADsTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/CMoLfADwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/CMoLfAStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/CMoLfAUpTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/CMoLfBDsTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/CMoLfBDwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/CMoLfBStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/CMoLfBUpTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/CMoLfCDsTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/CMoLfCDwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/CMoLfCStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/CMoLfCUpTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/CMoLoADsTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/CMoLoADwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/CMoLoAStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/CMoLoAUpTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/CMoLoBDwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/CMoLoBStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/CMoLoBUpTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/CMoLoCDsTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/CMoLoCDwTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/CMoLoCStl": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/CMoLoCUpTrn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "59"
+  },
+  "GameDB/Voodoo/CMoLobDsTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/D22Trn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "26"
+  },
+  "GameDB/Voodoo/D2ETRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/beach1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "41"
+  },
+  "GameDB/Voodoo/beach4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "32"
+  },
+  "GameDB/Voodoo/bridge1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "36"
+  },
+  "GameDB/Voodoo/bridge2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "41"
+  },
+  "GameDB/Voodoo/cemetaryANI": {
+    "width": 48,
+    "height": 160,
+    "nb_frames": "36"
+  },
+  "GameDB/Voodoo/cemetarySTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/ceremny3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/crosrd1Trn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "57"
+  },
+  "GameDB/Voodoo/crosrd2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "43"
+  },
+  "GameDB/Voodoo/crosrd4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "29"
+  },
+  "GameDB/Voodoo/firedol1ANI": {
+    "width": 92,
+    "height": 204,
+    "nb_frames": "87"
+  },
+  "GameDB/Voodoo/firedol2ANI": {
+    "width": 152,
+    "height": 208,
+    "nb_frames": "87"
+  },
+  "GameDB/Voodoo/firedol3ANI": {
+    "width": 264,
+    "height": 208,
+    "nb_frames": "87"
+  },
+  "GameDB/Voodoo/gracrtrnSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "206"
+  },
+  "GameDB/Voodoo/grave1STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/grave2ANI": {
+    "width": 64,
+    "height": 120,
+    "nb_frames": "36"
+  },
+  "GameDB/Voodoo/grave2STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/grave3ANI": {
+    "width": 60,
+    "height": 160,
+    "nb_frames": "36"
+  },
+  "GameDB/Voodoo/grave3STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/grave4ANI": {
+    "width": 60,
+    "height": 164,
+    "nb_frames": "30"
+  },
+  "GameDB/Voodoo/grave4STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/grave5STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/grave6ANI": {
+    "width": 60,
+    "height": 160,
+    "nb_frames": "30"
+  },
+  "GameDB/Voodoo/grave6STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/grave7ANI": {
+    "width": 60,
+    "height": 80,
+    "nb_frames": "36"
+  },
+  "GameDB/Voodoo/grave7STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/grave8ANI": {
+    "width": 64,
+    "height": 140,
+    "nb_frames": "36"
+  },
+  "GameDB/Voodoo/grave8STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/grave9ANI": {
+    "width": 60,
+    "height": 148,
+    "nb_frames": "36"
+  },
+  "GameDB/Voodoo/grave9STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/grotto1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "32"
+  },
+  "GameDB/Voodoo/grotto2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "32"
+  },
+  "GameDB/Voodoo/grotto3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "32"
+  },
+  "GameDB/Voodoo/grotto4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "32"
+  },
+  "GameDB/Voodoo/grotto5TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "32"
+  },
+  "GameDB/Voodoo/grotto6TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "32"
+  },
+  "GameDB/Voodoo/grottoutTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "29"
+  },
+  "GameDB/Voodoo/h2ofall1SPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "41"
+  },
+  "GameDB/Voodoo/h2ofall2SPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "41"
+  },
+  "GameDB/Voodoo/h2ofall2Trn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/Voodoo/h2ofall3SPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "41"
+  },
+  "GameDB/Voodoo/meltdol1ANI": {
+    "width": 108,
+    "height": 200,
+    "nb_frames": "61"
+  },
+  "GameDB/Voodoo/meltdol2ANI": {
+    "width": 196,
+    "height": 208,
+    "nb_frames": "61"
+  },
+  "GameDB/Voodoo/meltdol3ANI": {
+    "width": 132,
+    "height": 204,
+    "nb_frames": "61"
+  },
+  "GameDB/Voodoo/monkey1ANI": {
+    "width": 108,
+    "height": 88,
+    "nb_frames": "40"
+  },
+  "GameDB/Voodoo/monkey2ANI": {
+    "width": 96,
+    "height": 84,
+    "nb_frames": "40"
+  },
+  "GameDB/Voodoo/monkey3ANI": {
+    "width": 92,
+    "height": 80,
+    "nb_frames": "40"
+  },
+  "GameDB/Voodoo/monkey4ANI": {
+    "width": 84,
+    "height": 76,
+    "nb_frames": "43"
+  },
+  "GameDB/Voodoo/monkey5ANI": {
+    "width": 88,
+    "height": 88,
+    "nb_frames": "40"
+  },
+  "GameDB/Voodoo/monkey6ANI": {
+    "width": 84,
+    "height": 80,
+    "nb_frames": "43"
+  },
+  "GameDB/Voodoo/monkey7ANI": {
+    "width": 100,
+    "height": 76,
+    "nb_frames": "40"
+  },
+  "GameDB/Voodoo/monkey8ANI": {
+    "width": 112,
+    "height": 92,
+    "nb_frames": "40"
+  },
+  "GameDB/Voodoo/monkey9ANI": {
+    "width": 92,
+    "height": 84,
+    "nb_frames": "40"
+  },
+  "GameDB/Voodoo/monkleapSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "19"
+  },
+  "GameDB/Voodoo/monktoyANI": {
+    "width": 260,
+    "height": 284,
+    "nb_frames": "39"
+  },
+  "GameDB/Voodoo/monktoySTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "2"
+  },
+  "GameDB/Voodoo/obolisk4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "29"
+  },
+  "GameDB/Voodoo/obolisk5TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "29"
+  },
+  "GameDB/Voodoo/plaqueSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "2"
+  },
+  "GameDB/Voodoo/shack1STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/shack2STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/shack3STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/Voodoo/spinSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "69"
+  },
+  "GameDB/carnival/1stcallTOM": {
+    "audioOnly": true
+  },
+  "GameDB/carnival/800001TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/carnival/800002TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "15"
+  },
+  "GameDB/carnival/800005TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "17"
+  },
+  "GameDB/carnival/800050STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/carnival/800052ANI": {
+    "width": 184,
+    "height": 132,
+    "nb_frames": "59"
+  },
+  "GameDB/carnival/800053ANI": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "79"
+  },
+  "GameDB/carnival/801006TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/carnival/801007TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "15"
+  },
+  "GameDB/carnival/801011TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "15"
+  },
+  "GameDB/carnival/801050STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/carnival/801051ANI": {
+    "width": 136,
+    "height": 84,
+    "nb_frames": "10"
+  },
+  "GameDB/carnival/801052ANI": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "71"
+  },
+  "GameDB/carnival/801053STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/carnival/802003TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/carnival/802004TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/carnival/803001TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/carnival/803005TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/carnival/803008TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/carnival/803030SPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "26"
+  },
+  "GameDB/carnival/803031ANI": {
+    "width": 368,
+    "height": 172,
+    "nb_frames": "10"
+  },
+  "GameDB/carnival/803049STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/carnival/803050STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/carnival/803051ANI": {
+    "width": 64,
+    "height": 176,
+    "nb_frames": "7"
+  },
+  "GameDB/carnival/803052ANI": {
+    "width": 56,
+    "height": 176,
+    "nb_frames": "7"
+  },
+  "GameDB/carnival/803053ANI": {
+    "width": 60,
+    "height": 176,
+    "nb_frames": "7"
+  },
+  "GameDB/carnival/803054ANI": {
+    "width": 56,
+    "height": 176,
+    "nb_frames": "7"
+  },
+  "GameDB/carnival/803055ANI": {
+    "width": 56,
+    "height": 176,
+    "nb_frames": "7"
+  },
+  "GameDB/carnival/803056ANI": {
+    "width": 68,
+    "height": 176,
+    "nb_frames": "7"
+  },
+  "GameDB/carnival/803057ANI": {
+    "width": 136,
+    "height": 160,
+    "nb_frames": "22"
+  },
+  "GameDB/carnival/803070STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/carnival/803071SPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "71"
+  },
+  "GameDB/carnival/803072SPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "48"
+  },
+  "GameDB/carnival/804001TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/carnival/804002TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/carnival/804005TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/carnival/804050STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/carnival/804051ANI": {
+    "width": 128,
+    "height": 396,
+    "nb_frames": "43"
+  },
+  "GameDB/carnival/805006TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/carnival/805007TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/carnival/806003TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/carnival/806004TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/carnival/806026ANI": {
+    "width": 60,
+    "height": 60,
+    "nb_frames": "11"
+  },
+  "GameDB/carnival/806027ANI": {
+    "width": 132,
+    "height": 60,
+    "nb_frames": "6"
+  },
+  "GameDB/carnival/806028ANI": {
+    "width": 156,
+    "height": 72,
+    "nb_frames": "26"
+  },
+  "GameDB/carnival/806036ANI": {
+    "width": 60,
+    "height": 60,
+    "nb_frames": "11"
+  },
+  "GameDB/carnival/806037ANI": {
+    "width": 124,
+    "height": 60,
+    "nb_frames": "6"
+  },
+  "GameDB/carnival/806038ANI": {
+    "width": 152,
+    "height": 76,
+    "nb_frames": "26"
+  },
+  "GameDB/carnival/806046ANI": {
+    "width": 60,
+    "height": 60,
+    "nb_frames": "11"
+  },
+  "GameDB/carnival/806047ANI": {
+    "width": 120,
+    "height": 60,
+    "nb_frames": "6"
+  },
+  "GameDB/carnival/806048ANI": {
+    "width": 148,
+    "height": 80,
+    "nb_frames": "26"
+  },
+  "GameDB/carnival/806050STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/carnival/806051STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/carnival/806055ANI": {
+    "width": 268,
+    "height": 220,
+    "nb_frames": "10"
+  },
+  "GameDB/carnival/806055STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/carnival/806056ANI": {
+    "width": 220,
+    "height": 184,
+    "nb_frames": "28"
+  },
+  "GameDB/carnival/806056STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/carnival/806060ANI": {
+    "width": 92,
+    "height": 120,
+    "nb_frames": "6"
+  },
+  "GameDB/carnival/806062ANI": {
+    "width": 56,
+    "height": 260,
+    "nb_frames": "20"
+  },
+  "GameDB/carnival/806063ANI": {
+    "width": 60,
+    "height": 260,
+    "nb_frames": "23"
+  },
+  "GameDB/carnival/806065ANI": {
+    "width": 104,
+    "height": 60,
+    "nb_frames": "10"
+  },
+  "GameDB/carnival/806066SPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/carnival/807004ANI": {
+    "width": 92,
+    "height": 68,
+    "nb_frames": "1"
+  },
+  "GameDB/carnival/807005TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/carnival/807008TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/carnival/807011STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/carnival/807015TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/carnival/807025ANI": {
+    "width": 160,
+    "height": 216,
+    "nb_frames": "43"
+  },
+  "GameDB/carnival/807050STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/carnival/807051STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/carnival/807052ANI": {
+    "width": 216,
+    "height": 120,
+    "nb_frames": "12"
+  },
+  "GameDB/carnival/807053STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/carnival/807054STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/carnival/807055STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/carnival/807056STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/carnival/807057STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/carnival/807058ANI": {
+    "width": 264,
+    "height": 112,
+    "nb_frames": "12"
+  },
+  "GameDB/carnival/807059STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/carnival/807060STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/carnival/807061STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/carnival/807062ANI": {
+    "width": 256,
+    "height": 140,
+    "nb_frames": "12"
+  },
+  "GameDB/carnival/807063STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/carnival/807064ANI": {
+    "width": 280,
+    "height": 228,
+    "nb_frames": "15"
+  },
+  "GameDB/carnival/807065ANI": {
+    "width": 320,
+    "height": 168,
+    "nb_frames": "44"
+  },
+  "GameDB/carnival/807066ANI": {
+    "width": 196,
+    "height": 145,
+    "nb_frames": "8"
+  },
+  "GameDB/carnival/807067ANI": {
+    "error": "original file absent"
+  },
+  "GameDB/carnival/807071STL": {
+    "width": 300,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/carnival/807072ANI": {
+    "width": 188,
+    "height": 120,
+    "nb_frames": "2"
+  },
+  "GameDB/carnival/808006Trn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "22"
+  },
+  "GameDB/carnival/808503Trn": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "23"
+  },
+  "GameDB/carnival/FLtrailerSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/carnival/bckstageSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/carnival/billrtrnSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "206"
+  },
+  "GameDB/carnival/cardsANI": {
+    "width": 52,
+    "height": 72,
+    "nb_frames": "4"
+  },
+  "GameDB/carnival/carouselSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "81"
+  },
+  "GameDB/carnival/circusANI": {
+    "width": 336,
+    "height": 200,
+    "nb_frames": "779"
+  },
+  "GameDB/carnival/dimlightANI": {
+    "width": 80,
+    "height": 80,
+    "nb_frames": "16"
+  },
+  "GameDB/carnival/intofunTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "12"
+  },
+  "GameDB/carnival/knot1ANI": {
+    "width": 60,
+    "height": 320,
+    "nb_frames": "20"
+  },
+  "GameDB/carnival/knot2ANI": {
+    "width": 48,
+    "height": 320,
+    "nb_frames": "20"
+  },
+  "GameDB/carnival/knot3ANI": {
+    "width": 44,
+    "height": 320,
+    "nb_frames": "20"
+  },
+  "GameDB/carnival/knot4ANI": {
+    "width": 36,
+    "height": 320,
+    "nb_frames": "20"
+  },
+  "GameDB/carnival/knot5ANI": {
+    "width": 36,
+    "height": 320,
+    "nb_frames": "20"
+  },
+  "GameDB/carnival/leverTom": {
+    "audioOnly": true
+  },
+  "GameDB/carnival/lightdimSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/carnival/litstageSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/carnival/oncarselSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "36"
+  },
+  "GameDB/carnival/opensuitSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/carnival/outstageTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "30"
+  },
+  "GameDB/carnival/qclubSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "25"
+  },
+  "GameDB/carnival/scene1bkANI": {
+    "width": 336,
+    "height": 376,
+    "nb_frames": "156"
+  },
+  "GameDB/carnival/scene2bkANI": {
+    "width": 336,
+    "height": 372,
+    "nb_frames": "156"
+  },
+  "GameDB/carnival/scene3bkANI": {
+    "width": 336,
+    "height": 368,
+    "nb_frames": "156"
+  },
+  "GameDB/carnival/scene4bkANI": {
+    "width": 336,
+    "height": 376,
+    "nb_frames": "155"
+  },
+  "GameDB/carnival/scene5bkANI": {
+    "width": 320,
+    "height": 356,
+    "nb_frames": "157"
+  },
+  "GameDB/carnival/stageSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/carnival/suitcaseSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/carnival/suitclseANI": {
+    "width": 176,
+    "height": 120,
+    "nb_frames": "33"
+  },
+  "GameDB/carnival/suitinsdSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/carnival/suitoutANI": {
+    "width": 160,
+    "height": 100,
+    "nb_frames": "16"
+  },
+  "GameDB/carnival/thrufnceTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "17"
+  },
+  "GameDB/h2oFront/MorgtoeSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/PBentry1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "27"
+  },
+  "GameDB/h2oFront/PBentry3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "36"
+  },
+  "GameDB/h2oFront/PBentry4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/h2oFront/PBlr3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/h2oFront/PBsignSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/PBstudy4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "26"
+  },
+  "GameDB/h2oFront/PBupstr4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "37"
+  },
+  "GameDB/h2oFront/PSdesk3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/h2oFront/PSdesk4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "12"
+  },
+  "GameDB/h2oFront/PSdesk4bTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "12"
+  },
+  "GameDB/h2oFront/PSdoor3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/h2oFront/PSdoor4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/h2oFront/PSfront3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/h2oFront/PSfront4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/h2oFront/aeolianSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/barbsignSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/bodyroseSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "20"
+  },
+  "GameDB/h2oFront/booth1STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/booth2STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/booth3STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/booth4STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/booth5STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/booth6STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/box1missANI": {
+    "width": 320,
+    "height": 88,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/box2missANI": {
+    "width": 292,
+    "height": 60,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/box3missANI": {
+    "width": 376,
+    "height": 80,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/box4missANI": {
+    "width": 312,
+    "height": 64,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/box5missANI": {
+    "width": 312,
+    "height": 64,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/box6missANI": {
+    "width": 316,
+    "height": 72,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/brooklynSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "24"
+  },
+  "GameDB/h2oFront/cart3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/h2oFront/cart4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/h2oFront/cartSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/cartfl1ANI": {
+    "width": 320,
+    "height": 208,
+    "nb_frames": "30"
+  },
+  "GameDB/h2oFront/cartfl2ANI": {
+    "width": 360,
+    "height": 248,
+    "nb_frames": "21"
+  },
+  "GameDB/h2oFront/cartfl3ANI": {
+    "width": 360,
+    "height": 248,
+    "nb_frames": "26"
+  },
+  "GameDB/h2oFront/cartop0ANI": {
+    "width": 340,
+    "height": 268,
+    "nb_frames": "31"
+  },
+  "GameDB/h2oFront/cartop1ANI": {
+    "width": 348,
+    "height": 264,
+    "nb_frames": "31"
+  },
+  "GameDB/h2oFront/cartop2ANI": {
+    "width": 348,
+    "height": 264,
+    "nb_frames": "31"
+  },
+  "GameDB/h2oFront/celeringSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/celfluteSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/celgloveSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/cell1-3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "12"
+  },
+  "GameDB/h2oFront/cell1-4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/h2oFront/cell2-3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/h2oFront/cell2-4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/h2oFront/cell3-1aTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "29"
+  },
+  "GameDB/h2oFront/cell3-1bTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "30"
+  },
+  "GameDB/h2oFront/cell3-3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/h2oFront/cellclueSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/cellcupSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/cellhatSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/cellknitSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/dartSPC": {
+    "width": 168,
+    "height": 156,
+    "nb_frames": "13"
+  },
+  "GameDB/h2oFront/dartSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/dartbox1STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/dartbox2STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/dartbox3STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/dartbox4STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/dartbox5STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/dartbox6STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/dartclosSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/darts1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/h2oFront/darts3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/h2oFront/desk2STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/desk4STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/earringSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/egyptSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "24"
+  },
+  "GameDB/h2oFront/ffroseANI": {
+    "width": 60,
+    "height": 60,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/firepl2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/h2oFront/firepl4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/h2oFront/fireplacSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "29"
+  },
+  "GameDB/h2oFront/gloveSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/gotmuffyTOM": {
+    "audioOnly": true
+  },
+  "GameDB/h2oFront/hatboxSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/hongkongSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "24"
+  },
+  "GameDB/h2oFront/intobutcTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "69"
+  },
+  "GameDB/h2oFront/knittingSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/leortrnSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "206"
+  },
+  "GameDB/h2oFront/londonSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "24"
+  },
+  "GameDB/h2oFront/maChinaANI": {
+    "width": 108,
+    "height": 128,
+    "nb_frames": "11"
+  },
+  "GameDB/h2oFront/maEgyptANI": {
+    "width": 116,
+    "height": 128,
+    "nb_frames": "7"
+  },
+  "GameDB/h2oFront/maEnglanANI": {
+    "width": 96,
+    "height": 128,
+    "nb_frames": "7"
+  },
+  "GameDB/h2oFront/maFranceANI": {
+    "width": 104,
+    "height": 124,
+    "nb_frames": "7"
+  },
+  "GameDB/h2oFront/maNYANI": {
+    "width": 92,
+    "height": 104,
+    "nb_frames": "7"
+  },
+  "GameDB/h2oFront/maRomeANI": {
+    "width": 96,
+    "height": 96,
+    "nb_frames": "7"
+  },
+  "GameDB/h2oFront/mapChinaSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/mapEgyptSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/mapEnglaSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/mapFrancSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/mapNYSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/mapRomeSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/mercsignSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/morgroseSTL": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "2"
+  },
+  "GameDB/h2oFront/morgue2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "27"
+  },
+  "GameDB/h2oFront/muffblurSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/muffpostSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/mufftagANI": {
+    "width": 180,
+    "height": 184,
+    "nb_frames": "48"
+  },
+  "GameDB/h2oFront/mufftailSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/musicSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/outmorg3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/h2oFront/outmorg4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "41"
+  },
+  "GameDB/h2oFront/outmorg5TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/h2oFront/parisSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "23"
+  },
+  "GameDB/h2oFront/peekffrmSTL": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/petiphneSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/phoneSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "19"
+  },
+  "GameDB/h2oFront/phonedwnSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/pinAANI": {
+    "width": 68,
+    "height": 68,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/pinBANI": {
+    "width": 64,
+    "height": 64,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/pinFANI": {
+    "width": 60,
+    "height": 68,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/pinGANI": {
+    "width": 72,
+    "height": 72,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/pinRANI": {
+    "width": 64,
+    "height": 68,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/pinYANI": {
+    "width": 64,
+    "height": 64,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/pincloseSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/police2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "12"
+  },
+  "GameDB/h2oFront/police4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/h2oFront/pub1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/h2oFront/pub2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/h2oFront/pub3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/h2oFront/pub5TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/h2oFront/pub7TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "12"
+  },
+  "GameDB/h2oFront/pub9TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/h2oFront/pubdoor2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/h2oFront/pubdoor3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/h2oFront/pubsignSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/pull1ANI": {
+    "width": 284,
+    "height": 328,
+    "nb_frames": "40"
+  },
+  "GameDB/h2oFront/pull2ANI": {
+    "width": 220,
+    "height": 332,
+    "nb_frames": "12"
+  },
+  "GameDB/h2oFront/pull3ANI": {
+    "width": 132,
+    "height": 336,
+    "nb_frames": "50"
+  },
+  "GameDB/h2oFront/pull4ANI": {
+    "width": 100,
+    "height": 336,
+    "nb_frames": "11"
+  },
+  "GameDB/h2oFront/pull5ANI": {
+    "width": 220,
+    "height": 332,
+    "nb_frames": "11"
+  },
+  "GameDB/h2oFront/pull6ANI": {
+    "width": 284,
+    "height": 336,
+    "nb_frames": "52"
+  },
+  "GameDB/h2oFront/ringTOM": {
+    "audioOnly": true
+  },
+  "GameDB/h2oFront/romeSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "24"
+  },
+  "GameDB/h2oFront/sweeney4TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/h2oFront/sweeneySTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/tap1dartANI": {
+    "width": 200,
+    "height": 60,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/tap2dartANI": {
+    "width": 216,
+    "height": 60,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/tap3dartANI": {
+    "width": 184,
+    "height": 60,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/tap4dartANI": {
+    "width": 252,
+    "height": 88,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/tap5dartANI": {
+    "width": 200,
+    "height": 72,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/tap6dartANI": {
+    "width": 228,
+    "height": 60,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/tapsSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "69"
+  },
+  "GameDB/h2oFront/tapsSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/teapotSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/h2oFront/vic1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/h2oFront/vic2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/h2oFront/vic3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "31"
+  },
+  "GameDB/h2oFront/vic5TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/h2oFront/warehs11TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/h2oFront/warehs22TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/h2oFront/warehse1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "21"
+  },
+  "GameDB/iceNchat/endseqSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "1710"
+  },
+  "GameDB/iceNchat/exjour1STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/iceNchat/exjour1TOM": {
+    "audioOnly": true
+  },
+  "GameDB/iceNchat/exjour2STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/iceNchat/exjour2TOM": {
+    "audioOnly": true
+  },
+  "GameDB/iceNchat/exjour3STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "2"
+  },
+  "GameDB/iceNchat/exjour3TOM": {
+    "audioOnly": true
+  },
+  "GameDB/iceNchat/exjour4STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "2"
+  },
+  "GameDB/iceNchat/exjour4TOM": {
+    "audioOnly": true
+  },
+  "GameDB/iceNchat/exjour5STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "2"
+  },
+  "GameDB/iceNchat/exjour5TOM": {
+    "audioOnly": true
+  },
+  "GameDB/iceNchat/exjour6STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "2"
+  },
+  "GameDB/iceNchat/exjour6TOM": {
+    "audioOnly": true
+  },
+  "GameDB/iceNchat/exjour7STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "2"
+  },
+  "GameDB/iceNchat/exjour7TOM": {
+    "audioOnly": true
+  },
+  "GameDB/iceNchat/exjour8STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "2"
+  },
+  "GameDB/iceNchat/exjour8TOM": {
+    "audioOnly": true
+  },
+  "GameDB/iceNchat/exjour9STL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "2"
+  },
+  "GameDB/iceNchat/exjourSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/iceNchat/exjrlttrSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "74"
+  },
+  "GameDB/iceNchat/holmescvSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/iceNchat/icebreakSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "91"
+  },
+  "GameDB/iceNchat/icedeathNAR": {
+    "audioOnly": true
+  },
+  "GameDB/iceNchat/icepickANI": {
+    "width": 220,
+    "height": 280,
+    "nb_frames": "16"
+  },
+  "GameDB/iceNchat/icepickSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/iceNchat/slumpexpSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/iceNchat/upjourSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "27"
+  },
+  "GameDB/neuro/2carnivlSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "100"
+  },
+  "GameDB/neuro/2h2ofrntSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "57"
+  },
+  "GameDB/neuro/2haremSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "104"
+  },
+  "GameDB/neuro/2voodooSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "73"
+  },
+  "GameDB/neuro/NRpodstlSPC": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/neuro/claire2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "17"
+  },
+  "GameDB/neuro/claireSPC": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/neuro/clairprsNAR": {
+    "audioOnly": true
+  },
+  "GameDB/neuro/clsNRpodSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "40"
+  },
+  "GameDB/neuro/galteANI": {
+    "width": 180,
+    "height": 144,
+    "nb_frames": "30"
+  },
+  "GameDB/neuro/galteSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/neuro/janswoonSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "67"
+  },
+  "GameDB/neuro/mexlerANI": {
+    "width": 176,
+    "height": 148,
+    "nb_frames": "30"
+  },
+  "GameDB/neuro/mexlerSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/neuro/necklaceSPC": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/neuro/neuroN1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/neuro/neuroS1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "66"
+  },
+  "GameDB/neuro/neuroS2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/neuro/neuroS3TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "142"
+  },
+  "GameDB/neuro/neuroS7TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "168"
+  },
+  "GameDB/neuro/neuroS8TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "34"
+  },
+  "GameDB/neuro/neuroct1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/neuro/neuroct2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/neuro/poddeadNAR": {
+    "audioOnly": true
+  },
+  "GameDB/neuro/staticSPC": {
+    "width": 284,
+    "height": 300,
+    "nb_frames": "35"
+  },
+  "GameDB/neuro/staticTOM": {
+    "audioOnly": true
+  },
+  "GameDB/neuro/swanANI": {
+    "width": 168,
+    "height": 144,
+    "nb_frames": "30"
+  },
+  "GameDB/neuro/swanSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/neuro/thermonANI": {
+    "width": 172,
+    "height": 144,
+    "nb_frames": "30"
+  },
+  "GameDB/neuro/thermonSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/sanitory/BMwcANI": {
+    "width": 260,
+    "height": 240,
+    "nb_frames": "280"
+  },
+  "GameDB/sanitory/BMwcButtANI": {
+    "width": 60,
+    "height": 60,
+    "nb_frames": "6"
+  },
+  "GameDB/sanitory/BMwcSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/sanitory/BSwcANI": {
+    "width": 260,
+    "height": 240,
+    "nb_frames": "240"
+  },
+  "GameDB/sanitory/BSwcButtANI": {
+    "width": 60,
+    "height": 60,
+    "nb_frames": "6"
+  },
+  "GameDB/sanitory/BSwcSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/sanitory/GTwcANI": {
+    "width": 260,
+    "height": 240,
+    "nb_frames": "263"
+  },
+  "GameDB/sanitory/GTwcSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/sanitory/LGwcANI": {
+    "width": 260,
+    "height": 240,
+    "nb_frames": "365"
+  },
+  "GameDB/sanitory/LGwcButtANI": {
+    "width": 60,
+    "height": 60,
+    "nb_frames": "6"
+  },
+  "GameDB/sanitory/LGwcSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/sanitory/incmalVID": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "598"
+  },
+  "GameDB/sanitory/ndescendTRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "118"
+  },
+  "GameDB/sanitory/podbut1SPC": {
+    "width": 60,
+    "height": 60,
+    "nb_frames": "11"
+  },
+  "GameDB/sanitory/poddescSPC": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "156"
+  },
+  "GameDB/sanitory/poddevSTL": {
+    "width": 640,
+    "height": 400,
+    "nb_frames": "1"
+  },
+  "GameDB/sanitory/podknob1ANI": {
+    "width": 80,
+    "height": 72,
+    "nb_frames": "51"
+  },
+  "GameDB/sanitory/podknob2ANI": {
+    "width": 76,
+    "height": 72,
+    "nb_frames": "51"
+  },
+  "GameDB/sanitory/podknob3ANI": {
+    "width": 76,
+    "height": 72,
+    "nb_frames": "51"
+  },
+  "GameDB/sanitory/podrtswANI": {
+    "width": 108,
+    "height": 144,
+    "nb_frames": "11"
+  },
+  "GameDB/sanitory/podrtwl1ANI": {
+    "width": 60,
+    "height": 252,
+    "nb_frames": "51"
+  },
+  "GameDB/sanitory/podrtwl2ANI": {
+    "width": 56,
+    "height": 252,
+    "nb_frames": "51"
+  },
+  "GameDB/sanitory/podrtwl3ANI": {
+    "width": 60,
+    "height": 252,
+    "nb_frames": "51"
+  },
+  "GameDB/sanitory/saniEl1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "27"
+  },
+  "GameDB/sanitory/saniEl2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/sanitory/saniN1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/sanitory/saniNdw1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/sanitory/saniS1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "11"
+  },
+  "GameDB/sanitory/saniS2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/sanitory/sanictd1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/sanitory/sanictr1TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/sanitory/sanictr2TRN": {
+    "width": 320,
+    "height": 200,
+    "nb_frames": "16"
+  },
+  "GameDB/sanitory/wcButtANI": {
+    "width": 60,
+    "height": 60,
+    "nb_frames": "10"
+  }
+}
