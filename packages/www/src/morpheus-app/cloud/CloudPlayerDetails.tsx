@@ -27,9 +27,11 @@ const comparisonSchema = z.object({
 export function DiscoverySummary({
   overlay = false,
   completionOnly = false,
+  sideGutterWidth,
 }: {
   overlay?: boolean;
   completionOnly?: boolean;
+  sideGutterWidth?: number;
 }) {
   const cloud = useMorpheusCloud();
   const activeSlotId = useAppSelector(
@@ -96,7 +98,14 @@ export function DiscoverySummary({
     return null;
   return (
     <aside
-      className={`${styles.discovery} ${overlay ? styles.overlay : ''}`}
+      className={`${styles.discovery} ${overlay ? styles.overlay : ''} ${sideGutterWidth !== undefined ? styles.sideOverlay : ''}`}
+      style={
+        sideGutterWidth !== undefined
+          ? {
+              width: `calc(${sideGutterWidth}px - 24px - env(safe-area-inset-left, 0px))`,
+            }
+          : undefined
+      }
       aria-label="Journey discovery"
     >
       <span>{progress.overall.percent}% discovered</span>

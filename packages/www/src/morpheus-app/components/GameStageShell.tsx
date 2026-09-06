@@ -761,8 +761,8 @@ export const GameStageShell = ({
       {policy.menus &&
         gameMenu.showDiscoveryDuringPlay &&
         !gameMenu.open &&
-        top >= 96 &&
-        width >= 300 && <DiscoverySummary overlay />}
+        width >= 300 &&
+        left >= 120 && <DiscoverySummary overlay sideGutterWidth={left} />}
       {policy.menus && !gameMenu.open && (
         <DiscoverySummary overlay completionOnly />
       )}
