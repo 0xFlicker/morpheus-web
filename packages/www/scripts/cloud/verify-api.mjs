@@ -235,7 +235,7 @@ try {
     return id;
   };
   const cohort = [];
-  for (let index = 0; index < 19; index++)
+  for (let index = 0; index < 1; index++)
     cohort.push(await seed('played', [1050, 895065]));
   await seed('imported', [1050, 895065]);
   await seed('played', [1050]);
@@ -243,14 +243,14 @@ try {
   await seed('played', [1050, 895065], first.id);
   await seed('played', [1050, 895065], cohort[0]);
   assert.equal(
-    (await summary()).body.comparison.reason,
-    'small-cohort',
+    (await summary()).body.comparison.otherPlayerCount,
+    1,
     'Excluded and linked players must not inflate the cohort',
   );
   await seed('played', [1050, 895065]);
   const comparison = (await summary()).body.comparison;
   assert.equal(comparison.status, 'available');
-  assert.equal(comparison.otherPlayerCount, 20);
+  assert.equal(comparison.otherPlayerCount, 2);
   assert.equal(comparison.averagePercent, 0.8);
   assert.equal(comparison.verified, false);
   assert.ok(!JSON.stringify(comparison).includes(cohort[0]));

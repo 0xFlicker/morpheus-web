@@ -758,7 +758,14 @@ export const GameStageShell = ({
           pointerEvents: 'none',
         }}
       />
-      {policy.menus && <DiscoverySummary overlay />}
+      {policy.menus &&
+        gameMenu.showDiscoveryDuringPlay &&
+        !gameMenu.open &&
+        top >= 96 &&
+        width >= 300 && <DiscoverySummary overlay />}
+      {policy.menus && !gameMenu.open && (
+        <DiscoverySummary overlay completionOnly />
+      )}
       {policy.menus && livingSaveCoordinator !== null && (
         <GameMenu
           saveSlots={

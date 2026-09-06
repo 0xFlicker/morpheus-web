@@ -186,4 +186,4 @@ export function evaluateAchievements(
   }));
 }
 
-export const MINIMUM_DISCOVERY_COMPARISON_PLAYERS = 20;
+export const MINIMUM_DISCOVERY_COMPARISON_PLAYERS = 1;

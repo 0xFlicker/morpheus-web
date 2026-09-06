@@ -24,7 +24,13 @@ const comparisonSchema = z.object({
   ]),
 });
 
-export function DiscoverySummary({ overlay = false }: { overlay?: boolean }) {
+export function DiscoverySummary({
+  overlay = false,
+  completionOnly = false,
+}: {
+  overlay?: boolean;
+  completionOnly?: boolean;
+}) {
   const cloud = useMorpheusCloud();
   const activeSlotId = useAppSelector(
     (state) => state.livingSaves.runtimeSlotId,
@@ -50,7 +56,7 @@ export function DiscoverySummary({ overlay = false }: { overlay?: boolean }) {
   useEffect(() => {
     setComparison(null);
     if (
-      !overlay ||
+      (overlay && !completionOnly) ||
       !progress?.completed ||
       cloud?.status !== 'ready' ||
       !activeSlotId
@@ -77,11 +83,17 @@ export function DiscoverySummary({ overlay = false }: { overlay?: boolean }) {
     acknowledgedRevision,
     cloud?.status,
     overlay,
+    completionOnly,
     playerId,
     progress?.completed,
     runId,
   ]);
-  if (!progress) return null;
+  if (
+    !progress ||
+    (completionOnly && !progress.completed) ||
+    (overlay && !completionOnly && progress.completed)
+  )
+    return null;
   return (
     <aside
       className={`${styles.discovery} ${overlay ? styles.overlay : ''}`}
@@ -93,7 +105,7 @@ export function DiscoverySummary({ overlay = false }: { overlay?: boolean }) {
           {section.label} {section.percent}%
         </span>
       )}
-      {progress.completed && overlay && (
+      {progress.completed && (!overlay || completionOnly) && (
         <p>
           Your journey revealed {progress.overall.discovered} of{' '}
           {progress.overall.total} locations.

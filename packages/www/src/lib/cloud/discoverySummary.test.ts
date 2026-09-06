@@ -32,17 +32,17 @@ describe('production discovery summary', () => {
     ).toMatchObject({ reason: 'imported' });
     expect(sql).not.toHaveBeenCalled();
   });
-  it('requires twenty distinct other completed players before returning an aggregate', async () => {
-    sql.mockResolvedValueOnce([{ players: '19', average: '2' }]);
+  it('compares from the first other completed player and omits empty cohorts', async () => {
+    sql.mockResolvedValueOnce([{ players: '0', average: null }]);
     expect((await discoverySummary('self', save)).comparison).toEqual({
       status: 'unavailable',
       reason: 'small-cohort',
     });
-    sql.mockResolvedValueOnce([{ players: '20', average: '2' }]);
+    sql.mockResolvedValueOnce([{ players: '1', average: '2' }]);
     expect((await discoverySummary('self', save)).comparison).toEqual({
       status: 'available',
       cohortLabel: 'Other players’ best currently saved completed playthroughs',
-      otherPlayerCount: 20,
+      otherPlayerCount: 1,
       playerPercent: 0.8,
       averagePercent: 0.8,
       verified: false,

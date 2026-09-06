@@ -8,6 +8,7 @@ import {
   closeGameMenu,
   openGameMenu,
   selectGameMenu,
+  setShowDiscoveryDuringPlay,
   showGameMenuMain,
   showGameMenuSaveSlots,
 } from '@/morpheus-app/store/slices/gameMenuSlice';
@@ -32,6 +33,18 @@ export const GameMenu = ({
   const wheelButtonRef = useRef<HTMLButtonElement>(null);
   const backdropPressedRef = useRef(false);
   const wasOpenRef = useRef(false);
+
+  useEffect(() => {
+    try {
+      dispatch(
+        setShowDiscoveryDuringPlay(
+          localStorage.getItem('morpheus.showDiscoveryDuringPlay') === 'true',
+        ),
+      );
+    } catch (error) {
+      console.warn('Discovery display preference could not be read.', error);
+    }
+  }, [dispatch]);
 
   const close = useCallback(() => {
     dispatch(closeGameMenu());
@@ -139,6 +152,28 @@ export const GameMenu = ({
               close();
             }}
           />
+          <label>
+            <input
+              type="checkbox"
+              checked={menu.showDiscoveryDuringPlay}
+              onChange={(event) => {
+                const enabled = event.target.checked;
+                dispatch(setShowDiscoveryDuringPlay(enabled));
+                try {
+                  localStorage.setItem(
+                    'morpheus.showDiscoveryDuringPlay',
+                    String(enabled),
+                  );
+                } catch (error) {
+                  console.warn(
+                    'Discovery display preference could not be saved.',
+                    error,
+                  );
+                }
+              }}
+            />{' '}
+            Show discovery during play
+          </label>
           {menu.screen === 'main' ? (
             <nav className={styles.mainActions} aria-label="Game menu">
               <button type="button" onClick={close}>

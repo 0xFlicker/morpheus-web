@@ -47,7 +47,7 @@ export default function PrivacyPage() {
         Discovery is calculated from locations recorded in your saves. At the
         ending, Morpheus may compare your discovery with an aggregate of other
         players’ currently saved completed games. It does not reveal anyone
-        else’s identity or save, and is shown only when at least 20 other
+        else’s identity or save. The comparison shows how many other
         players are represented. Recorded progress is not a certification that a
         game was played without modifications.
       </p>
