@@ -1,3 +1,4 @@
+import { useHDAssetsEnabled } from 'service/useHDAssetsEnabled'
 import React, {
   useRef,
   useEffect,
@@ -61,6 +62,7 @@ const VideoEl = ({
   onVideoCanPlayThrough,
   onVideoFramePresented,
 }: VideoElProps) => {
+  const hdEnabled = useHDAssetsEnabled()
   const videoRef = useRef<HTMLVideoElement>(null)
   const hasRegistered = useRef(false)
   const cancelFrameWaitRef = useRef<CancelVideoFrameWait | undefined>(undefined)
@@ -156,8 +158,8 @@ const VideoEl = ({
       onEnded={onVideoEnded}
       onCanPlayThrough={onVideoCanPlayThrough}
     >
-      <source src={getAssetUrl(`${url}.mp4`)} type="video/mp4" />
-      <source src={getAssetUrl(`${url}.webm`)} type="video/webm" />
+      <source src={getAssetUrl(`${url}.mp4`, undefined, hdEnabled)} type="video/mp4" />
+      <source src={getAssetUrl(`${url}.webm`, undefined, hdEnabled)} type="video/webm" />
     </video>
   )
 }
@@ -198,6 +200,7 @@ const Video = ({
   onVideoCastFramePresented,
   onVideoCastEnded,
 }: IVideoProps) => {
+  const hdEnabled = useHDAssetsEnabled()
   const aggregatedCastRefs = useMemo(
     () =>
       Object.entries(
@@ -256,7 +259,7 @@ const Video = ({
         }) => {
           return (
             <VideoEl
-              key={url}
+              key={getAssetUrl(url, 'mp4', hdEnabled)}
               url={url}
               casts={casts}
               looping={looping}

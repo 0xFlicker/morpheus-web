@@ -1,3 +1,4 @@
+import { useHDAssetsEnabled } from 'service/useHDAssetsEnabled'
 import {
   Fragment,
   useMemo,
@@ -436,6 +437,7 @@ const PanoAnimationVideo = ({
   onMediaRef,
   onReady,
 }: PanoAnimationVideoProps) => {
+  const hdEnabled = useHDAssetsEnabled()
   const mediaRef = useRef<HTMLVideoElement | null>(null)
   const handleMediaRef = useCallback(
     (media: HTMLVideoElement | null) => {
@@ -473,8 +475,8 @@ const PanoAnimationVideo = ({
       onCanPlayThrough={() => onReady(cast.castId)}
       onEnded={() => onEnded(cast)}
     >
-      <source src={getAssetUrl(`${cast.fileName}.webm`)} type="video/webm" />
-      <source src={getAssetUrl(`${cast.fileName}.mp4`)} type="video/mp4" />
+      <source src={getAssetUrl(`${cast.fileName}.webm`, undefined, hdEnabled)} type="video/webm" />
+      <source src={getAssetUrl(`${cast.fileName}.mp4`, undefined, hdEnabled)} type="video/mp4" />
     </video>
   )
 }
@@ -487,6 +489,7 @@ const WebGl: FunctionComponent<
     top: number
   }
 > = (props) => {
+  const hdEnabled = useHDAssetsEnabled()
   const activePanoScene = useMemo(
     () => findActivePanoScene(props.stageScenes, props.gamestates),
     [props.gamestates, props.stageScenes]
@@ -618,7 +621,7 @@ const WebGl: FunctionComponent<
       </Canvas>
       {panoAnimationsToLoad.map((cast) => (
         <PanoAnimationVideo
-          key={`${cast.castId}:${cast.fileName}:${cast.frame}`}
+          key={`${cast.castId}:${getAssetUrl(cast.fileName, 'mp4', hdEnabled)}:${cast.frame}`}
           cast={cast}
           active={activePanoAnimationCastIds.has(cast.castId)}
           onEnded={handleAnimationEnded}

@@ -1,7 +1,8 @@
 'use client';
 
 import type { PointerEvent, ReactNode } from 'react';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { getHDAssetsEnabled, setHDAssetsEnabled } from '@/service/gamedb';
 
 import { useAppDispatch, useAppSelector } from '@/morpheus-app/store/hooks';
 import {
@@ -29,12 +30,15 @@ export const GameMenu = ({
 }: GameMenuProps) => {
   const dispatch = useAppDispatch();
   const menu = useAppSelector(selectGameMenu);
+  const [hdEnabled, setHDEnabled] = useState(false);
+  const [hdError, setHDError] = useState<string>();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const wheelButtonRef = useRef<HTMLButtonElement>(null);
   const backdropPressedRef = useRef(false);
   const wasOpenRef = useRef(false);
 
   useEffect(() => {
+    setHDEnabled(getHDAssetsEnabled());
     try {
       dispatch(
         setShowDiscoveryDuringPlay(
@@ -152,6 +156,24 @@ export const GameMenu = ({
               close();
             }}
           />
+          <label>
+            <input
+              type="checkbox"
+              checked={hdEnabled}
+              onChange={(event) => {
+                try {
+                  setHDAssetsEnabled(event.target.checked);
+                  setHDEnabled(event.target.checked);
+                  setHDError(undefined);
+                } catch {
+                  setHDError('Could not save the HD preference. Allow browser storage and try again.');
+                }
+              }}
+            />{' '}
+            HD assets
+          </label>
+          <p>Uses enhanced images and videos where available; other assets stay original. Applies to newly loaded media.</p>
+          {hdError && <p role="alert">{hdError}</p>}
           <label>
             <input
               type="checkbox"

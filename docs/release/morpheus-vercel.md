@@ -144,3 +144,45 @@ test scene IDs, browser/device, timestamp, and evidence capture.
   code-review/change control.
 - **Spend:** set a paid-plan spend notification before public launch. Review
   Blob transfer, edge requests, and cache-miss/origin usage after launch.
+
+## HD playback assets
+
+The optional HD setting selects the admitted RIFE x2 playback catalog under
+`HD/rife-x2-v1/GameDB/` in the existing public GameDB store. Original paths,
+map data, UI images, audio, stills, and controlled-state atlases remain intact.
+The native checkout's `docs/hd-assets/report.md`, `coverage.csv`, and
+`rife-x2-v1-audit.json` document admission and gaps. Keep the native
+`HDAssetCatalog.swift` and engine `client/js/service/hd-assets.ts` catalogs in sync.
+
+The upload script verifies hashes, refuses overwrites, verifies the public store
+before writing, and records size/ETag/SHA-256 receipts. Rerunning with the same
+receipt file verifies existing ETags before resuming. From `packages/www`, with
+Node 24 selected and the existing operator environment loaded:
+
+```sh
+node --env-file=../../.env.local scripts/upload-hd-assets.mjs \
+  /path/to/extracted-archive /path/to/rife-x2-v1-audit.json /path/to/receipts.json
+```
+
+It uses `MORPHEUS_GAMEDB_BLOB_TOKEN`, never the private map token. Keep credentials
+out of reports and public environment variables. Local `dev:next` must receive
+`NEXT_PUBLIC_MORPHEUS_GAMEDB_ORIGIN` to use uploaded HD media; a local original-only
+`public/GameDB` symlink does not provide `public/HD`.
+
+The setting is off by default, persists per browser, and is applied when media
+elements are loaded or recreated. Media element identity includes the resolved tier URL so reused casts
+select the new source. Panorama animation drawing samples the complete decoded
+frame into unchanged authored bounds.
+
+The spatial image catalog is `morpheus/docs/hd-assets/spatial-x2-v1-catalog.json`
+in the adjacent Apple checkout. Pass that JSON instead of the RIFE audit to the
+same uploader; it selects the `HD/spatial-x2-v1/` prefix and verifies each PNG.
+There are 669 mapped PNGs (260 panoramas, 93 controlled atlases, 316 stills).
+The remaining archive's spatial-only videos are not part of this image import.
+
+Regenerate both image lookup tables with the Apple checkout's
+`scripts/generate-hd-spatial-catalog.py /absolute/path/to/web`. Its input catalog
+includes validated frame-zero aliases and explicit controlled-atlas layouts;
+do not infer those layouts from authored cast size. The common HD setting
+selects both rails. React media URL selection uses a hydration-safe preference
+snapshot so a server-rendered original URL cannot remain stuck after page load.

@@ -14,3 +14,4 @@ export const gameDbOrigin = normalizeBase(configuredOrigin);
 setBaseUrl(gameDbOrigin);
 
 export { getAssetUrl, getPanoAnimUrl };
+export { getHDAssetsEnabled, setHDAssetsEnabled } from '@soapbubble/morpheus-client/service/gamedb';

@@ -1,3 +1,4 @@
+import { getHDAtlasLayout } from 'service/hd-spatial-assets'
 import { get } from 'lodash'
 import { isCastActive, Gamestates } from 'morpheus/gamestate/isActive'
 import { Matcher } from 'morpheus/casts/matchers'
@@ -180,6 +181,13 @@ function getFrameLayout(
   }
 
   const { width: imgWidth, height: imgHeight } = getDrawSourceDimensions(img)
+  if ('src' in img && typeof img.src === 'string') {
+    const hdLayout = getHDAtlasLayout(img.src, imgWidth, imgHeight)
+    if (hdLayout) {
+      frameLayoutCache.set(img, hdLayout)
+      return hdLayout
+    }
+  }
   const dimensions = detectFrameDimensions(
     imgWidth,
     imgHeight,

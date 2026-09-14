@@ -1,11 +1,12 @@
+import { drawPanoramaChunk } from './panoramaRaster'
 import { useCallback, useLayoutEffect, useMemo, useRef } from 'react'
 import createCanvas from 'utils/canvas'
 import { CanvasTexture } from 'three'
-import { DST_WIDTH, DST_HEIGHT, PANO_CANVAS_WIDTH } from 'morpheus/constants'
+import { DST_WIDTH, DST_HEIGHT } from 'morpheus/constants'
 import type { PanoAnim } from '../types'
 import {
   getPanoAnimationFrameSignature,
-  getPanoAnimationPlacements,
+  drawPanoAnimationFrame,
 } from '../panoAnimation'
 
 export interface PanoAnimationMediaLayer {
@@ -23,13 +24,17 @@ export default function usePanoChunk(
   offsetX: number,
   animationLayers: readonly PanoAnimationMediaLayer[] = []
 ): PanoChunk {
+  const scale = img ? img.naturalWidth / 2048 : 1
+  if (img && (!(scale === 1 || scale === 2) || img.naturalHeight !== 1024 * scale)) {
+    throw new Error('Unsupported panorama atlas dimensions')
+  }
   const canvas = useMemo(
     () =>
       createCanvas({
-        width: 1024,
-        height: 512,
+        width: DST_WIDTH * scale,
+        height: DST_HEIGHT * scale,
       }),
-    []
+    [scale]
   )
   const texture = useMemo(() => {
     if (canvas) {
@@ -42,18 +47,18 @@ export default function usePanoChunk(
   const sourceCanvas = useMemo(() => {
     if (img) {
       const fullPano = createCanvas({
-        width: 3072,
-        height: 512,
+        width: 3072 * scale,
+        height: 512 * scale,
       })
       const ctx = fullPano.getContext('2d')
       if (ctx) {
-        ctx.drawImage(img, 0, 0, 2048, 512, 0, 0, 2048, 512)
-        ctx.drawImage(img, 0, 512, 1024, 512, 2048, 0, 1024, 512)
+        ctx.drawImage(img, 0, 0, 2048 * scale, 512 * scale, 0, 0, 2048 * scale, 512 * scale)
+        ctx.drawImage(img, 0, 512 * scale, 1024 * scale, 512 * scale, 2048 * scale, 0, 1024 * scale, 512 * scale)
         return fullPano
       }
     }
     return undefined
-  }, [img])
+  }, [img, scale])
 
   const drawChunk = useCallback(() => {
     if (!sourceCanvas || !texture) {
@@ -65,75 +70,20 @@ export default function usePanoChunk(
       return
     }
 
-    dstContext.clearRect(0, 0, DST_WIDTH, DST_HEIGHT)
-    if (offsetX > PANO_CANVAS_WIDTH - DST_WIDTH) {
-      const firstChunkWidth = PANO_CANVAS_WIDTH - offsetX
-      const secondChunkWidth = DST_WIDTH - firstChunkWidth
-      dstContext.drawImage(
-        sourceCanvas,
-        offsetX,
-        0,
-        firstChunkWidth,
-        DST_HEIGHT,
-        0,
-        0,
-        firstChunkWidth,
-        DST_HEIGHT
-      )
-      dstContext.drawImage(
-        sourceCanvas,
-        0,
-        0,
-        secondChunkWidth,
-        DST_HEIGHT,
-        firstChunkWidth,
-        0,
-        secondChunkWidth,
-        DST_HEIGHT
-      )
-    } else {
-      dstContext.drawImage(
-        sourceCanvas,
-        offsetX,
-        0,
-        DST_WIDTH,
-        DST_HEIGHT,
-        0,
-        0,
-        DST_WIDTH,
-        DST_HEIGHT
-      )
-    }
+    drawPanoramaChunk(dstContext, sourceCanvas, offsetX, scale)
 
     for (const { cast, media } of animationLayers) {
       if (media.readyState < 2) {
         continue
       }
 
-      const width = cast.width > 0 ? cast.width : media.videoWidth
-      const height = cast.height > 0 ? cast.height : media.videoHeight
-      for (const placement of getPanoAnimationPlacements({
-        cast,
-        offsetX,
-        width,
-        height,
-      })) {
-        dstContext.drawImage(
-          media,
-          0,
-          0,
-          width,
-          height,
-          placement.destinationX,
-          placement.destinationY,
-          placement.width,
-          placement.height
-        )
-      }
+      drawPanoAnimationFrame(dstContext, media, cast, offsetX)
     }
 
     texture.needsUpdate = true
-  }, [animationLayers, canvas, offsetX, sourceCanvas, texture])
+  }, [animationLayers, canvas, offsetX, scale, sourceCanvas, texture])
+
+  useLayoutEffect(() => () => texture?.dispose(), [texture])
 
   const frameSignatureRef = useRef('')
   useLayoutEffect(() => {
