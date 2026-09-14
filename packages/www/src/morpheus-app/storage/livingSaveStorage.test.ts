@@ -45,7 +45,8 @@ function deleteLivingSaveDatabase(): Promise<void> {
     const request = indexedDB.deleteDatabase(LIVING_SAVE_DATABASE_NAME);
     request.onsuccess = () => resolve();
     request.onerror = () => reject(request.error);
-    request.onblocked = () => reject(new Error('Living-save database remained open'));
+    request.onblocked = () =>
+      reject(new Error('Living-save database remained open'));
   });
 }
 
@@ -58,8 +59,13 @@ function writeRawCatalog(record: unknown): Promise<void> {
     request.onerror = () => reject(request.error);
     request.onsuccess = () => {
       const database = request.result;
-      const transaction = database.transaction(LIVING_SAVE_STORE_NAME, 'readwrite');
-      transaction.objectStore(LIVING_SAVE_STORE_NAME).put(record, LIVING_SAVE_CATALOG_KEY);
+      const transaction = database.transaction(
+        LIVING_SAVE_STORE_NAME,
+        'readwrite',
+      );
+      transaction
+        .objectStore(LIVING_SAVE_STORE_NAME)
+        .put(record, LIVING_SAVE_CATALOG_KEY);
       transaction.oncomplete = () => {
         database.close();
         resolve();
@@ -169,8 +175,14 @@ describe('living-save storage', () => {
 
     const catalog = expectSuccess(await readLivingSaveCatalog());
 
-    expect(catalog.slots['slot-1']).toMatchObject({ kind: 'unloadable', revision: 3 });
-    expect(catalog.slots['slot-2']).toMatchObject({ kind: 'empty', revision: 0 });
+    expect(catalog.slots['slot-1']).toMatchObject({
+      kind: 'unloadable',
+      revision: 3,
+    });
+    expect(catalog.slots['slot-2']).toMatchObject({
+      kind: 'empty',
+      revision: 0,
+    });
     expect(expectSuccess(await readLivingSaveRawPayload('slot-1'))).toEqual(
       rawPayload,
     );
@@ -213,7 +225,10 @@ describe('living-save storage', () => {
       request.onerror = () => reject(request.error);
     });
     const stored = await new Promise<unknown>((resolve, reject) => {
-      const transaction = database.transaction(LIVING_SAVE_STORE_NAME, 'readonly');
+      const transaction = database.transaction(
+        LIVING_SAVE_STORE_NAME,
+        'readonly',
+      );
       const request = transaction
         .objectStore(LIVING_SAVE_STORE_NAME)
         .get(LIVING_SAVE_CATALOG_KEY);
@@ -224,7 +239,7 @@ describe('living-save storage', () => {
 
     expect(stored).toMatchObject({
       slots: {
-        'slot-1': { revision: 3, payload: rawPayload },
+        'slot-1': { revision: 5, payload: rawPayload },
       },
     });
   });
@@ -244,7 +259,10 @@ describe('living-save storage', () => {
       request.onerror = () => reject(request.error);
     });
     const stored = await new Promise<unknown>((resolve, reject) => {
-      const transaction = database.transaction(LIVING_SAVE_STORE_NAME, 'readonly');
+      const transaction = database.transaction(
+        LIVING_SAVE_STORE_NAME,
+        'readonly',
+      );
       const request = transaction
         .objectStore(LIVING_SAVE_STORE_NAME)
         .get(LIVING_SAVE_CATALOG_KEY);
@@ -325,12 +343,14 @@ describe('living-save storage', () => {
     });
 
     expect(expired).toMatchObject({ ok: false, code: 'undo-expired' });
-    expect(expectSuccess(await readLivingSaveCatalog()).slots['slot-1']).toMatchObject({
+    expect(
+      expectSuccess(await readLivingSaveCatalog()).slots['slot-1'],
+    ).toMatchObject({
       kind: 'empty',
     });
   });
 
-  it('allows one revision-matched checkpoint and conflicts the stale writer', async () => {
+  it('rebases concurrent checkpoints containing only resume and camera changes', async () => {
     const initial = expectSuccess(await readLivingSaveCatalog());
     const created = expectSuccess(
       await createLivingSaveSlot({
@@ -355,9 +375,6 @@ describe('living-save storage', () => {
       }),
     ]);
 
-    expect(results.filter((result) => result.ok)).toHaveLength(1);
-    expect(results.filter((result) => !result.ok)).toEqual([
-      expect.objectContaining({ code: 'conflict' }),
-    ]);
+    expect(results.filter((result) => result.ok)).toHaveLength(2);
   });
 });

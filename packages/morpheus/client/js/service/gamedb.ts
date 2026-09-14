@@ -1,4 +1,22 @@
 import { endsWith } from 'lodash'
+import { hdAssetPaths } from './hd-assets'
+import { hdSpatialPaths } from './hd-spatial-assets'
+
+export const HD_ASSETS_PREFERENCE_KEY = 'Morpheus.hdAssetsEnabled'
+
+export function getHDAssetsEnabled(): boolean {
+  if (typeof window === 'undefined') return false
+  try {
+    return window.localStorage.getItem(HD_ASSETS_PREFERENCE_KEY) === 'true'
+  } catch (error) {
+    console.warn('HD asset preference could not be read.', error)
+    return false
+  }
+}
+
+export function setHDAssetsEnabled(enabled: boolean) {
+  window.localStorage.setItem(HD_ASSETS_PREFERENCE_KEY, String(enabled))
+}
 
 let baseUrl = ''
 
@@ -47,11 +65,17 @@ export function setBaseUrl(url: string) {
   baseUrl = normalizeBase(url)
 }
 
-export function getAssetUrl(assetPath: string, type?: VideoMediaStrings) {
+export function getAssetUrl(assetPath: string, type?: VideoMediaStrings, hdEnabled = getHDAssetsEnabled()) {
   const path = normalizeGameDbAssetPath(assetPath)
-  return `${baseUrl}/${path}${
+  const relativePath = `${path}${
     type && !endsWith(assetPath, type) ? `.${type}` : ''
-  }`.replaceAll('#', '%23')
+  }`
+  if (hdEnabled && hdSpatialPaths[relativePath]) {
+    return `${baseUrl}/HD/spatial-x2-v1/${hdSpatialPaths[relativePath]}`.replaceAll('#', '%23')
+  }
+  const prefix = hdEnabled && hdAssetPaths.has(relativePath)
+    ? 'HD/rife-x2-v1/' : ''
+  return `${baseUrl}/${prefix}${relativePath}`.replaceAll('#', '%23')
 }
 
 export function getPanoAnimUrl(assetPath: string) {

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { fetchInitial } from '@soapbubble/morpheus-client/service/gameState';
 import type { Scene } from 'morpheus/casts/types';
 
-import { installLivingSaveRuntime } from './actions';
+import { installLivingSaveRuntime, resetGame } from './actions';
 import {
   createLivingSaveCheckpointCoordinator,
   createRuntimeCheckpointCoordinator,
@@ -12,6 +12,7 @@ import {
   fullGameRuntimePolicy,
   toolingRuntimePolicy,
 } from '../runtime/runtimePolicy';
+import { activateScene, scenePrefetched } from './slices/sceneSlice';
 import { updateGamestate } from './slices/gamestateSlice';
 import { createAppStore } from './store';
 import {
@@ -300,5 +301,171 @@ describe('living-save checkpoints', () => {
     expect(firstWrites).toBe(1);
     expect(secondWrites).toBe(0);
     expect(secondStore.getState().livingSaves.saveHealth).toBe('saved');
+  });
+  it('skips repeated presentation writes after success but retries failed evidence and still saves stable actions', async () => {
+    const store = createAppStore();
+    const original = createLivingSaveEnvelopeFixture({ activeSceneId: 2000 });
+    const catalog = occupyLivingSaveSlot(
+      createEmptyLivingSaveCatalogFixture(),
+      'slot-1',
+      original,
+    );
+    store.dispatch(
+      installLivingSaveRuntime({
+        operationId: 'install',
+        catalog,
+        slotId: 'slot-1',
+        envelope: original,
+        activeScene: scene(2000),
+        returnScene: null,
+        saveHealth: 'saved',
+        skipSceneEntryActions: false,
+      }),
+    );
+    let writes = 0;
+    const checkpoints = createLivingSaveCheckpointCoordinator(
+      fullGameRuntimePolicy,
+      {
+        dispatch: store.dispatch,
+        getState: store.getState,
+        now: Date.now,
+        createResumePointId: () => crypto.randomUUID(),
+        writeCheckpoint: async () => {
+          writes += 1;
+          return writes === 1
+            ? { ok: false, code: 'unavailable-storage' }
+            : { ok: true, value: catalog };
+        },
+      },
+    );
+    const generation = store.getState().livingSaves.runtimeGeneration;
+    const observation = { sceneId: 2000, unitIds: ['first'] };
+    await checkpoints.requestCheckpoint(generation, observation);
+    expect(writes).toBe(1);
+    await checkpoints.requestCheckpoint(generation, observation);
+    expect(writes).toBe(2); // The failed observation was retried, not suppressed.
+    await checkpoints.requestCheckpoint(generation, observation);
+    await checkpoints.requestCheckpoint(generation, observation);
+    expect(writes).toBe(2); // Repeated foreground/menu callbacks need no durable write.
+    await checkpoints.requestCheckpoint(generation);
+    expect(writes).toBe(3); // Ordinary gameplay checkpoints retain their existing semantics.
+  });
+
+  it('retains visible observations when writes coalesce, deduplicates repeats and rejects stale generations', async () => {
+    const store = createAppStore();
+    const original = createLivingSaveEnvelopeFixture({ activeSceneId: 2000 });
+    const catalog = occupyLivingSaveSlot(
+      createEmptyLivingSaveCatalogFixture(),
+      'slot-1',
+      original,
+    );
+    store.dispatch(
+      installLivingSaveRuntime({
+        operationId: 'install',
+        catalog,
+        slotId: 'slot-1',
+        envelope: original,
+        activeScene: scene(2000),
+        returnScene: null,
+        saveHealth: 'saved',
+        skipSceneEntryActions: false,
+      }),
+    );
+    let release = () => {};
+    const blocked = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const writes: Array<{ sceneIds: number[]; unitIds: string[] } | undefined> =
+      [];
+    const checkpoints = createLivingSaveCheckpointCoordinator(
+      fullGameRuntimePolicy,
+      {
+        dispatch: store.dispatch,
+        getState: store.getState,
+        now: Date.now,
+        createResumePointId: () => crypto.randomUUID(),
+        writeCheckpoint: async (params) => {
+          writes.push(params.discovery);
+          if (writes.length === 1) await blocked;
+          return { ok: true, value: catalog };
+        },
+      },
+    );
+    const generation = store.getState().livingSaves.runtimeGeneration;
+    const pending = checkpoints.requestCheckpoint(generation, {
+      sceneId: 2000,
+      unitIds: ['first'],
+    });
+    void checkpoints.requestCheckpoint(generation, {
+      sceneId: 2000,
+      unitIds: ['first'],
+    });
+    store.dispatch(scenePrefetched(scene(2010)));
+    store.dispatch(activateScene(2010));
+    void checkpoints.requestCheckpoint(generation, {
+      sceneId: 2010,
+      unitIds: ['second'],
+    });
+    void checkpoints.requestCheckpoint(generation + 1, {
+      sceneId: 2010,
+      unitIds: ['stale'],
+    });
+    void checkpoints.requestCheckpoint(generation); // Stable-action save must preserve queued observations.
+    release();
+    await pending;
+    expect(writes).toEqual([
+      { sceneIds: [2000], unitIds: ['first'] },
+      { sceneIds: [2000, 2010], unitIds: ['first', 'second'] },
+    ]);
+  });
+
+  it('retains an already queued envelope even if the live runtime is cleared before the slow write completes', async () => {
+    const store = createAppStore();
+    const original = createLivingSaveEnvelopeFixture({ activeSceneId: 2000 });
+    const catalog = occupyLivingSaveSlot(
+      createEmptyLivingSaveCatalogFixture(),
+      'slot-1',
+      original,
+    );
+    store.dispatch(
+      installLivingSaveRuntime({
+        operationId: 'install',
+        catalog,
+        slotId: 'slot-1',
+        envelope: original,
+        activeScene: scene(2000),
+        returnScene: null,
+        saveHealth: 'saved',
+        skipSceneEntryActions: false,
+      }),
+    );
+    let releaseFirst = () => {};
+    const firstWrite = new Promise<void>((resolve) => {
+      releaseFirst = resolve;
+    });
+    const writes: number[] = [];
+    const checkpoints = createLivingSaveCheckpointCoordinator(
+      fullGameRuntimePolicy,
+      {
+        dispatch: store.dispatch,
+        getState: store.getState,
+        now: Date.now,
+        createResumePointId: () => crypto.randomUUID(),
+        writeCheckpoint: async (params) => {
+          writes.push(params.envelope.activeSceneId);
+          if (writes.length === 1) await firstWrite;
+          return { ok: true, value: catalog };
+        },
+      },
+    );
+    const generation = store.getState().livingSaves.runtimeGeneration;
+    const pending = checkpoints.requestCheckpoint(generation);
+    store.dispatch(scenePrefetched(scene(2010)));
+    store.dispatch(activateScene(2010));
+    void checkpoints.requestCheckpoint(generation);
+    store.dispatch(resetGame());
+    releaseFirst();
+    await pending;
+    expect(writes).toEqual([2000, 2010]);
   });
 });

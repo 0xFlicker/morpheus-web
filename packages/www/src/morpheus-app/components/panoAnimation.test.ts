@@ -1,11 +1,32 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type { Gamestates } from 'morpheus/gamestate/isActive';
 import type { Gamestate, PanoAnim } from 'morpheus/casts/types';
 import {
   getActivePanoAnimations,
   getPanoAnimationFrameSignature,
   getPanoAnimationPlacements,
+  drawPanoAnimationFrame,
 } from 'morpheus/casts/panoAnimation';
+
+it('draws the entire HD frame into unchanged authored panorama bounds', () => {
+  vi.stubGlobal('HTMLVideoElement', class {
+    videoWidth = 168;
+    videoHeight = 144;
+  });
+  try {
+    const media = new HTMLVideoElement();
+    const context = { drawImage: vi.fn() };
+    const cast = makePanoAnimation({ frame: 0 });
+    drawPanoAnimationFrame(context, media, cast, 0);
+    expect(context.drawImage).toHaveBeenCalled();
+    for (const call of context.drawImage.mock.calls) {
+      expect(call.slice(0, 5)).toEqual([media, 0, 0, 168, 144]);
+      expect(call.slice(7)).toEqual([84, 72]);
+    }
+  } finally {
+    vi.unstubAllGlobals();
+  }
+});
 
 function makePanoAnimation(overrides: Partial<PanoAnim> = {}): PanoAnim {
   return {

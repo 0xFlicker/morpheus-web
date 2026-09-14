@@ -4,6 +4,8 @@ import type { CSSProperties } from 'react';
 import { useCallback, useEffect, useReducer, useRef } from 'react';
 import { fetch as fetchScene } from '@soapbubble/morpheus-client/service/scene';
 
+import { useMorpheusCloud } from '@/morpheus-app/cloud/CloudProvider';
+import { CloudPlayerDetails } from '@/morpheus-app/cloud/CloudPlayerDetails';
 import { GameStageShell } from '@/morpheus-app/components/GameStageShell';
 import { LivingSaveSlotManager } from '@/morpheus-app/components/save-slots/LivingSaveSlotManager';
 import { RuntimeProvider } from '@/morpheus-app/runtime/RuntimeProvider';
@@ -29,6 +31,7 @@ const TITLE_ART_STYLE: CSSProperties & { '--title-image': string } = {
 };
 
 const FullGame = ({ mcpSessionName }: { mcpSessionName: string | null }) => {
+  const cloud = useMorpheusCloud();
   const coordinator = useLivingSaveCoordinator();
   const livingSaves = useAppSelector(selectLivingSaves);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -41,6 +44,11 @@ const FullGame = ({ mcpSessionName }: { mcpSessionName: string | null }) => {
     undefined,
   );
   const [phase, sendPhase] = useReducer(gamePhaseReducer, 'title');
+  const setPlayingRef = useRef(cloud?.setPlaying);
+  setPlayingRef.current = cloud?.setPlaying;
+  useEffect(() => {
+    setPlayingRef.current?.(phase === 'stage');
+  }, [phase]);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -137,6 +145,7 @@ const FullGame = ({ mcpSessionName }: { mcpSessionName: string | null }) => {
         return;
       }
 
+      cloud?.acknowledgeNotice();
       selectingSlotRef.current = true;
       const isNewSlot = slot.state === 'empty';
       if (isNewSlot) {
@@ -168,7 +177,7 @@ const FullGame = ({ mcpSessionName }: { mcpSessionName: string | null }) => {
         startGame();
       }
     },
-    [coordinator, phase, playIntro, returnToTitle, startGame],
+    [cloud, coordinator, phase, playIntro, returnToTitle, startGame],
   );
 
   if (phase === 'stage') {
@@ -188,6 +197,7 @@ const FullGame = ({ mcpSessionName }: { mcpSessionName: string | null }) => {
       >
         <div className={styles.titleArt} style={TITLE_ART_STYLE}>
           <div className={styles.slotHub}>
+            <CloudPlayerDetails showNotice />
             <LivingSaveSlotManager
               title="Choose your journey"
               onSelect={(slot) => {
@@ -258,6 +268,7 @@ export const Client = ({
   return (
     <RuntimeProvider
       policy={fullGameRuntimePolicy}
+      cloudEnabled
       createLivingSaveCoordinator={createCoordinator}
     >
       <FullGame mcpSessionName={mcpSessionName} />

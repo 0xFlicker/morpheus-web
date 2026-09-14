@@ -1,3 +1,4 @@
+import { useHDAssetsEnabled } from 'service/useHDAssetsEnabled'
 import React, {
   useCallback,
   useRef,
@@ -45,6 +46,7 @@ const Images = ({
   onImageCastLoad,
   onImageCastError,
 }: ImagesProps) => {
+  const hdEnabled = useHDAssetsEnabled()
   const aggregatedImageRefs = useMemo(
     () => {
       return movieSpecialCasts.reduce(
@@ -55,6 +57,7 @@ const Images = ({
               getAssetUrl(
                 image ? `${fileName}.${startFrame}` : fileName,
                 'png',
+                hdEnabled,
               )) ||
             url
           if (!key) {
@@ -68,7 +71,7 @@ const Images = ({
         {} as MovieCastCollectionMap,
       );
     },
-    [movieSpecialCasts],
+    [movieSpecialCasts, hdEnabled],
   )
   return (
     <React.Fragment>

@@ -12,9 +12,27 @@ async function loadGameDb(origin?: string) {
 
 afterEach(() => {
   vi.unstubAllEnvs();
+  vi.unstubAllGlobals();
 });
 
 describe('GameDB URL resolution', () => {
+  it('switches covered images and videos while retaining original gaps and audio', async () => {
+    const values = new Map<string, string>();
+    vi.stubGlobal('window', { localStorage: {
+      getItem: (key: string) => values.get(key) ?? null,
+      setItem: (key: string, value: string) => values.set(key, value),
+    } });
+    const { getAssetUrl, getHDAssetsEnabled, setHDAssetsEnabled } = await loadGameDb('https://media.example.com');
+    expect(getHDAssetsEnabled()).toBe(false);
+    setHDAssetsEnabled(true);
+    expect(getAssetUrl('GameDB/Deck1/introMOV', 'mp4')).toBe('https://media.example.com/HD/rife-x2-v1/GameDB/Deck1/introMOV.mp4');
+    expect(getAssetUrl('GameDB/Deck1/introMOV', 'webm')).toContain('/HD/rife-x2-v1/');
+    expect(getAssetUrl('GameDB/Deck1/balcNWPAN', 'png')).toBe('https://media.example.com/HD/spatial-x2-v1/GameDB/Deck1/balcNWPAN.png');
+    expect(getAssetUrl('GameDB/Deck1/introMOV', 'mp3')).toBe('https://media.example.com/GameDB/Deck1/introMOV.mp3');
+    expect(getAssetUrl('GameDB/Deck3Aft/scrbLGSTL.0', 'png')).toBe('https://media.example.com/HD/spatial-x2-v1/GameDB/Deck3Aft/scrbLGSTL.0.png');
+    setHDAssetsEnabled(false);
+    expect(getAssetUrl('GameDB/Deck1/introMOV', 'mp4')).toBe('https://media.example.com/GameDB/Deck1/introMOV.mp4');
+  });
   it('uses one GameDB path segment at a configured public origin', async () => {
     const { getAssetUrl } = await loadGameDb('https://media.example.com/');
 

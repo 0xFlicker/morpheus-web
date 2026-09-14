@@ -311,9 +311,8 @@ const Special = ({
       ),
     [activeVisualCasts]
   )
-  const activeVideoPresentationKey = `${presentation?.token ?? 'stable'}:${
-    stageScenes[0]?.sceneId ?? ''
-  }:${activeVideoCasts
+  const activeVideoActivationKey = String(stageScenes[0]?.sceneId ?? '')
+  const activeVideoPresentationKey = `${presentation?.token ?? 'stable'}:${activeVideoActivationKey}:${activeVideoCasts
     .map((cast) => cast.castId)
     .sort((a, b) => a - b)
     .join(',')}`
@@ -356,7 +355,7 @@ const Special = ({
    *
    * To do so we need to look at each video and its casts. If the video is part
    * of the uppermost stage scene, then it should play.  All other videos should
-   * end (pause and set currentTime to 0), unless they are also part of the
+   * end (pause and reset activation), unless they are also part of the
    * uppermost stage scene
    */
   const updateVideoPlaybackState = useCallback(
@@ -384,13 +383,13 @@ const Special = ({
     async (controller: VideoController, presentationKey: string) => {
       const attempt = (videoPlaybackAttemptRef.current.get(controller) ?? 0) + 1
       videoPlaybackAttemptRef.current.set(controller, attempt)
-      const result = await controller.play(presentationKey)
+      const result = await controller.play(presentationKey, activeVideoActivationKey)
 
       if (videoPlaybackAttemptRef.current.get(controller) === attempt) {
         updateVideoPlaybackState(controller, result)
       }
     },
-    [updateVideoPlaybackState]
+    [updateVideoPlaybackState, activeVideoActivationKey]
   )
 
   useEffect(() => {

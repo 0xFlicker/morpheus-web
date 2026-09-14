@@ -103,3 +103,24 @@ export function getPanoAnimationFrameSignature(
     )
     .join('|')
 }
+
+/** Sample the full decoded frame while preserving authored panorama coordinates. */
+export function drawPanoAnimationFrame(
+  context: Pick<CanvasRenderingContext2D, 'drawImage'>,
+  media: HTMLVideoElement,
+  cast: PanoAnim,
+  offsetX: number
+): void {
+  for (const placement of getPanoAnimationPlacements({
+    cast,
+    offsetX,
+    width: cast.width > 0 ? cast.width : media.videoWidth,
+    height: cast.height > 0 ? cast.height : media.videoHeight,
+  })) {
+    context.drawImage(
+      media, 0, 0, media.videoWidth, media.videoHeight,
+      placement.destinationX, placement.destinationY,
+      placement.width, placement.height
+    )
+  }
+}

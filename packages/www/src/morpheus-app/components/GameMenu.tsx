@@ -1,17 +1,21 @@
 'use client';
 
 import type { PointerEvent, ReactNode } from 'react';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { getHDAssetsEnabled, setHDAssetsEnabled } from '@/service/gamedb';
 
 import { useAppDispatch, useAppSelector } from '@/morpheus-app/store/hooks';
 import {
   closeGameMenu,
   openGameMenu,
   selectGameMenu,
+  setShowDiscoveryDuringPlay,
   showGameMenuMain,
   showGameMenuSaveSlots,
 } from '@/morpheus-app/store/slices/gameMenuSlice';
 import styles from './game-menu.module.css';
+import { CloudReportPanel } from '@/morpheus-app/cloud/CloudReportPanel';
+import { CloudPlayerDetails } from '@/morpheus-app/cloud/CloudPlayerDetails';
 
 type GameMenuProps = {
   saveSlots: ReactNode;
@@ -26,10 +30,25 @@ export const GameMenu = ({
 }: GameMenuProps) => {
   const dispatch = useAppDispatch();
   const menu = useAppSelector(selectGameMenu);
+  const [hdEnabled, setHDEnabled] = useState(false);
+  const [hdError, setHDError] = useState<string>();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const wheelButtonRef = useRef<HTMLButtonElement>(null);
   const backdropPressedRef = useRef(false);
   const wasOpenRef = useRef(false);
+
+  useEffect(() => {
+    setHDEnabled(getHDAssetsEnabled());
+    try {
+      dispatch(
+        setShowDiscoveryDuringPlay(
+          localStorage.getItem('morpheus.showDiscoveryDuringPlay') === 'true',
+        ),
+      );
+    } catch (error) {
+      console.warn('Discovery display preference could not be read.', error);
+    }
+  }, [dispatch]);
 
   const close = useCallback(() => {
     dispatch(closeGameMenu());
@@ -128,6 +147,55 @@ export const GameMenu = ({
           onPointerDown={(event) => event.stopPropagation()}
           onPointerUp={(event) => event.stopPropagation()}
         >
+          <CloudPlayerDetails
+            onBeforeAccountOpen={() => {
+              // Clerk's portal cannot receive input beneath a modal dialog.
+              // Release the top layer before Clerk opens and owns focus.
+              wasOpenRef.current = false;
+              dialogRef.current?.close();
+              close();
+            }}
+          />
+          <label>
+            <input
+              type="checkbox"
+              checked={hdEnabled}
+              onChange={(event) => {
+                try {
+                  setHDAssetsEnabled(event.target.checked);
+                  setHDEnabled(event.target.checked);
+                  setHDError(undefined);
+                } catch {
+                  setHDError('Could not save the HD preference. Allow browser storage and try again.');
+                }
+              }}
+            />{' '}
+            HD assets
+          </label>
+          <p>Uses enhanced images and videos where available; other assets stay original. Applies to newly loaded media.</p>
+          {hdError && <p role="alert">{hdError}</p>}
+          <label>
+            <input
+              type="checkbox"
+              checked={menu.showDiscoveryDuringPlay}
+              onChange={(event) => {
+                const enabled = event.target.checked;
+                dispatch(setShowDiscoveryDuringPlay(enabled));
+                try {
+                  localStorage.setItem(
+                    'morpheus.showDiscoveryDuringPlay',
+                    String(enabled),
+                  );
+                } catch (error) {
+                  console.warn(
+                    'Discovery display preference could not be saved.',
+                    error,
+                  );
+                }
+              }}
+            />{' '}
+            Show discovery during play
+          </label>
           {menu.screen === 'main' ? (
             <nav className={styles.mainActions} aria-label="Game menu">
               <button type="button" onClick={close}>
@@ -161,6 +229,7 @@ export const GameMenu = ({
               {saveSlots}
             </div>
           )}
+          <CloudReportPanel />
         </section>
       </dialog>
     </>

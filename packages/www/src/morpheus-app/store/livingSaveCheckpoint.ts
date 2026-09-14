@@ -1,6 +1,9 @@
 import { isNavigableSceneTarget } from 'morpheus/scene/transitionTarget';
 
-import { writeLivingSaveCheckpoint } from '@/morpheus-app/storage/livingSaveStorage';
+import {
+  getLivingSaveWriterId,
+  writeLivingSaveCheckpoint,
+} from '@/morpheus-app/storage/livingSaveStorage';
 import { createLivingSaveResumePointId } from '@/morpheus-app/storage/livingSaveIdentity';
 import {
   LIVING_SAVE_GAME_DATA_VERSION,
@@ -28,7 +31,13 @@ import {
 } from './slices/livingSavesSlice';
 import type { AppDispatch, AppStore, RootState } from './store';
 
+export type DiscoveryObservation = {
+  sceneId: number;
+  unitIds: readonly string[];
+};
+
 type WriteCheckpointParams = {
+  discovery?: { sceneIds: number[]; unitIds: string[] };
   slotId: LivingSaveSlotId;
   envelope: LivingSaveSessionEnvelope;
   expectedCatalogRevision: number;
@@ -46,7 +55,11 @@ export type LivingSaveCheckpointDependencies = {
 };
 
 export type LivingSaveCheckpointCoordinator = {
-  requestCheckpoint: (runtimeGeneration: number) => Promise<void>;
+  requestCheckpoint: (
+    runtimeGeneration: number,
+    observation?: DiscoveryObservation,
+  ) => Promise<void>;
+  flush: () => Promise<LivingSaveResult<void>>;
 };
 
 export function createLivingSaveCheckpointCoordinator(
@@ -57,9 +70,17 @@ export function createLivingSaveCheckpointCoordinator(
     throw new Error('Living-save checkpoints require a persistent runtime');
   }
   let inFlight: Promise<void> | null = null;
-  let queuedGeneration: number | null = null;
+  type CapturedCheckpoint = {
+    runtimeGeneration: number;
+    params: WriteCheckpointParams;
+  };
+  let queued: CapturedCheckpoint | null = null;
+  let observationGeneration = -1;
+  const sceneIds = new Set<number>();
+  const unitIds = new Set<string>();
+  let lastResult: LivingSaveResult<void> = { ok: true, value: undefined };
 
-  const persistGeneration = async (runtimeGeneration: number) => {
+  const capture = (runtimeGeneration: number): CapturedCheckpoint | null => {
     const state = dependencies.getState();
     const activeSlotId = state.livingSaves.runtimeSlotId;
     if (
@@ -68,12 +89,12 @@ export function createLivingSaveCheckpointCoordinator(
       state.livingSaves.bootstrapPhase !== 'ready' ||
       !isNavigableSceneTarget(state.scene.activeSceneId)
     ) {
-      return;
+      return null;
     }
     const slot = state.livingSaves.slots.find(
       (candidate) => candidate.slotId === activeSlotId,
     );
-    if (!slot || slot.state !== 'occupied') return;
+    if (!slot || slot.state !== 'occupied') return null;
 
     const envelope: LivingSaveSessionEnvelope = {
       format: LIVING_SAVE_SESSION_FORMAT,
@@ -92,25 +113,38 @@ export function createLivingSaveCheckpointCoordinator(
       rotation: { ...state.rotation.current },
     };
 
-    dependencies.dispatch(
-      livingSaveCheckpointStarted({ runtimeGeneration, slotId: activeSlotId }),
-    );
-    let result: LivingSaveResult<LivingSaveCatalog>;
-    try {
-      result = await dependencies.writeCheckpoint({
+    return {
+      runtimeGeneration,
+      params: {
         slotId: activeSlotId,
         envelope,
         expectedCatalogRevision: state.livingSaves.catalogRevision,
         expectedSlotRevision: slot.revision,
-      });
+      },
+    };
+  };
+
+  const persist = async ({ runtimeGeneration, params }: CapturedCheckpoint) => {
+    dependencies.dispatch(
+      livingSaveCheckpointStarted({ runtimeGeneration, slotId: params.slotId }),
+    );
+    let result: LivingSaveResult<LivingSaveCatalog>;
+    try {
+      result = await dependencies.writeCheckpoint(params);
     } catch {
       result = { ok: false, code: 'unavailable-storage' };
     }
+    // A committed competing version is durable even while a choice is pending.
+    lastResult =
+      result.ok || result.checkpointRetained
+        ? { ok: true, value: undefined }
+        : result;
+
     if (!result.ok) {
       dependencies.dispatch(
         livingSaveCheckpointFailed({
           runtimeGeneration,
-          slotId: activeSlotId,
+          slotId: params.slotId,
           reason: result.code,
         }),
       );
@@ -119,31 +153,63 @@ export function createLivingSaveCheckpointCoordinator(
     dependencies.dispatch(
       livingSaveCheckpointSucceeded({
         runtimeGeneration,
-        slotId: activeSlotId,
+        slotId: params.slotId,
         catalog: result.value,
       }),
     );
   };
 
-  const requestCheckpoint = (runtimeGeneration: number): Promise<void> => {
-    if (inFlight) {
-      queuedGeneration = runtimeGeneration;
-      return inFlight;
+  const requestCheckpoint = (
+    runtimeGeneration: number,
+    observation?: DiscoveryObservation,
+  ): Promise<void> => {
+    // Capture immediately: an account switch may unmount the game before this write runs.
+    const captured = capture(runtimeGeneration);
+    if (!captured) return inFlight ?? Promise.resolve();
+    if (observationGeneration !== runtimeGeneration) {
+      observationGeneration = runtimeGeneration;
+      sceneIds.clear();
+      unitIds.clear();
     }
+    if (
+      observation &&
+      observation.sceneId === captured.params.envelope.activeSceneId
+    ) {
+      // Repeated focus/presentation callbacks carry no new progress. An in-flight
+      // write already contains this evidence; a failed write must remain retryable.
+      if (
+        sceneIds.has(observation.sceneId) &&
+        observation.unitIds.every((id) => unitIds.has(id)) &&
+        (inFlight !== null || lastResult.ok)
+      )
+        return inFlight ?? Promise.resolve();
+      sceneIds.add(observation.sceneId);
+      observation.unitIds.forEach((id) => unitIds.add(id));
+    }
+    captured.params.discovery = {
+      sceneIds: [...sceneIds],
+      unitIds: [...unitIds],
+    };
+    queued = captured;
+    if (inFlight) return inFlight;
     inFlight = (async () => {
-      let nextGeneration: number | null = runtimeGeneration;
-      while (nextGeneration !== null) {
-        queuedGeneration = null;
-        await persistGeneration(nextGeneration);
-        nextGeneration = queuedGeneration;
+      while (queued !== null) {
+        const next = queued;
+        queued = null;
+        await persist(next);
       }
     })().finally(() => {
       inFlight = null;
     });
     return inFlight;
   };
-
-  return { requestCheckpoint };
+  const flush = async (): Promise<LivingSaveResult<void>> => {
+    await requestCheckpoint(
+      dependencies.getState().livingSaves.runtimeGeneration,
+    );
+    return lastResult;
+  };
+  return { requestCheckpoint, flush };
 }
 
 export function createRuntimeCheckpointCoordinator(
@@ -158,10 +224,12 @@ export function createRuntimeCheckpointCoordinator(
 export function createBrowserLivingSaveCheckpointCoordinator(
   store: AppStore,
 ): LivingSaveCheckpointCoordinator {
+  const writerId = getLivingSaveWriterId();
   return createLivingSaveCheckpointCoordinator(fullGameRuntimePolicy, {
     dispatch: store.dispatch,
     getState: store.getState,
-    writeCheckpoint: writeLivingSaveCheckpoint,
+    writeCheckpoint: (params) =>
+      writeLivingSaveCheckpoint({ ...params, writerId }),
     now: Date.now,
     createResumePointId: createLivingSaveResumePointId,
   });

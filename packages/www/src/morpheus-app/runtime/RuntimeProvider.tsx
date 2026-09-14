@@ -7,6 +7,7 @@ import {
   type PropsWithChildren,
 } from 'react';
 import { Provider } from 'react-redux';
+import { CloudProvider } from '@/morpheus-app/cloud/CloudProvider';
 import type { Scene } from 'morpheus/casts/types';
 
 import { LivingSaveCheckpointProvider } from '@/morpheus-app/store/LivingSaveCheckpointContext';
@@ -24,12 +25,14 @@ import { createVolatileSceneRuntime } from './volatileSceneRuntime';
 
 type FullGameRuntimeProviderProps = PropsWithChildren<{
   policy: FullGameRuntimePolicy;
+  cloudEnabled?: boolean;
   createLivingSaveCoordinator: (store: AppStore) => LivingSaveCoordinator;
   scene?: never;
 }>;
 
 type VolatileRuntimeProviderProps = PropsWithChildren<{
   policy: VolatileRuntimePolicy;
+  cloudEnabled?: never;
   scene: Scene;
   createLivingSaveCoordinator?: never;
 }>;
@@ -101,7 +104,17 @@ export function RuntimeProvider(props: RuntimeProviderProps) {
           <LivingSaveCoordinatorProvider
             coordinator={runtime.livingSaveCoordinator}
           >
-            {content}
+            {props.cloudEnabled && checkpointCoordinator !== null ? (
+              <CloudProvider
+                store={runtime.store}
+                coordinator={runtime.livingSaveCoordinator}
+                checkpointCoordinator={checkpointCoordinator}
+              >
+                {content}
+              </CloudProvider>
+            ) : (
+              content
+            )}
           </LivingSaveCoordinatorProvider>
         )}
       </Provider>

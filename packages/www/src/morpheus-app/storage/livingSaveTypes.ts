@@ -79,7 +79,12 @@ export type LivingSaveFailureCode =
 
 export type LivingSaveResult<T> =
   | { ok: true; value: T }
-  | { ok: false; code: LivingSaveFailureCode; reason?: string };
+  | {
+      ok: false;
+      code: LivingSaveFailureCode;
+      reason?: string;
+      checkpointRetained?: true;
+    };
 
 export type LivingSaveValidationResult =
   | { ok: true; envelope: LivingSaveSessionEnvelope }
