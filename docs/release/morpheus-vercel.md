@@ -191,3 +191,9 @@ The `first-frame-spatial-x2.zip` supplement fills all 16 previously missing
 still PNG requests, including the two explicitly mapped scrapbook source aliases.
 File SHA-256 and decoded RGB hashes were verified before adding these objects
 to the same spatial rail; no existing objects were replaced.
+
+Movie completion is tracked per scene activation, independently of compositor
+presentation tokens. Finished non-looping movies hold their final frame while
+destination assets load; repeated readiness/playback effects cannot restart them.
+Leaving the scene resets eligibility, and reactivation rewinds retained media.
+Authored `looping` remains the authority for continuous playback.

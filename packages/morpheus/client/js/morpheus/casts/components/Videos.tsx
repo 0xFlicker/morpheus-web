@@ -1,3 +1,4 @@
+import { createMoviePlayback } from './moviePlayback'
 import { useHDAssetsEnabled } from 'service/useHDAssetsEnabled'
 import React, {
   useRef,
@@ -8,7 +9,7 @@ import React, {
 } from 'react'
 import { getAssetUrl } from 'service/gamedb'
 import { MovieSpecialCast } from '../types'
-import { MediaPlaybackResult, startMediaPlayback } from './mediaPlayback'
+import { MediaPlaybackResult } from './mediaPlayback'
 import {
   waitForVideoFrames,
   type CancelVideoFrameWait,
@@ -23,7 +24,7 @@ type VideoRef = (el: HTMLVideoElement | null) => void
 export interface VideoController {
   el: HTMLVideoElement | null
   castIds: number[]
-  play: (presentationKey: string) => Promise<MediaPlaybackResult>
+  play: (presentationKey: string, activationKey: string) => Promise<MediaPlaybackResult>
   pause: () => void
   end: () => void
 }
@@ -64,6 +65,7 @@ const VideoEl = ({
 }: VideoElProps) => {
   const hdEnabled = useHDAssetsEnabled()
   const videoRef = useRef<HTMLVideoElement>(null)
+  const playbackRef = useRef<ReturnType<typeof createMoviePlayback> | undefined>(undefined)
   const hasRegistered = useRef(false)
   const cancelFrameWaitRef = useRef<CancelVideoFrameWait | undefined>(undefined)
   // Store latest values in refs to avoid callback dependencies
@@ -78,29 +80,35 @@ const VideoEl = ({
     videoRef.current = el
     if (el && !hasRegistered.current) {
       hasRegistered.current = true
+      const playback = createMoviePlayback(el)
+      playbackRef.current = playback
       const currentCasts = castsRef.current
       const controller = {
         el,
         castIds: currentCasts.map((c) => c.castId),
-        async play(presentationKey: string) {
+        async play(presentationKey: string, activationKey: string) {
           if (!videoRef.current) {
             return 'failed'
           }
-          cancelFrameWaitRef.current?.()
-          cancelFrameWaitRef.current = waitForVideoFrames(
-            videoRef.current,
-            MOVIE_PRESENTATION_FRAME_COUNT,
-            () => {
-              cancelFrameWaitRef.current = undefined
-              if (videoRef.current) {
-                onVideoFramePresentedRef.current(
-                  videoRef.current,
-                  presentationKey
-                )
+          const result = await playback.play(activationKey, () => {
+            cancelFrameWaitRef.current?.()
+            cancelFrameWaitRef.current = waitForVideoFrames(
+              el,
+              MOVIE_PRESENTATION_FRAME_COUNT,
+              () => {
+                cancelFrameWaitRef.current = undefined
+                if (videoRef.current) {
+                  onVideoFramePresentedRef.current(
+                    videoRef.current,
+                    presentationKey
+                  )
+                }
               }
-            }
-          )
-          const result = await startMediaPlayback(videoRef.current)
+            )
+          })
+          if (result === 'completed' && videoRef.current) {
+            onVideoFramePresentedRef.current(videoRef.current, presentationKey)
+          }
           if (result === 'failed') {
             cancelFrameWaitRef.current?.()
             cancelFrameWaitRef.current = undefined
@@ -115,15 +123,14 @@ const VideoEl = ({
         end() {
           cancelFrameWaitRef.current?.()
           cancelFrameWaitRef.current = undefined
-          if (videoRef.current) {
-            videoRef.current.pause()
-          }
+          playback.end()
         },
       }
       onVideoRefRef.current(controller)
     } else if (!el) {
       cancelFrameWaitRef.current?.()
       cancelFrameWaitRef.current = undefined
+      playbackRef.current = undefined
       hasRegistered.current = false
     }
   }, [])
@@ -155,7 +162,10 @@ const VideoEl = ({
       playsInline
       webkit-playsinline="webkit-playsinline"
       loop={looping}
-      onEnded={onVideoEnded}
+      onEnded={event => {
+        playbackRef.current?.complete()
+        onVideoEnded(event)
+      }}
       onCanPlayThrough={onVideoCanPlayThrough}
     >
       <source src={getAssetUrl(`${url}.mp4`, undefined, hdEnabled)} type="video/mp4" />

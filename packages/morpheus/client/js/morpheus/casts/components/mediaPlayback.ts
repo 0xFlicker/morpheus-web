@@ -2,7 +2,7 @@ export interface PlayableMedia {
   play: () => Promise<void>
 }
 
-export type MediaPlaybackResult = 'started' | 'blocked' | 'failed'
+export type MediaPlaybackResult = 'started' | 'blocked' | 'failed' | 'completed'
 
 type PlaybackErrorReporter = (message: string, error: unknown) => void
 
