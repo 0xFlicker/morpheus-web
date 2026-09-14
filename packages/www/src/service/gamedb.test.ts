@@ -29,7 +29,7 @@ describe('GameDB URL resolution', () => {
     expect(getAssetUrl('GameDB/Deck1/introMOV', 'webm')).toContain('/HD/rife-x2-v1/');
     expect(getAssetUrl('GameDB/Deck1/balcNWPAN', 'png')).toBe('https://media.example.com/HD/spatial-x2-v1/GameDB/Deck1/balcNWPAN.png');
     expect(getAssetUrl('GameDB/Deck1/introMOV', 'mp3')).toBe('https://media.example.com/GameDB/Deck1/introMOV.mp3');
-    expect(getAssetUrl('GameDB/Deck3Aft/scrbLGSTL.0', 'png')).toBe('https://media.example.com/GameDB/Deck3Aft/scrbLGSTL.0.png');
+    expect(getAssetUrl('GameDB/Deck3Aft/scrbLGSTL.0', 'png')).toBe('https://media.example.com/HD/spatial-x2-v1/GameDB/Deck3Aft/scrbLGSTL.0.png');
     setHDAssetsEnabled(false);
     expect(getAssetUrl('GameDB/Deck1/introMOV', 'mp4')).toBe('https://media.example.com/GameDB/Deck1/introMOV.mp4');
   });

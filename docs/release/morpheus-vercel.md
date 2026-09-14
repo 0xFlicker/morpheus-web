@@ -177,7 +177,7 @@ frame into unchanged authored bounds.
 The spatial image catalog is `morpheus/docs/hd-assets/spatial-x2-v1-catalog.json`
 in the adjacent Apple checkout. Pass that JSON instead of the RIFE audit to the
 same uploader; it selects the `HD/spatial-x2-v1/` prefix and verifies each PNG.
-There are 669 mapped PNGs (260 panoramas, 93 controlled atlases, 316 stills).
+There are 685 mapped PNGs (260 panoramas, 93 controlled atlases, 332 stills).
 The remaining archive's spatial-only videos are not part of this image import.
 
 Regenerate both image lookup tables with the Apple checkout's
@@ -186,3 +186,8 @@ includes validated frame-zero aliases and explicit controlled-atlas layouts;
 do not infer those layouts from authored cast size. The common HD setting
 selects both rails. React media URL selection uses a hydration-safe preference
 snapshot so a server-rendered original URL cannot remain stuck after page load.
+
+The `first-frame-spatial-x2.zip` supplement fills all 16 previously missing
+still PNG requests, including the two explicitly mapped scrapbook source aliases.
+File SHA-256 and decoded RGB hashes were verified before adding these objects
+to the same spatial rail; no existing objects were replaced.

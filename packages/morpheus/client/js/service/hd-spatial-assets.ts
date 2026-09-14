@@ -668,7 +668,23 @@ export const hdSpatialPaths: Readonly<Record<string, string>> = {
   "GameDB/sanitory/saniS2PAN.png": "GameDB/sanitory/saniS2PAN.png",
   "GameDB/sanitory/saniSPAN.png": "GameDB/sanitory/saniSPAN.png",
   "GameDB/sanitory/sanictr2PAN.png": "GameDB/sanitory/sanictr2PAN.png",
-  "GameDB/sanitory/sanictrPAN.png": "GameDB/sanitory/sanictrPAN.png"
+  "GameDB/sanitory/sanictrPAN.png": "GameDB/sanitory/sanictrPAN.png",
+  "GameDB/Deck1/montySTL.0.png": "GameDB/Deck1/montySTL.0.png",
+  "GameDB/Deck3Aft/scrbclseSTL.0.png": "GameDB/Deck3Aft/scrbclseSTL.0.png",
+  "GameDB/Deck3Aft/scrbLGSTL.0.png": "GameDB/Deck3Aft/scrbLGSTL.0.png",
+  "GameDB/Deck3Aft/jp1closeSTL.0.png": "GameDB/Deck3Aft/jp1closeSTL.0.png",
+  "GameDB/Voodoo/monktoySTL.0.png": "GameDB/Voodoo/monktoySTL.0.png",
+  "GameDB/Voodoo/plaqueSTL.0.png": "GameDB/Voodoo/plaqueSTL.0.png",
+  "GameDB/Harem/hooka1STL.0.png": "GameDB/Harem/hooka1STL.0.png",
+  "GameDB/h2oFront/morgroseSTL.0.png": "GameDB/h2oFront/morgroseSTL.0.png",
+  "GameDB/iceNchat/exjour3STL.0.png": "GameDB/iceNchat/exjour3STL.0.png",
+  "GameDB/iceNchat/exjour4STL.0.png": "GameDB/iceNchat/exjour4STL.0.png",
+  "GameDB/iceNchat/exjour5STL.0.png": "GameDB/iceNchat/exjour5STL.0.png",
+  "GameDB/iceNchat/exjour6STL.0.png": "GameDB/iceNchat/exjour6STL.0.png",
+  "GameDB/iceNchat/exjour7STL.0.png": "GameDB/iceNchat/exjour7STL.0.png",
+  "GameDB/iceNchat/exjour8STL.0.png": "GameDB/iceNchat/exjour8STL.0.png",
+  "GameDB/iceNchat/exjour9STL.0.png": "GameDB/iceNchat/exjour9STL.0.png",
+  "GameDB/All/topSTL.0.png": "GameDB/All/topSTL.0.png"
 }
 
 export interface HDAtlasLayout { frameWidth: number; frameHeight: number; cols: number; rows: number; frameCount: number }
