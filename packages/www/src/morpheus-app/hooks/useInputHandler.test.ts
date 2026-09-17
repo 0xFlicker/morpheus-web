@@ -54,34 +54,60 @@ describe('input lifecycle across scene transitions', () => {
   });
 
   it('ignores the old pointer stream until release after a scene transition', () => {
-    expect(resolvePointerSuppression(17, 17, 'move')).toEqual({
+    expect(resolvePointerSuppression(17, 17, 'move', 1)).toEqual({
       shouldIgnore: true,
       suppressedPointerId: 17,
     });
-    expect(resolvePointerSuppression(17, 17, 'up')).toEqual({
+    expect(resolvePointerSuppression(17, 17, 'up', 0)).toEqual({
       shouldIgnore: true,
       suppressedPointerId: null,
     });
-    expect(resolvePointerSuppression(17, 17, 'down')).toEqual({
+    expect(resolvePointerSuppression(17, 17, 'down', 1)).toEqual({
       shouldIgnore: false,
       suppressedPointerId: null,
     });
-    expect(resolvePointerSuppression(null, 17, 'down')).toEqual({
+    expect(resolvePointerSuppression(null, 17, 'down', 1)).toEqual({
       shouldIgnore: false,
       suppressedPointerId: null,
     });
   });
 
+  it('recovers hover after a transition misses the pointer release', () => {
+    const held = resolvePointerSuppression(17, 17, 'move', 1);
+    expect(held).toEqual({ shouldIgnore: true, suppressedPointerId: 17 });
+    const hover = resolvePointerSuppression(
+      held.suppressedPointerId,
+      17,
+      'move',
+      0,
+    );
+    expect(hover).toEqual({ shouldIgnore: false, suppressedPointerId: null });
+    expect(
+      resolvePointerSuppression(hover.suppressedPointerId, 17, 'move', 0),
+    ).toEqual({ shouldIgnore: false, suppressedPointerId: null });
+  });
+
+  it('keeps held buttons and other pointers suppressed', () => {
+    expect(resolvePointerSuppression(17, 17, 'move', 2)).toEqual({
+      shouldIgnore: true,
+      suppressedPointerId: 17,
+    });
+    expect(resolvePointerSuppression(17, 18, 'move', 0)).toEqual({
+      shouldIgnore: true,
+      suppressedPointerId: 17,
+    });
+  });
+
   it('does not let a second pointer reactivate the suppressed stream', () => {
-    expect(resolvePointerSuppression(17, 18, 'down')).toEqual({
+    expect(resolvePointerSuppression(17, 18, 'down', 1)).toEqual({
       shouldIgnore: true,
       suppressedPointerId: 17,
     });
-    expect(resolvePointerSuppression(17, 18, 'move')).toEqual({
+    expect(resolvePointerSuppression(17, 18, 'move', 1)).toEqual({
       shouldIgnore: true,
       suppressedPointerId: 17,
     });
-    expect(resolvePointerSuppression(17, 17, 'cancel')).toEqual({
+    expect(resolvePointerSuppression(17, 17, 'cancel', 0)).toEqual({
       shouldIgnore: true,
       suppressedPointerId: null,
     });
@@ -104,9 +130,9 @@ describe('input lifecycle across scene transitions', () => {
 
   it('lets continuous controls drag regardless of their authored gesture', () => {
     for (const type of [5, 6, 7, 8]) {
-      expect(
-        isPointerDragHotspot(createHotspot({ type, gesture: 3 })),
-      ).toBe(true);
+      expect(isPointerDragHotspot(createHotspot({ type, gesture: 3 }))).toBe(
+        true,
+      );
     }
   });
 

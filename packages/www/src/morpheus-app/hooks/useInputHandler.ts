@@ -213,14 +213,19 @@ export function resolvePointerSuppression(
   suppressedPointerId: number | null,
   pointerId: number,
   event: 'down' | 'move' | 'up' | 'cancel',
+  buttons: number,
 ): { shouldIgnore: boolean; suppressedPointerId: number | null } {
   if (suppressedPointerId === null) {
     return { shouldIgnore: false, suppressedPointerId: null };
   }
 
-  if (pointerId === suppressedPointerId && event === 'down') {
+  if (
+    pointerId === suppressedPointerId &&
+    (event === 'down' || (event === 'move' && buttons === 0))
+  ) {
     // A pointer cannot emit another down until its prior press has ended. This
-    // also recovers when the release happened outside the canvas.
+    // also recovers when the release happened outside the canvas. A move with
+    // no buttons held proves the old press ended, without requiring a click.
     return { shouldIgnore: false, suppressedPointerId: null };
   }
 
@@ -721,7 +726,7 @@ export function useInputHandler(params: {
     ],
   );
 
-  // Reset pointer state on scene change
+  // End the old gesture while preserving the cursor position on scene change
   const sceneIdRef = useRef(scene.sceneId);
   useEffect(() => {
     if (sceneIdRef.current !== scene.sceneId) {
@@ -735,18 +740,6 @@ export function useInputHandler(params: {
         cancelAnimationFrame(sweepRafRef.current);
         sweepRafRef.current = null;
       }
-      const resetPointer = {
-        screenX: 0,
-        screenY: 0,
-        isDown: false,
-        downTime: 0,
-        startScreenX: 0,
-        startScreenY: 0,
-        startGameX: 0,
-        startGameY: 0,
-      };
-      pointerRef.current = resetPointer;
-      setPointer(resetPointer);
     }
   }, [finishCurrentPointerInteraction, scene.sceneId]);
 
@@ -952,6 +945,7 @@ export function useInputHandler(params: {
         suppressedPointerIdRef.current,
         event.pointerId,
         'down',
+        event.buttons,
       );
       suppressedPointerIdRef.current = suppression.suppressedPointerId;
       if (suppression.shouldIgnore) return;
@@ -1021,6 +1015,7 @@ export function useInputHandler(params: {
         suppressedPointerIdRef.current,
         event.pointerId,
         'move',
+        event.buttons,
       );
       suppressedPointerIdRef.current = suppression.suppressedPointerId;
       if (suppression.shouldIgnore) return;
@@ -1086,6 +1081,7 @@ export function useInputHandler(params: {
         suppressedPointerIdRef.current,
         event.pointerId,
         'up',
+        event.buttons,
       );
       suppressedPointerIdRef.current = suppression.suppressedPointerId;
       if (suppression.shouldIgnore) return;
@@ -1252,6 +1248,7 @@ export function useInputHandler(params: {
         suppressedPointerIdRef.current,
         event.pointerId,
         'cancel',
+        event.buttons,
       );
       suppressedPointerIdRef.current = suppression.suppressedPointerId;
       if (suppression.shouldIgnore) return;
