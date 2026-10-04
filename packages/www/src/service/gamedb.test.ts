@@ -86,3 +86,15 @@ describe('GameDB URL resolution', () => {
     setBaseUrl('');
   });
 });
+
+it('selects restored credit tiers in both video formats', async () => {
+  const { getAssetUrl } = await loadGameDb('https://media.example.com');
+  const names = ['crTransSpc', ...[1, 2, 3, 4, 5].map(n => `crTrans${n}Spc`), ...[1, 2, 3, 4, 5].map(n => `credit${n}SPC`)];
+  for (const name of names) {
+    for (const ext of ['mp4', 'webm'] as const) {
+      const path = `GameDB/Credits/almendra-v1/${name}`;
+      expect(getAssetUrl(path, ext, false)).toBe(`https://media.example.com/${path}.${ext}`);
+      expect(getAssetUrl(path, ext, true)).toBe(`https://media.example.com/HD/credits-v1/${path}.${ext}`);
+    }
+  }
+});

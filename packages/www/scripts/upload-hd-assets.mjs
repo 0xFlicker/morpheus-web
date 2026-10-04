@@ -13,7 +13,7 @@ const destination = await head('GameDB/Deck1/introMOV.mp4', { token });
 if (new URL(destination.url).origin !== new URL(origin).origin) throw new Error('Token does not belong to the configured public GameDB store');
 const audit = JSON.parse(readFileSync(auditPath, 'utf8'));
 const prefix = Array.isArray(audit) ? 'HD/rife-x2-v1/' : audit.prefix;
-if (!['HD/rife-x2-v1/', 'HD/spatial-x2-v1/'].includes(prefix)) throw new Error('Unknown HD rail');
+if (!['HD/rife-x2-v1/', 'HD/spatial-x2-v1/', 'HD/credits-v1/', ''].includes(prefix)) throw new Error('Unknown HD rail');
 let entries;
 if (Array.isArray(audit)) {
   const manifest = JSON.parse(readFileSync(resolve(source, 'manifest.json'), 'utf8'));
@@ -37,6 +37,7 @@ await Promise.all(Array.from({ length: 6 }, async () => {
     const [name, metadata] = entries[index++];
     try {
       if (!name.startsWith('GameDB/') || name.split('/').includes('..')) throw new Error('Invalid archive path');
+      if ((prefix === '' || prefix === 'HD/credits-v1/') && !/^GameDB\/Credits\/almendra-v1\/(?:credit[1-5]SPC|crTrans(?:[1-5])?Spc)\.(mp4|webm)$/.test(name)) throw new Error('Invalid restored-credit path');
       const pathname = `${prefix}${name}`;
       const local = resolve(source, name);
       const hash = createHash('sha256');

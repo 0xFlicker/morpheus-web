@@ -1947,3 +1947,29 @@ export const hdAssetPaths = new Set<string>([
   "GameDB/sanitory/wcButtANI.mp4",
   "GameDB/sanitory/wcButtANI.webm",
 ])
+
+// Re-rendered credits: SD and HD share the same authored timing.
+export const hdPlaybackPaths: Readonly<Record<string, string>> = {
+  'GameDB/Credits/almendra-v1/crTransSpc.mp4': 'HD/credits-v1/GameDB/Credits/almendra-v1/crTransSpc.mp4',
+  'GameDB/Credits/almendra-v1/crTransSpc.webm': 'HD/credits-v1/GameDB/Credits/almendra-v1/crTransSpc.webm',
+  'GameDB/Credits/almendra-v1/crTrans1Spc.mp4': 'HD/credits-v1/GameDB/Credits/almendra-v1/crTrans1Spc.mp4',
+  'GameDB/Credits/almendra-v1/crTrans1Spc.webm': 'HD/credits-v1/GameDB/Credits/almendra-v1/crTrans1Spc.webm',
+  'GameDB/Credits/almendra-v1/crTrans2Spc.mp4': 'HD/credits-v1/GameDB/Credits/almendra-v1/crTrans2Spc.mp4',
+  'GameDB/Credits/almendra-v1/crTrans2Spc.webm': 'HD/credits-v1/GameDB/Credits/almendra-v1/crTrans2Spc.webm',
+  'GameDB/Credits/almendra-v1/crTrans3Spc.mp4': 'HD/credits-v1/GameDB/Credits/almendra-v1/crTrans3Spc.mp4',
+  'GameDB/Credits/almendra-v1/crTrans3Spc.webm': 'HD/credits-v1/GameDB/Credits/almendra-v1/crTrans3Spc.webm',
+  'GameDB/Credits/almendra-v1/crTrans4Spc.mp4': 'HD/credits-v1/GameDB/Credits/almendra-v1/crTrans4Spc.mp4',
+  'GameDB/Credits/almendra-v1/crTrans4Spc.webm': 'HD/credits-v1/GameDB/Credits/almendra-v1/crTrans4Spc.webm',
+  'GameDB/Credits/almendra-v1/crTrans5Spc.mp4': 'HD/credits-v1/GameDB/Credits/almendra-v1/crTrans5Spc.mp4',
+  'GameDB/Credits/almendra-v1/crTrans5Spc.webm': 'HD/credits-v1/GameDB/Credits/almendra-v1/crTrans5Spc.webm',
+  'GameDB/Credits/almendra-v1/credit1SPC.mp4': 'HD/credits-v1/GameDB/Credits/almendra-v1/credit1SPC.mp4',
+  'GameDB/Credits/almendra-v1/credit1SPC.webm': 'HD/credits-v1/GameDB/Credits/almendra-v1/credit1SPC.webm',
+  'GameDB/Credits/almendra-v1/credit2SPC.mp4': 'HD/credits-v1/GameDB/Credits/almendra-v1/credit2SPC.mp4',
+  'GameDB/Credits/almendra-v1/credit2SPC.webm': 'HD/credits-v1/GameDB/Credits/almendra-v1/credit2SPC.webm',
+  'GameDB/Credits/almendra-v1/credit3SPC.mp4': 'HD/credits-v1/GameDB/Credits/almendra-v1/credit3SPC.mp4',
+  'GameDB/Credits/almendra-v1/credit3SPC.webm': 'HD/credits-v1/GameDB/Credits/almendra-v1/credit3SPC.webm',
+  'GameDB/Credits/almendra-v1/credit4SPC.mp4': 'HD/credits-v1/GameDB/Credits/almendra-v1/credit4SPC.mp4',
+  'GameDB/Credits/almendra-v1/credit4SPC.webm': 'HD/credits-v1/GameDB/Credits/almendra-v1/credit4SPC.webm',
+  'GameDB/Credits/almendra-v1/credit5SPC.mp4': 'HD/credits-v1/GameDB/Credits/almendra-v1/credit5SPC.mp4',
+  'GameDB/Credits/almendra-v1/credit5SPC.webm': 'HD/credits-v1/GameDB/Credits/almendra-v1/credit5SPC.webm',
+}

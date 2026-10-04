@@ -1,5 +1,5 @@
 import { endsWith } from 'lodash'
-import { hdAssetPaths } from './hd-assets'
+import { hdAssetPaths, hdPlaybackPaths } from './hd-assets'
 import { hdSpatialPaths } from './hd-spatial-assets'
 
 export const HD_ASSETS_PREFERENCE_KEY = 'Morpheus.hdAssetsEnabled'
@@ -70,6 +70,9 @@ export function getAssetUrl(assetPath: string, type?: VideoMediaStrings, hdEnabl
   const relativePath = `${path}${
     type && !endsWith(assetPath, type) ? `.${type}` : ''
   }`
+  if (hdEnabled && hdPlaybackPaths[relativePath]) {
+    return `${baseUrl}/${hdPlaybackPaths[relativePath]}`.replaceAll('#', '%23')
+  }
   if (hdEnabled && hdSpatialPaths[relativePath]) {
     return `${baseUrl}/HD/spatial-x2-v1/${hdSpatialPaths[relativePath]}`.replaceAll('#', '%23')
   }

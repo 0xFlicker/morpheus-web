@@ -197,3 +197,17 @@ presentation tokens. Finished non-looping movies hold their final frame while
 destination assets load; repeated readiness/playback effects cannot restart them.
 Leaving the scene resets eligibility, and reactivation rewinds retained media.
 Authored `looping` remains the authority for continuous playback.
+
+## Restored credits (Almendra v1)
+
+The 11-movie credit cycle uses `GameDB/Credits/almendra-v1/` for SD and
+`HD/credits-v1/GameDB/Credits/almendra-v1/` for HD, in MP4 and WebM. The explicit
+playback mappings in Swift `HDAssetCatalog.playbackPaths` and web
+`hdPlaybackPaths` select HD without RIFE timing conversion. Both tiers are 24 fps.
+
+Both authored scene chains contain separate restoration transition, hold, and
+closing transition scenes; the final background joins directly to the opening.
+The private Blob map was updated with a conditional ETag write and origin SHA-256
+verification. Native artwork receipts live in `docs/artwork/credits-almendra-sc/movies/`.
+The upload script accepts empty SD and `HD/credits-v1/` prefixes only for this
+version's exact credit movie filenames. Existing objects are never overwritten.
