@@ -80,7 +80,7 @@ record. Upload only rights-cleared converted archive media.
 ## Native macOS download
 
 Publish notarized macOS exports in the public media store under immutable keys
-of the form `downloads/Morpheus-<version>-<build>-macOS.zip`. Do not overwrite a
+of the form `downloads/Morpheus-<version>-<build>-macOS-<commit>.zip`. The source commit distinguishes candidates with the same version/build. Do not overwrite a
 published build. Package the exported `.app` with `ditto -c -k
 --sequesterRsrc --keepParent`, extract the resulting ZIP into a temporary
 directory, and run `codesign --verify --deep --strict --verbose=4` against both
@@ -94,9 +94,11 @@ Current public release:
 | ------------- | ------------------------------------------------------------------ |
 | App version   | `1.0 (5)`                                                          |
 | Compatibility | Universal `arm64` + `x86_64`; macOS 14 or later                    |
-| Blob key      | `downloads/Morpheus-1.0-5-macOS.zip`                               |
-| SHA-256       | `009a4caecc77fbae011c12d6381881b2839e24ef304d105d15ad84758dd984ab` |
-| Size          | `11,399,098` bytes                                                 |
+| Blob key      | `downloads/Morpheus-1.0-5-macOS-6fe0d9e.zip`                               |
+| SHA-256       | `2b395074fb6b62f69ec25d43deaee0796213b96683f54550de09278c6d2a259f` |
+| Size          | `16,411,090` bytes                                                 |
+
+This candidate comes from native commit `6fe0d9e`, accepted by Apple notarization job `9953708b-aaa8-4874-a754-3224659b2cb3`. The stapled app and quarantined ZIP extraction passed signature, ticket, Gatekeeper, and distribution checks. The uploaded public download matches the SHA-256 above and returns an attachment response. The earlier download object remains unchanged.
 
 For a stable-path correction, retain the prior source, record the current
 ETag, and run the importer in its explicit update mode. Before it writes,

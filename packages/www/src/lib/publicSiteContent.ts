@@ -79,7 +79,7 @@ export const publicDestinations: readonly PublicDestination[] = Object.freeze([
     eyebrow: 'Native · Version 1.0 (5)',
     description:
       'Get the universal Apple silicon and Intel build for macOS 14 or later.',
-    href: 'https://ol0swvwh4hjeaxzf.public.blob.vercel-storage.com/downloads/Morpheus-1.0-5-macOS.zip?download=1',
+    href: 'https://ol0swvwh4hjeaxzf.public.blob.vercel-storage.com/downloads/Morpheus-1.0-5-macOS-6fe0d9e.zip?download=1',
     external: true,
   },
   {
