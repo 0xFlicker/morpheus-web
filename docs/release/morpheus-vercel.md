@@ -92,13 +92,13 @@ Current public release:
 
 | Field         | Value                                                              |
 | ------------- | ------------------------------------------------------------------ |
-| App version   | `1.0 (14)`                                                         |
+| App version   | `1.0 (15)`                                                         |
 | Compatibility | Universal `arm64` + `x86_64`; macOS 14 or later                    |
-| Blob key      | `downloads/Morpheus-1.0-14-macOS-c9648a7.zip`                         |
-| SHA-256       | `f0691ef4f55a34538d2ce7c265b1503f622030590f574cc12738ce4a4637b0b3` |
-| Size          | `16,677,671` bytes                                                 |
+| Blob key      | `downloads/Morpheus-1.0-15-macOS-d7e4ff7.zip`                         |
+| SHA-256       | `f636add1cbfff76f363ff5bfe273ee3dcb4db43777bd4eea4a6587b705f6903e` |
+| Size          | `16,679,385` bytes                                                 |
 
-This release comes from native commit `c9648a7`. The notarized export and quarantined ZIP extraction passed signature and ticket checks. Gatekeeper and system distribution checks accepted the extracted app. The public download matches the SHA-256 above and returns an attachment response.
+This release comes from native commit `d7e4ff7`. The notarized export and quarantined ZIP extraction passed signature and ticket checks. Gatekeeper and system distribution checks accepted the extracted app. The public download matches the SHA-256 above and returns an attachment response.
 
 For a stable-path correction, retain the prior source, record the current
 ETag, and run the importer in its explicit update mode. Before it writes,
